@@ -32,7 +32,8 @@ Annotation key:
 | Accessibility Requirements | `### Accessibility Requirements` | `#### Accessibility Requirements` | `PARALLEL` — AA/AAA numeric values must match exactly |
 | CTA Hierarchy | `### CTA Hierarchy` | `#### CTA Hierarchy` | `PARALLEL` |
 | L10n / I18n Requirements | `### L10n / I18n Requirements` | `#### L10n / I18n Requirements` | `PARALLEL` — expansion table rows must match |
-| Question Sequence | `### Question Sequence` (Q1–Q15, Q5a, Q9b) | `#### Question Sequence` | `PARALLEL` — question numbers, wording, and mandatory flags must match |
+| Question Sequence | `### Question Sequence` (Q1–Q15, Q5a, Q8b) — Q7=Design System, Q8=Make Kit, Q8b=DESIGN.md, Q9=Constraints (conditional) | `#### Question Sequence` | `PARALLEL` — question numbers, wording, and mandatory flags must match |
+| Authority File Gate | `### Authority File Gate` (between Q8b and Q9 in both files) | `#### Authority File Gate` | `PARALLEL` — status table and four preamble variants must match |
 | Phase 1 closing summary | After Question Sequence | After Question Sequence | `PARALLEL` — summary field list must match; Gem adds *(recalled / new)* annotations |
 | Phase 2 flag order | `## Phase 2: Clarify and Analyze` | `### Phase 2 — Clarify` | `PARALLEL` — flag order must be identical: Scope → Ambiguity → CTA → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Accessibility → L10n → AC → Platform |
 | Scope Flag | `### Scope Flags` | `**Scope**` | `PARALLEL` |
@@ -72,7 +73,7 @@ When adding or changing any feature, every checked location below must be update
 
 - [ ] `### Question Sequence` / `#### Question Sequence` — question text and wording
 - [ ] `### Cadence Rules` / `#### Cadence Rules` — if the question has mandatory/skip rules
-- [ ] `### [Relevant Phase 1 section]` — if the question triggers a Phase 1 behaviour (e.g., grid guidance fires at Q8)
+- [ ] `### [Relevant Phase 1 section]` — if the question triggers a Phase 1 behaviour (e.g., grid guidance fires at Q9)
 - [ ] `### [Relevant Phase 2 flag]` — the flag that audits this question's answer
 - [ ] Phase 1 closing summary — if the question produces a summary field
 - [ ] Memory Consultation stable/fresh table — classify the new question (Gem only)
@@ -155,13 +156,33 @@ When adding or changing any feature, every checked location below must be update
 ### Adding or changing a guidelines file type (DESIGN.md, Make Kit, etc.)
 
 - [ ] `### Guidelines File Support` / `#### Guidelines File Support` — reference content
-- [ ] `### Question Sequence` — Q8, Q9, or Q9b as appropriate
+- [ ] `### Question Sequence` — Q7, Q8, or Q8b as appropriate
 - [ ] `### Make Kit Flag` or `### DESIGN.md Flag` — Phase 2 verify flag
 - [ ] Output template — relevant conditional section
 - [ ] Memory Consultation — relevant stable/fresh row (Gem only)
 - [ ] Phase 1 closing summary — relevant summary field
 - [ ] `**Guidelines files are the token source of truth**` principle or `**Make Kit is law**` principle
 - [ ] `## Post-Generation Guidance` / `## After You Generate` — relevant tip
+- [ ] Version history (Gem only)
+
+### Adding or changing the Authority File Gate
+
+- [ ] Phase 1 — Authority File Gate block (between Q8b and Q9) in both files — status table and four preamble variants
+- [ ] Phase 1 — Raw Value Translation section — authority file gate block at top (both files)
+- [ ] Phase 1 — Grid Conformance — proactive grid guidance Q reference (Q9, not Q8)
+- [ ] Phase 1 — Question Sequence — Q9 conditional branch text for each status
+- [ ] Phase 1 closing summary — authority file status field
+- [ ] Phase 2 — Raw Value Translation Flag — authority file gate logic (three branches)
+- [ ] Phase 2 — Design System Flags — authority file gate verification bullet
+- [ ] Phase 2 — Make Kit Flag — Q reference (Q8 not Q9)
+- [ ] Phase 2 — DESIGN.md Flag — Q reference (Q8b not Q9b)
+- [ ] Phase 2 — Platform Flag — Q references (Q8, Q8b)
+- [ ] Phase 3 TC-EBC Constraints — authority file clause at top of bullet list
+- [ ] Output template — token rows updated with "defer to authority file" option
+- [ ] Post-generation guidance — authority file tip
+- [ ] Key Principles / Principles — "Authority file gates primitive intake" principle
+- [ ] "Translate, don't discard" principle — updated to include authority file redirect
+- [ ] Memory Consultation table Q-numbers (Gem only)
 - [ ] Version history (Gem only)
 
 ### Adding or changing a principle
@@ -249,3 +270,4 @@ Record any known drift or deferred fixes here. Clear entries when resolved.
 | Date | Issue | Status |
 |---|---|---|
 | 2026-05-03 | Initial manifest created after 15-finding quality check. Both files are fully synced as of SKILL.md (no version) and Gem v2.10.0. | ✅ Resolved — both files clean at manifest creation |
+| 2026-05-08 | Authority File Gate introduced (v2.12.0). Q7/Q8/Q8b moved before Q9. Q9 now conditional on authority file status. Raw Value Translation gains authority file gate. New "Authority file gates primitive intake" principle added. "Translate, don't discard" updated. SKILL.md and Gem fully synced. | ✅ Resolved |

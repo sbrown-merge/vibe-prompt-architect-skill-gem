@@ -50,6 +50,13 @@ Work through the questions below **one at a time**. Ask one question, then stop 
 
 Apply this logic continuously throughout Phase 1. Whenever a user's reply contains a raw design value — a hex color, an rgba/hsl expression, a pixel or point measurement, a named font size, or a hard-coded radius — intercept it, translate it to the closest semantic token name, and inform the user before moving to the next question.
 
+**Authority file gate — evaluate before translating:**
+Before applying Raw Value Translation logic, check the authority file status established in Q7/Q8/Q8b:
+- **Make Kit active:** Raw styling values (colors, font sizes, spacing, radius) should be redirected to the Make Kit rather than translated. Tell the user: "This value is governed by your Make Kit — reference the Make Kit's token rather than entering a raw value here." Do not translate; do not discard.
+- **DESIGN.md active:** Raw styling values that correspond to defined tokens should be redirected to DESIGN.md dot-path references. Tell the user: "This value is covered by your DESIGN.md — use `{colors.primary}` rather than `#0057FF`." Do not translate; do not discard.
+- **Named system active:** Apply Raw Value Translation using that system's token naming conventions (Tailwind, Material 3, etc.).
+- **None:** Apply full Raw Value Translation logic as below.
+
 **What to detect:**
 - **Color** — hex codes (`#0057FF`, `#fff`), `rgb()`, `rgba()`, `hsl()`, named CSS colors (`coral`, `steelblue`)
 - **Typography** — raw font sizes (`16px`, `1rem`, `14pt`), raw line heights (`24px`, `1.5`), font weight numbers (`700`, `400`)
@@ -116,7 +123,7 @@ After receiving a reply containing raw values, show the translations inline — 
 - If the user has named a design system (e.g., shadcn/ui, Material 3, Tailwind), prefix token names to match that system's conventions where known (e.g., Tailwind: `text-base`, `bg-primary`, `rounded-md`, `p-6`; Material 3: `md-sys-color-primary`, `md-sys-typescale-body-large`).
 - If no design system is named, use the generic `--token-name` CSS variable convention above.
 - If a raw value is genuinely ambiguous (e.g., `#888888` could be border, muted text, or disabled state), ask the user which semantic role it plays before assigning a token name.
-- Never silently discard a raw value. Always translate or ask.
+- Never silently discard a raw value. Translate, redirect to the authority file, or ask.
 
 ### Grid Conformance
 
@@ -159,14 +166,14 @@ Bundle the grid correction and the token translation into a single notification.
 >
 > Confirm these are correct or flag any that need adjusting.
 
-**Proactive grid guidance (Q8 — Constraints):**
-When the user answers Q8 (Constraints), if they have not specified a grid system, add a brief note recommending the 8px grid before moving to Q9:
+**Proactive grid guidance (Q9 — Constraints):**
+When the user answers Q9 (Constraints) and no authority file is active, if they have not specified a grid system, add a brief note recommending the 8px grid before moving to Q10:
 
 > No grid specified — applying an 8px base grid (4px microgrid for fine details) by default. This is the standard for most production design systems. Confirm or specify an alternative before moving on.
 
 ### Guidelines File Support
 
-Reference section — intake for guidelines files is handled at Q8 (design system / tokens / guidelines file) and Q9b (DESIGN.md — Stitch only). This section provides the reference information needed to correctly generate prompts that cite those files.
+Reference section — intake for guidelines files is handled at Q7 (design system / tokens / guidelines file) and Q8b (DESIGN.md — Stitch only). This section provides the reference information needed to correctly generate prompts that cite those files.
 
 **DESIGN.md — structure and token hierarchy:**
 
@@ -350,14 +357,44 @@ Ask these in order. The question text below is a guide — adapt the wording nat
 5. **Required Elements** — What specific UI components, content, or features must be present? *(List everything required — components, content, imagery, labels. Don't evaluate priority yet; just get everything on the table.)*
 5a. **Primary Action** — Of everything listed, which is the single most important action a user should take on this screen? *(This becomes the [Primary] CTA. If they name more than one, note that only one can hold the primary position and ask them to choose. If none is clear, ask what success looks like — what has the user accomplished when they leave this screen?)*
 6. **Behaviors** — How should the UI respond to interaction? *(States, transitions, conditional logic, animations?)*
-7. **Constraints** — Any rules to lock in? *(Platform — iOS/Android/Web, grid, spacing, accessibility needs, brand rules?)*
-8. **Design System / Tokens / Guidelines File** — Do you have a component library, UI kit, design tokens, or a guidelines file to reference? *(Options — name whichever applies:)*
+7. **Design System / Tokens / Guidelines File** — Do you have a component library, UI kit, design tokens, or a guidelines file to reference? *(Options — name whichever applies:)*
    - A **named design system** (shadcn/ui, Material 3, Tailwind, etc.)
    - A **DESIGN.md file** in your project *(Google Stitch's open-source guidelines format — contains YAML token front matter and human-readable design rationale. If present, token values for primitive, semantic, and component tiers can be referenced directly from it rather than entered manually.)*
    - A **platform-specific guidelines file** (e.g., Cursor's `.cursorrules`, Claude Code's `CLAUDE.md`, or any other agent instructions file that includes design rules)
    - **None** — tokens will be specified manually or left to AI discretion
-9. **Make Kit** *(ask only if Platform = Figma Make)* — Does this Figma Make project have a Make Kit attached? *(A Make Kit bundles components, styles, tokens, and explicit usage instructions that Figma Make is designed to follow. If one is attached, it becomes the authoritative source for all design decisions and must not be overridden.)*
-9b. **DESIGN.md** *(ask only if Platform = Google Stitch)* — Does this project have a DESIGN.md at the project root? *(DESIGN.md is Stitch's open-source guidelines format. It contains YAML token front matter — primitive, semantic, and component tiers — plus a human-readable design rationale body. If present, it is the authoritative source for all token values and must not be overridden by values in the prompt.)*
+8. **Make Kit** *(ask only if Platform = Figma Make)* — Does this Figma Make project have a Make Kit attached? *(A Make Kit bundles components, styles, tokens, and explicit usage instructions that Figma Make is designed to follow. If one is attached, it becomes the authoritative source for all design decisions and must not be overridden.)*
+8b. **DESIGN.md** *(ask only if Platform = Google Stitch)* — Does this project have a DESIGN.md at the project root? *(DESIGN.md is Stitch's open-source guidelines format. It contains YAML token front matter — primitive, semantic, and component tiers — plus a human-readable design rationale body. If present, it is the authoritative source for all token values and must not be overridden by values in the prompt.)*
+
+### Authority File Gate
+
+Before asking Q9, evaluate the confirmed answers from Q7, Q8, and Q8b to determine the authority file status for this session.
+
+| Authority file status | Confirmed in | Scope for Q9 (Constraints) |
+|---|---|---|
+| **Make Kit** | Q8 — Make Kit: yes | Platform and behavioral constraints only. No color, typography, spacing, or radius questions. |
+| **DESIGN.md** | Q8b — DESIGN.md: yes | Platform constraints and semantic/component token overrides only. No primitive values. |
+| **Named design system** | Q7 — named system confirmed | Platform constraints and token-convention overrides in that system's naming. No raw values. |
+| **None** | Q7 — no system; Q8/Q8b — no file | Full styling intake. Ask for all constraints as before. |
+
+Use the corresponding preamble before Q9:
+
+**If Make Kit is active:**
+> The Make Kit is the source of truth for all components, styles, and tokens in this project. I won't ask for color, typography, spacing, or radius values — those are governed by the Make Kit. For Q9, tell me only about platform requirements (iOS / Android / Web), safe area handling, and any behavioral rules not covered by the Make Kit.
+
+**If DESIGN.md is active:**
+> DESIGN.md is the authoritative token source for this project — primitive, semantic, and component tiers. I won't ask for raw color or spacing values. For Q9, tell me about platform requirements and any semantic or component-level token overrides you want to specify explicitly.
+
+**If a named design system is active:**
+> [System name] governs your token names and conventions. I won't ask for raw values — any constraints you specify should use that system's token naming. For Q9, tell me about platform requirements and any overrides you need beyond what the system provides.
+
+**If no authority file (none):**
+> No design system or guidelines file is set for this project — the AI will work from the constraints you specify here. For Q9, tell me about platform requirements, grid, spacing, color, typography, radius, and any brand rules to lock in. Raw values will be translated to tokens as you enter them.
+
+9. **Constraints** — *(Scope depends on authority file status — see the preamble above.)*
+   - **Make Kit active:** Platform (iOS / Android / Web), safe area insets, and behavioral overrides not covered by the Make Kit. Do not specify color, typography, spacing, or radius — those are governed by the Make Kit.
+   - **DESIGN.md active:** Platform (iOS / Android / Web) and any semantic or component-level token overrides. Do not specify primitive values — those are governed by the DESIGN.md.
+   - **Named system active:** Platform (iOS / Android / Web) and token-convention overrides using that system's naming. Do not specify raw values.
+   - **None:** Any rules to lock in — platform (iOS / Android / Web), grid, spacing, accessibility needs, brand rules, color, typography, radius.
 10. **Reference Images** — Do you have any screenshots, existing screens, or inspiration images to attach alongside the prompt?
 11. **Scope** — Are you targeting a single component, one screen, or a multi-screen flow?
 12. **Prototype Type** — Are you building a functional prototype (real interactions, logic, and data) or a design mockup (visual fidelity and click-through flows)?
@@ -373,6 +410,7 @@ After the final question, deliver a structured confirmation summary before movin
 > - Primary CTA: [answer from Q5a — or "not yet designated"]
 > - Design system / guidelines file: [answer — or "none"]
 > - Make Kit / DESIGN.md: [yes / no / not applicable]
+> - Authority file status: [Make Kit / DESIGN.md / named system: name / none]
 > - WCAG level: [AA / AAA]
 > - L10n / I18n: [not required / required — languages: list]
 > - Prototype type: [functional / mockup]
@@ -410,26 +448,32 @@ Audit gathered Elements, Q5, and Q5a outputs for CTA hierarchy problems. This is
 When generating the Elements block, label every CTA with its tier: `[Primary]`, `[Secondary]`, `[Tertiary]`, or `[Destructive]`. Include a CTA hierarchy summary in the Constraints block.
 
 ### Raw Value Translation Flag
-Review all gathered inputs for any raw values that were not caught and translated during Phase 1. Check every field — including Elements, Behavior, and Constraints — for stray hex codes, pixel measurements, unitless numbers that represent sizes, or hard-coded weights. Translate any found using the same closest-match logic from Phase 1, notify the user of the changes in the Phase 2 summary message, and confirm before generating. Additionally, if a named design system is now confirmed, verify that all translated token names follow that system's conventions — rename any that don't match.
+Review all gathered inputs for any raw values that were not caught or redirected during Phase 1. Check every field — including Elements, Behavior, and Constraints — for stray hex codes, pixel measurements, unitless numbers that represent sizes, or hard-coded weights.
+
+Apply the authority file status established in Q7/Q8/Q8b:
+- **Make Kit or DESIGN.md active:** Any raw styling values that slipped through — colors, font sizes, spacing, radius — are conflicts. Flag them explicitly: these values should defer to the authority file, not appear as raw values or translated tokens in the prompt. Remove them before generating.
+- **Named system active:** Translate any untranslated raw values using that system's token naming conventions. Verify that all translated token names from Phase 1 also follow that system's conventions — rename any that don't match.
+- **No authority file:** Translate any untranslated raw values using the closest-match logic from Phase 1. Notify the user of all changes in the Phase 2 summary message and confirm before generating.
 
 ### Grid Flag
-Audit all spacing and radius values across every gathered input field — including Elements, Behavior, and Constraints — for values not conformant with the 8px base grid (or 4px microgrid). Apply the same rounding and tokenisation logic from Phase 1. Include any corrections in the Phase 2 summary message alongside Raw Value Translation changes. If no grid was specified by the user and none was recommended during Q8, recommend the 8px grid now and apply it to all spacing values before generating.
+Audit all spacing and radius values across every gathered input field — including Elements, Behavior, and Constraints — for values not conformant with the 8px base grid (or 4px microgrid). Apply the same rounding and tokenisation logic from Phase 1. Include any corrections in the Phase 2 summary message alongside Raw Value Translation changes. If no grid was specified by the user and none was recommended during Q9, recommend the 8px grid now and apply it to all spacing values before generating.
 
 ### Design System Flags
 - If a design system exists but wasn't mentioned: prompt the user to reference it explicitly, since referencing library components and tokens dramatically improves output fidelity
 - If no design system: note that the AI will make stylistic choices freely; suggest setting at least a color and type constraint to avoid generic output
+- **Authority file gate verification:** If Make Kit or DESIGN.md is confirmed, scan the Constraints block for any raw styling values (hex colors, pixel sizes, named font sizes) or translated token names that duplicate values already governed by the authority file. Flag these as conflicts — they will create ambiguity for the AI. Remove or replace with the appropriate authority file reference before generating.
 - **If a DESIGN.md is confirmed:** verify that the generated prompt instructs the tool to read the DESIGN.md before generating. Token references in the prompt should use DESIGN.md dot-path syntax (`colors.primary`, `spacing.lg`, `rounded.md`) rather than CSS variable convention. Check that primitive, semantic, and component tiers are all accounted for — a prompt that only references semantic tokens may miss component-level overrides.
 - **If another guidelines file is confirmed:** instruct the prompt to reference it by name and location. Note any design rules it contains that should be explicitly restated in Constraints for tools that don't automatically read such files.
 
 ### Make Kit Flag *(Figma Make only)*
-- Verify that Q9 captured whether a Make Kit is attached. If the answer was not recorded, ask now before generating.
-- If yes: the Make Kit is the single source of truth for all components, styling values, and usage rules. The generated prompt must instruct Figma Make to use the Make Kit exclusively and never override its explicit instructions.
+- Verify that Q8 captured whether a Make Kit is attached. If the answer was not recorded, ask now before generating.
+- If yes: the Make Kit is the single source of truth for all components, styling values, and usage rules. The generated prompt must instruct Figma Make to use the Make Kit exclusively and never override its explicit instructions. Confirm that no raw styling values or primitive token names appear in the Constraints block — all styling must defer to the Make Kit.
 - If no: treat the project's linked Figma component library and variables as the fallback source of truth, and note that styling will be at AI discretion beyond what's linked.
 
 ### DESIGN.md Flag *(Google Stitch only)*
-- Verify that Q9b captured whether a DESIGN.md is present at the project root. If the answer was not recorded, ask now before generating.
-- If yes: the DESIGN.md is the single source of truth for all token values — primitive, semantic, and component tiers. The generated prompt must instruct the AI to read the DESIGN.md before generating and to use its dot-path token references (`{colors.primary}`, `{spacing.lg}`, `{rounded.md}`) throughout. Token values in the prompt must not override values defined in the file.
-- If no: treat the design system and token values gathered in Q8 as the fallback source of truth and proceed with CSS variable convention.
+- Verify that Q8b captured whether a DESIGN.md is present at the project root. If the answer was not recorded, ask now before generating.
+- If yes: the DESIGN.md is the single source of truth for all token values — primitive, semantic, and component tiers. The generated prompt must instruct the AI to read the DESIGN.md before generating and to use its dot-path token references (`{colors.primary}`, `{spacing.lg}`, `{rounded.md}`) throughout. Token values in the prompt must not override values defined in the file. Confirm that no primitive or raw values appear in the Constraints block.
+- If no: treat the design system and token values gathered in Q7 as the fallback source of truth and proceed with CSS variable convention.
 
 ### Accessibility Flag
 Every prompt defaults to WCAG 2.2 AA. Review gathered inputs for any conflicts before generating:
@@ -521,6 +565,8 @@ All interactive states and logic. Describe what happens in response to user acti
 
 **C — Constraints**
 The rules. This is where design system references, grid, brand tokens, platform specs, accessibility requirements, CTA hierarchy, localisation, and explicit prohibitions go.
+- When an authority file is active (Make Kit, DESIGN.md, or named design system confirmed in Q7/Q8/Q8b): reference token names and the file's own naming conventions only. Do not include raw values. Defer to the authority file for anything it covers — do not duplicate or override its definitions.
+- When no authority file is active: use CSS variable convention throughout. No raw values.
 - Reference token names, not raw values: `--color-primary` / `{colors.primary}`, not `#0057FF`
 - Include platform, viewport, grid, spacing, and radius tokens
 - Include the full WCAG 2.2 AA (or AAA) requirements with specific numeric values
@@ -565,10 +611,10 @@ Deliver the prompt as a native Markdown code block, ready to copy into any code 
 - **Platform:** [iOS / Android / Web / Responsive]
 - **Grid:** 8px base grid (4px microgrid for fine details) — `--space-sm` / `spacing.sm` (8px), `--space-lg` / `spacing.lg` (16px), `--space-xl` / `spacing.xl` (24px)
 - **Design system:** [e.g., shadcn/ui, Material 3, custom — or "none specified"]
-- **Color tokens:** [Token names — e.g., `--color-primary` / `{colors.primary}`, `--color-surface` / `{colors.surface}`, `--color-error` / `{colors.error}` — or "AI discretion"]
-- **Typography tokens:** [Token names — e.g., `--font-size-h1` / `{typography.h1}`, `--font-size-body` / `{typography.body}` — or "AI discretion"]
-- **Spacing tokens:** [Token names — e.g., `--space-xl` / `spacing.xl`, `--space-lg` / `spacing.lg` — or "AI discretion"]
-- **Radius tokens:** [Token names — e.g., `--radius-md` / `{rounded.md}` for cards, `--radius-full` / `{rounded.full}` for pills — or "AI discretion"]
+- **Color tokens:** [Token names — e.g., `--color-primary` / `{colors.primary}`, `--color-surface` / `{colors.surface}`, `--color-error` / `{colors.error}` — or "defer to authority file" — or "AI discretion"]
+- **Typography tokens:** [Token names — e.g., `--font-size-h1` / `{typography.h1}`, `--font-size-body` / `{typography.body}` — or "defer to authority file" — or "AI discretion"]
+- **Spacing tokens:** [Token names — e.g., `--space-xl` / `spacing.xl`, `--space-lg` / `spacing.lg` — or "defer to authority file" — or "AI discretion"]
+- **Radius tokens:** [Token names — e.g., `--radius-md` / `{rounded.md}` for cards, `--radius-full` / `{rounded.full}` for pills — or "defer to authority file" — or "AI discretion"]
 - **CTA hierarchy:**
   - [Primary]: [label] — filled, highest visual weight, [position]
   - [Secondary]: [label] — outlined or ghost, subordinate to primary
@@ -653,6 +699,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 
 - **Scope:** One screen at a time. Chain prompts sequentially for multi-screen flows.
 - **CTA clarity:** One primary action per screen. If helper text is needed to explain a button, fix the label or layout instead. Labels should name the outcome.
+- **Authority file:** The prompt instructs the AI to treat your Make Kit or DESIGN.md as the sole source of styling truth. Any values you manually add outside the authority file will conflict with it.
 - **Design system:** Reference token names in Constraints, not raw values. For DESIGN.md: use dot-path syntax — `{colors.primary}`, `{spacing.lg}`. Generate at `stitch.withgoogle.com`; validate with `npx @google/design.md lint`.
 - **Make Kit:** The prompt instructs the AI to use it as sole source of truth. Manual overrides will conflict.
 - **Accessibility:** Verify colour contrast with the WebAIM Contrast Checker before sign-off. Run the full AC checklist — AA, CTA, and L10n items — before iterating.
@@ -672,9 +719,10 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **One primary CTA per screen, strict hierarchy below it.** Every screen must have exactly one primary action. Secondary and tertiary CTAs must be visually subordinate. No two CTAs may have equal visual weight. Helper text and walkthroughs used to explain CTA purpose are design smells — the label, context, or layout should be fixed instead. CTA labels must name the outcome, not the action type.
 - **WCAG 2.2 AA is the unconditional baseline.** Every generated prompt must include the full set of AA accessibility requirements in its Constraints block — specific contrast ratios, target sizes, focus visibility, reflow, and text spacing — not just a reference to "WCAG AA". AAA is opt-in via Q14 and adds enhanced contrast, 44×44px targets, and stricter text presentation rules.
 - **Guidelines files are the token source of truth.** If a DESIGN.md, `.cursorrules`, `CLAUDE.md`, or equivalent guidelines file exists, the prompt must instruct the tool to read it before generating. Token values come from the file; the prompt references token names, not raw values. For DESIGN.md, use dot-path syntax: `{colors.primary}`, `{spacing.lg}`, `{rounded.md}`.
+- **Authority file gates primitive intake.** When Q7/Q8/Q8b confirms a Make Kit, DESIGN.md, or named design system before constraints are gathered, Q9 (Constraints) must be scoped accordingly: suppress requests for raw styling values — colors, font sizes, spacing, radius — and ask only for platform constraints and explicit overrides. For Make Kit and DESIGN.md, raw values supplied by the user are redirected to the authority file rather than translated. In generic prompts without an authority file, gather full styling data using the Raw Value Translation process.
 - **8px grid is the default.** All spacing and radius values must land on the 8px base grid, or the 4px microgrid for fine-grained contexts. Off-grid values are rounded to the nearest 4px multiple, corrected before tokenisation, and the user is informed of the change.
 - **Token names beat raw values.** Reference design tokens and CSS variables by name (`--font-size-body`, `--color-primary`) rather than hard-coded values. Raw values like `#0057FF` or `16px` belong in the token file, not the prompt.
-- **Translate, don't discard.** When a user provides a raw value, convert it to the closest semantic token and tell them. Never silently drop a raw value or pass it through untranslated.
+- **Translate, don't discard.** When a user provides a raw value, convert it to the closest semantic token and tell them — or redirect it to the authority file if one is active. Never silently drop a raw value or pass it through untranslated.
 - **Elements list is exhaustive.** Anything not listed may be omitted or hallucinated.
 - **One screen at a time.** Break multi-screen flows into sequential prompts.
 - **Design system = ingredient list.** If a system exists, the AI should cook from it, not freestyle.
