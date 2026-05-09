@@ -32,8 +32,8 @@ Annotation key:
 | Accessibility Requirements | `### Accessibility Requirements` | `#### Accessibility Requirements` | `PARALLEL` — AA/AAA numeric values must match exactly |
 | CTA Hierarchy | `### CTA Hierarchy` | `#### CTA Hierarchy` | `PARALLEL` |
 | L10n / I18n Requirements | `### L10n / I18n Requirements` | `#### L10n / I18n Requirements` | `PARALLEL` — expansion table rows must match |
-| Question Sequence | `### Question Sequence` (Q1–Q15, Q5a, Q8b) — Q7=Design System, Q8=Make Kit, Q8b=DESIGN.md, Q9=Constraints (conditional) | `#### Question Sequence` | `PARALLEL` — question numbers, wording, and mandatory flags must match |
-| Authority File Gate | `### Authority File Gate` (between Q8b and Q9 in both files) | `#### Authority File Gate` | `PARALLEL` — status table and four preamble variants must match |
+| Question Sequence | `### Question Sequence` (Q1–Q15, Q5a) — Q7=Design System, Q9=Constraints (conditional); Q8/Q8b removed (authority now established by Q1 platform choice for Figma Make / Google Stitch) | `#### Question Sequence` | `PARALLEL` — question numbers, wording, and mandatory flags must match |
+| Authority File Gate | `### Authority File Gate` (between Q7 and Q9 in both files) — status table triggers on Q1 (platform) and Q7 (design system); Make Kit triggered by Q1=Figma Make, DESIGN.md by Q1=Google Stitch | `#### Authority File Gate` | `PARALLEL` — status table and four preamble variants must match |
 | Phase 1 closing summary | After Question Sequence | After Question Sequence | `PARALLEL` — summary field list must match; Gem adds *(recalled / new)* annotations |
 | Phase 2 flag order | `## Phase 2: Clarify and Analyze` | `### Phase 2 — Clarify` | `PARALLEL` — flag order must be identical: Scope → Ambiguity → CTA → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Accessibility → L10n → AC → Platform |
 | Scope Flag | `### Scope Flags` | `**Scope**` | `PARALLEL` |
@@ -156,7 +156,7 @@ When adding or changing any feature, every checked location below must be update
 ### Adding or changing a guidelines file type (DESIGN.md, Make Kit, etc.)
 
 - [ ] `### Guidelines File Support` / `#### Guidelines File Support` — reference content
-- [ ] `### Question Sequence` — Q7, Q8, or Q8b as appropriate
+- [ ] `### Question Sequence` — Q7 as appropriate (Q8/Q8b removed; platform-specific authority established by Q1)
 - [ ] `### Make Kit Flag` or `### DESIGN.md Flag` — Phase 2 verify flag
 - [ ] Output template — relevant conditional section
 - [ ] Memory Consultation — relevant stable/fresh row (Gem only)
@@ -167,22 +167,26 @@ When adding or changing any feature, every checked location below must be update
 
 ### Adding or changing the Authority File Gate
 
-- [ ] Phase 1 — Authority File Gate block (between Q8b and Q9) in both files — status table and four preamble variants
+- [ ] Phase 1 — Q1 post-response conditional notice — Figma Make and Google Stitch platform notices in both files
+- [ ] Phase 1 — Authority File Gate block (between Q7 and Q9) in both files — status table trigger logic (Q1 platform + Q7 design system) and four preamble variants
 - [ ] Phase 1 — Raw Value Translation section — authority file gate block at top (both files)
 - [ ] Phase 1 — Grid Conformance — proactive grid guidance Q reference (Q9, not Q8)
-- [ ] Phase 1 — Question Sequence — Q9 conditional branch text for each status
-- [ ] Phase 1 closing summary — authority file status field
+- [ ] Phase 1 — Question Sequence — Q8/Q8b presence or absence; Q9 conditional branch text for each status
+- [ ] Phase 1 closing summary — authority file status field (Make Kit / DESIGN.md line removed)
 - [ ] Phase 2 — Raw Value Translation Flag — authority file gate logic (three branches)
 - [ ] Phase 2 — Design System Flags — authority file gate verification bullet
-- [ ] Phase 2 — Make Kit Flag — Q reference (Q8 not Q9)
-- [ ] Phase 2 — DESIGN.md Flag — Q reference (Q8b not Q9b)
-- [ ] Phase 2 — Platform Flag — Q references (Q8, Q8b)
+- [ ] Phase 2 — Make Kit Flag — platform-based authority (not Q8 reference)
+- [ ] Phase 2 — DESIGN.md Flag — platform-based authority (not Q8b reference)
+- [ ] Phase 2 — Platform Flag — platform-based authority notes (Figma Make, Google Stitch)
 - [ ] Phase 3 TC-EBC Constraints — authority file clause at top of bullet list
+- [ ] Output template — Make Kit section readiness warning callout
+- [ ] Output template — Design Guidelines section conditional readiness warning callout
 - [ ] Output template — token rows updated with "defer to authority file" option
-- [ ] Post-generation guidance — authority file tip
+- [ ] Post-generation guidance — authority file tip (readiness reinforcement)
 - [ ] Key Principles / Principles — "Authority file gates primitive intake" principle
+- [ ] Key Principles / Principles — "Make Kit is law" principle
 - [ ] "Translate, don't discard" principle — updated to include authority file redirect
-- [ ] Memory Consultation table Q-numbers (Gem only)
+- [ ] Memory Consultation table — platform authority file row replacing Q8/Q8b rows (Gem only)
 - [ ] Version history (Gem only)
 
 ### Adding or changing a principle
@@ -271,3 +275,4 @@ Record any known drift or deferred fixes here. Clear entries when resolved.
 |---|---|---|
 | 2026-05-03 | Initial manifest created after 15-finding quality check. Both files are fully synced as of SKILL.md (no version) and Gem v2.10.0. | ✅ Resolved — both files clean at manifest creation |
 | 2026-05-08 | Authority File Gate introduced (v2.12.0). Q7/Q8/Q8b moved before Q9. Q9 now conditional on authority file status. Raw Value Translation gains authority file gate. New "Authority file gates primitive intake" principle added. "Translate, don't discard" updated. SKILL.md and Gem fully synced. | ✅ Resolved |
+| 2026-05-08 | Platform-implied authority file (v2.13.0). Q8 and Q8b removed as explicit questions; Figma Make (Q1) automatically establishes Make Kit authority, Google Stitch (Q1) establishes DESIGN.md authority. Readiness warning added to Phase 1 after Q1 and to Make Kit / Design Guidelines output template sections. Phase 2 flags, Principles, and Memory Consultation (Gem) updated. SKILL.md and Gem fully synced. | ✅ Resolved |

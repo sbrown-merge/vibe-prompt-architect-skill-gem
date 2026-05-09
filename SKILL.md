@@ -51,7 +51,7 @@ Work through the questions below **one at a time**. Ask one question, then stop 
 Apply this logic continuously throughout Phase 1. Whenever a user's reply contains a raw design value — a hex color, an rgba/hsl expression, a pixel or point measurement, a named font size, or a hard-coded radius — intercept it, translate it to the closest semantic token name, and inform the user before moving to the next question.
 
 **Authority file gate — evaluate before translating:**
-Before applying Raw Value Translation logic, check the authority file status established in Q7/Q8/Q8b:
+Before applying Raw Value Translation logic, check the authority file status established by Q1 (platform) and Q7 (design system):
 - **Make Kit active:** Raw styling values (colors, font sizes, spacing, radius) should be redirected to the Make Kit rather than translated. Tell the user: "This value is governed by your Make Kit — reference the Make Kit's token rather than entering a raw value here." Do not translate; do not discard.
 - **DESIGN.md active:** Raw styling values that correspond to defined tokens should be redirected to DESIGN.md dot-path references. Tell the user: "This value is covered by your DESIGN.md — use `{colors.primary}` rather than `#0057FF`." Do not translate; do not discard.
 - **Named system active:** Apply Raw Value Translation using that system's token naming conventions (Tailwind, Material 3, etc.).
@@ -173,7 +173,7 @@ When the user answers Q9 (Constraints) and no authority file is active, if they 
 
 ### Guidelines File Support
 
-Reference section — intake for guidelines files is handled at Q7 (design system / tokens / guidelines file) and Q8b (DESIGN.md — Stitch only). This section provides the reference information needed to correctly generate prompts that cite those files.
+Reference section — intake for guidelines files is handled at Q7 (design system / tokens / guidelines file). This section provides the reference information needed to correctly generate prompts that cite those files.
 
 **DESIGN.md — structure and token hierarchy:**
 
@@ -350,7 +350,13 @@ When localisation is required, include a `## Localisation & I18n` section in the
 
 Ask these in order. The question text below is a guide — adapt the wording naturally to the conversation; don't read it verbatim.
 
-1. **Platform** — Which tool will receive this prompt? *(Name the target platform — AI code generator, design-to-code tool, UI prototyping tool, or other. Don't assume — the platform determines prompt conventions, Make Kit handling, and guidelines file syntax.)* *Prompt-drift note: if the named platform charges per generation run, note once — without preamble — that a tighter prompt reduces costly reruns. Do this immediately after Q1 is answered, before asking Q2.*
+1. **Platform** — Which tool will receive this prompt? *(Name the target platform — AI code generator, design-to-code tool, UI prototyping tool, or other. Don't assume — the platform determines prompt conventions, Make Kit handling, and guidelines file syntax.)* *Prompt-drift note: if the named platform charges per generation run, note once — without preamble — that a tighter prompt reduces costly reruns. Do this immediately after Q1 is answered, before asking Q2.* *Authority file notice: if the platform is Figma Make or Google Stitch, deliver the appropriate notice below immediately after Q1 is answered — before asking Q2 — regardless of whether the prompt-drift note also fired.*
+
+   **If Platform = Figma Make**, deliver this notice before Q2:
+   > **Make Kit:** Your project targets Figma Make, so your Make Kit is the authority for all design decisions in this session — I won't ask for raw styling values; those come from the Make Kit. Before running the generated prompt, ensure your Make Kit is attached to the project and contains your complete component library, styling tokens, and usage instructions. A Make Kit with missing or incomplete content will produce gaps in the output.
+
+   **If Platform = Google Stitch**, deliver this notice before Q2:
+   > **DESIGN.md:** Your project targets Google Stitch, so your DESIGN.md is the authoritative token source for this session — I won't ask for raw styling values; those come from DESIGN.md. Before running the generated prompt, ensure your DESIGN.md is present at the project root and contains complete token definitions across primitive, semantic, and component tiers. Missing token definitions will produce gaps in the output.
 2. **UI Type** — What kind of interface are you building? *(A screen, component, flow, modal, widget — or something else?)*
 3. **Product & User** — What kind of app or product is this for, and who is the user?
 4. **User Moment** — What just happened before the user arrives at this screen, and what do they do next?
@@ -362,19 +368,16 @@ Ask these in order. The question text below is a guide — adapt the wording nat
    - A **DESIGN.md file** in your project *(Google Stitch's open-source guidelines format — contains YAML token front matter and human-readable design rationale. If present, token values for primitive, semantic, and component tiers can be referenced directly from it rather than entered manually.)*
    - A **platform-specific guidelines file** (e.g., Cursor's `.cursorrules`, Claude Code's `CLAUDE.md`, or any other agent instructions file that includes design rules)
    - **None** — tokens will be specified manually or left to AI discretion
-8. **Make Kit** *(ask only if Platform = Figma Make)* — Does this Figma Make project have a Make Kit attached? *(A Make Kit bundles components, styles, tokens, and explicit usage instructions that Figma Make is designed to follow. If one is attached, it becomes the authoritative source for all design decisions and must not be overridden.)*
-8b. **DESIGN.md** *(ask only if Platform = Google Stitch)* — Does this project have a DESIGN.md at the project root? *(DESIGN.md is Stitch's open-source guidelines format. It contains YAML token front matter — primitive, semantic, and component tiers — plus a human-readable design rationale body. If present, it is the authoritative source for all token values and must not be overridden by values in the prompt.)*
-
 ### Authority File Gate
 
-Before asking Q9, evaluate the confirmed answers from Q7, Q8, and Q8b to determine the authority file status for this session.
+Before asking Q9, evaluate the platform confirmed at Q1 and the design system or guidelines file confirmed at Q7 to determine the authority file status for this session.
 
 | Authority file status | Confirmed in | Scope for Q9 (Constraints) |
 |---|---|---|
-| **Make Kit** | Q8 — Make Kit: yes | Platform and behavioral constraints only. No color, typography, spacing, or radius questions. |
-| **DESIGN.md** | Q8b — DESIGN.md: yes | Platform constraints and semantic/component token overrides only. No primitive values. |
+| **Make Kit** | Q1 — Platform: Figma Make | Platform and behavioral constraints only. No color, typography, spacing, or radius questions. |
+| **DESIGN.md** | Q1 — Platform: Google Stitch | Platform constraints and semantic/component token overrides only. No primitive values. |
 | **Named design system** | Q7 — named system confirmed | Platform constraints and token-convention overrides in that system's naming. No raw values. |
-| **None** | Q7 — no system; Q8/Q8b — no file | Full styling intake. Ask for all constraints as before. |
+| **None** | Q1 — other platform; Q7 — no system | Full styling intake. Ask for all constraints as before. |
 
 Use the corresponding preamble before Q9:
 
@@ -409,7 +412,6 @@ After the final question, deliver a structured confirmation summary before movin
 > - UI type: [answer]
 > - Primary CTA: [answer from Q5a — or "not yet designated"]
 > - Design system / guidelines file: [answer — or "none"]
-> - Make Kit / DESIGN.md: [yes / no / not applicable]
 > - Authority file status: [Make Kit / DESIGN.md / named system: name / none]
 > - WCAG level: [AA / AAA]
 > - L10n / I18n: [not required / required — languages: list]
@@ -450,7 +452,7 @@ When generating the Elements block, label every CTA with its tier: `[Primary]`, 
 ### Raw Value Translation Flag
 Review all gathered inputs for any raw values that were not caught or redirected during Phase 1. Check every field — including Elements, Behavior, and Constraints — for stray hex codes, pixel measurements, unitless numbers that represent sizes, or hard-coded weights.
 
-Apply the authority file status established in Q7/Q8/Q8b:
+Apply the authority file status established by Q1 (platform) and Q7 (design system):
 - **Make Kit or DESIGN.md active:** Any raw styling values that slipped through — colors, font sizes, spacing, radius — are conflicts. Flag them explicitly: these values should defer to the authority file, not appear as raw values or translated tokens in the prompt. Remove them before generating.
 - **Named system active:** Translate any untranslated raw values using that system's token naming conventions. Verify that all translated token names from Phase 1 also follow that system's conventions — rename any that don't match.
 - **No authority file:** Translate any untranslated raw values using the closest-match logic from Phase 1. Notify the user of all changes in the Phase 2 summary message and confirm before generating.
@@ -461,19 +463,19 @@ Audit all spacing and radius values across every gathered input field — includ
 ### Design System Flags
 - If a design system exists but wasn't mentioned: prompt the user to reference it explicitly, since referencing library components and tokens dramatically improves output fidelity
 - If no design system: note that the AI will make stylistic choices freely; suggest setting at least a color and type constraint to avoid generic output
-- **Authority file gate verification:** If Make Kit or DESIGN.md is confirmed, scan the Constraints block for any raw styling values (hex colors, pixel sizes, named font sizes) or translated token names that duplicate values already governed by the authority file. Flag these as conflicts — they will create ambiguity for the AI. Remove or replace with the appropriate authority file reference before generating.
+- **Authority file gate verification:** If Make Kit (Figma Make) or DESIGN.md (Google Stitch) authority is active, scan the Constraints block for any raw styling values (hex colors, pixel sizes, named font sizes) or translated token names that duplicate values already governed by the authority file. Flag these as conflicts — they will create ambiguity for the AI. Remove or replace with the appropriate authority file reference before generating.
 - **If a DESIGN.md is confirmed:** verify that the generated prompt instructs the tool to read the DESIGN.md before generating. Token references in the prompt should use DESIGN.md dot-path syntax (`colors.primary`, `spacing.lg`, `rounded.md`) rather than CSS variable convention. Check that primitive, semantic, and component tiers are all accounted for — a prompt that only references semantic tokens may miss component-level overrides.
 - **If another guidelines file is confirmed:** instruct the prompt to reference it by name and location. Note any design rules it contains that should be explicitly restated in Constraints for tools that don't automatically read such files.
 
 ### Make Kit Flag *(Figma Make only)*
-- Verify that Q8 captured whether a Make Kit is attached. If the answer was not recorded, ask now before generating.
-- If yes: the Make Kit is the single source of truth for all components, styling values, and usage rules. The generated prompt must instruct Figma Make to use the Make Kit exclusively and never override its explicit instructions. Confirm that no raw styling values or primitive token names appear in the Constraints block — all styling must defer to the Make Kit.
-- If no: treat the project's linked Figma component library and variables as the fallback source of truth, and note that styling will be at AI discretion beyond what's linked.
+- Make Kit authority is established by platform choice (Q1 = Figma Make). Verify the generated prompt includes the Make Kit instruction block and that no raw styling values or primitive token names appear in the Constraints block — all styling must defer to the Make Kit.
+- The Make Kit is the single source of truth for all components, styling values, and usage rules. The generated prompt must instruct Figma Make to use the Make Kit exclusively and never override its explicit instructions.
+- If the user has indicated their Make Kit is not yet set up: proceed with the generated prompt as written and include the readiness warning — the user is responsible for configuring the Make Kit before running.
 
 ### DESIGN.md Flag *(Google Stitch only)*
-- Verify that Q8b captured whether a DESIGN.md is present at the project root. If the answer was not recorded, ask now before generating.
-- If yes: the DESIGN.md is the single source of truth for all token values — primitive, semantic, and component tiers. The generated prompt must instruct the AI to read the DESIGN.md before generating and to use its dot-path token references (`{colors.primary}`, `{spacing.lg}`, `{rounded.md}`) throughout. Token values in the prompt must not override values defined in the file. Confirm that no primitive or raw values appear in the Constraints block.
-- If no: treat the design system and token values gathered in Q7 as the fallback source of truth and proceed with CSS variable convention.
+- DESIGN.md authority is established by platform choice (Q1 = Google Stitch). Verify the generated prompt includes the Design Guidelines instruction block referencing DESIGN.md and that no primitive or raw values appear in the Constraints block.
+- The DESIGN.md is the single source of truth for all token values — primitive, semantic, and component tiers. The generated prompt must instruct the AI to read the DESIGN.md before generating and to use its dot-path token references (`{colors.primary}`, `{spacing.lg}`, `{rounded.md}`) throughout. Token values in the prompt must not override values defined in the file.
+- If the user has indicated their DESIGN.md is not yet set up: proceed with the generated prompt as written and include the readiness warning — the user is responsible for configuring the DESIGN.md before running.
 
 ### Accessibility Flag
 Every prompt defaults to WCAG 2.2 AA. Review gathered inputs for any conflicts before generating:
@@ -524,7 +526,8 @@ Include the L10n status and target locales in the prompt header and the Localisa
 
 ### Platform Flags
 - iOS vs. Android vs. Web have different safe areas, navigation patterns, and interaction conventions — confirm which is intended if ambiguous
-- If targeting Figma Make: confirm whether a Make Kit is attached — it supersedes all other design decisions when present
+- If targeting Figma Make: Make Kit authority is established by platform choice — verify the generated prompt references the Make Kit correctly and includes the readiness warning
+- If targeting Google Stitch: DESIGN.md authority is established by platform choice — verify the generated prompt references DESIGN.md correctly and includes the readiness warning
 
 Ask any clarifying questions in a single message. Summarize what you understood, flag what's unclear, and wait for the user to confirm before proceeding.
 
@@ -565,7 +568,7 @@ All interactive states and logic. Describe what happens in response to user acti
 
 **C — Constraints**
 The rules. This is where design system references, grid, brand tokens, platform specs, accessibility requirements, CTA hierarchy, localisation, and explicit prohibitions go.
-- When an authority file is active (Make Kit, DESIGN.md, or named design system confirmed in Q7/Q8/Q8b): reference token names and the file's own naming conventions only. Do not include raw values. Defer to the authority file for anything it covers — do not duplicate or override its definitions.
+- When an authority file is active (Make Kit or DESIGN.md established by Q1 platform choice, or named design system confirmed in Q7): reference token names and the file's own naming conventions only. Do not include raw values. Defer to the authority file for anything it covers — do not duplicate or override its definitions.
 - When no authority file is active: use CSS variable convention throughout. No raw values.
 - Reference token names, not raw values: `--color-primary` / `{colors.primary}`, not `#0057FF`
 - Include platform, viewport, grid, spacing, and radius tokens
@@ -645,14 +648,18 @@ Deliver the prompt as a native Markdown code block, ready to copy into any code 
 
 <!-- Include this section when the user has a DESIGN.md or other guidelines file -->
 ## Design Guidelines
+<!-- When targeting Google Stitch with DESIGN.md: include the warning below -->
+<!-- > ⚠️ **Before running this prompt:** Verify that your DESIGN.md is present at the project root and contains complete token definitions across primitive, semantic, and component tiers. This prompt treats DESIGN.md as the authoritative token source — missing token definitions will produce gaps in the output. -->
 <!-- Replace the instruction below with the appropriate file reference for the target tool -->
 Before generating any UI, read [DESIGN.md / .cursorrules / CLAUDE.md / other guidelines file] at the project root. Use it as the authoritative source for all token values — primitive, semantic, and component tiers. Reference tokens using the file's own naming convention:
 - For DESIGN.md: use dot-path syntax — `{colors.primary}`, `{spacing.lg}`, `{rounded.md}`, `{typography.h1}`, `{components.button.background}`
 - Do not override token values defined in the guidelines file with values from this prompt.
 - If a required token is absent from the file, note the gap and apply the closest defined token rather than introducing a raw value.
 
-<!-- Include the following block only when target is Figma Make AND a Make Kit is attached -->
+<!-- Include the following block only when target is Figma Make -->
 ## Make Kit (Figma Make only)
+> ⚠️ **Before running this prompt:** Verify that your Make Kit is attached to this Figma Make project and contains your complete component library, styling tokens, and usage instructions. This prompt treats the Make Kit as non-negotiable — missing or incomplete content will produce gaps in the output.
+
 Use the Make Kit attached to this project as the single source of truth for all design decisions. Specifically:
 - Use only components defined in the Make Kit. Do not introduce components from outside it.
 - Apply only the styling values (color, typography, spacing, elevation, radius) defined in the Make Kit. Do not override these values with your own defaults.
@@ -699,7 +706,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 
 - **Scope:** One screen at a time. Chain prompts sequentially for multi-screen flows.
 - **CTA clarity:** One primary action per screen. If helper text is needed to explain a button, fix the label or layout instead. Labels should name the outcome.
-- **Authority file:** The prompt instructs the AI to treat your Make Kit or DESIGN.md as the sole source of styling truth. Any values you manually add outside the authority file will conflict with it.
+- **Authority file:** The prompt instructs the AI to treat your Make Kit or DESIGN.md as the sole source of styling truth. Verify your authority file is complete before running — gaps in the file will appear as gaps in the output. Any values you manually add outside the authority file will conflict with it.
 - **Design system:** Reference token names in Constraints, not raw values. For DESIGN.md: use dot-path syntax — `{colors.primary}`, `{spacing.lg}`. Generate at `stitch.withgoogle.com`; validate with `npx @google/design.md lint`.
 - **Make Kit:** The prompt instructs the AI to use it as sole source of truth. Manual overrides will conflict.
 - **Accessibility:** Verify colour contrast with the WebAIM Contrast Checker before sign-off. Run the full AC checklist — AA, CTA, and L10n items — before iterating.
@@ -719,14 +726,14 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **One primary CTA per screen, strict hierarchy below it.** Every screen must have exactly one primary action. Secondary and tertiary CTAs must be visually subordinate. No two CTAs may have equal visual weight. Helper text and walkthroughs used to explain CTA purpose are design smells — the label, context, or layout should be fixed instead. CTA labels must name the outcome, not the action type.
 - **WCAG 2.2 AA is the unconditional baseline.** Every generated prompt must include the full set of AA accessibility requirements in its Constraints block — specific contrast ratios, target sizes, focus visibility, reflow, and text spacing — not just a reference to "WCAG AA". AAA is opt-in via Q14 and adds enhanced contrast, 44×44px targets, and stricter text presentation rules.
 - **Guidelines files are the token source of truth.** If a DESIGN.md, `.cursorrules`, `CLAUDE.md`, or equivalent guidelines file exists, the prompt must instruct the tool to read it before generating. Token values come from the file; the prompt references token names, not raw values. For DESIGN.md, use dot-path syntax: `{colors.primary}`, `{spacing.lg}`, `{rounded.md}`.
-- **Authority file gates primitive intake.** When Q7/Q8/Q8b confirms a Make Kit, DESIGN.md, or named design system before constraints are gathered, Q9 (Constraints) must be scoped accordingly: suppress requests for raw styling values — colors, font sizes, spacing, radius — and ask only for platform constraints and explicit overrides. For Make Kit and DESIGN.md, raw values supplied by the user are redirected to the authority file rather than translated. In generic prompts without an authority file, gather full styling data using the Raw Value Translation process.
+- **Authority file gates primitive intake.** For Figma Make and Google Stitch, the platform choice at Q1 automatically establishes Make Kit and DESIGN.md authority respectively — no separate confirmation question is needed. For other platforms, a named design system confirmed at Q7 sets authority. When authority is established, Q9 (Constraints) must be scoped accordingly: suppress requests for raw styling values — colors, font sizes, spacing, radius — and ask only for platform constraints and explicit overrides. For Make Kit and DESIGN.md, raw values supplied by the user are redirected to the authority file rather than translated. In generic prompts without an authority file, gather full styling data using the Raw Value Translation process.
 - **8px grid is the default.** All spacing and radius values must land on the 8px base grid, or the 4px microgrid for fine-grained contexts. Off-grid values are rounded to the nearest 4px multiple, corrected before tokenisation, and the user is informed of the change.
 - **Token names beat raw values.** Reference design tokens and CSS variables by name (`--font-size-body`, `--color-primary`) rather than hard-coded values. Raw values like `#0057FF` or `16px` belong in the token file, not the prompt.
 - **Translate, don't discard.** When a user provides a raw value, convert it to the closest semantic token and tell them — or redirect it to the authority file if one is active. Never silently drop a raw value or pass it through untranslated.
 - **Elements list is exhaustive.** Anything not listed may be omitted or hallucinated.
 - **One screen at a time.** Break multi-screen flows into sequential prompts.
 - **Design system = ingredient list.** If a system exists, the AI should cook from it, not freestyle.
-- **Make Kit is law.** For Figma Make projects with an attached Make Kit, it is the non-negotiable source of truth for components, styling values, and usage rules. The prompt must state this explicitly and prohibit any override.
+- **Make Kit is law.** For Figma Make projects, Make Kit authority is established by the platform choice at Q1 — the prompt must reference it as the non-negotiable source of truth for components, styling values, and usage rules, and prohibit any override. If the Make Kit is not yet configured, the user must set it up before running.
 - **AC makes iteration precise.** Vague dissatisfaction leads to vague reruns. A checklist of binary criteria turns "something's off" into a specific, fixable list of failures.
 - **Prototype type shapes AC.** Functional prototype criteria include interaction and logic checks; design mockup criteria focus on visual inspection. Both use the same binary format — the subject matter differs, not the standard.
 - **Behaviors need states.** Every interactive element has at minimum a default, a focused, and an active state. Ask if the user hasn't specified. Focus state is a mandatory AA requirement, not optional.
