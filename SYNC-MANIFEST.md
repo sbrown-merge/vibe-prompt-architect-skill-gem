@@ -32,10 +32,10 @@ Annotation key:
 | Accessibility Requirements | `### Accessibility Requirements` | `#### Accessibility Requirements` | `PARALLEL` — AA/AAA numeric values must match exactly |
 | CTA Hierarchy | `### CTA Hierarchy` | `#### CTA Hierarchy` | `PARALLEL` |
 | L10n / I18n Requirements | `### L10n / I18n Requirements` | `#### L10n / I18n Requirements` | `PARALLEL` — expansion table rows must match |
-| Question Sequence | `### Question Sequence` (Q1–Q15, Q5a) — Q7=Design System, Q9=Constraints (conditional); Q8/Q8b removed (authority now established by Q1 platform choice for Figma Make / Google Stitch) | `#### Question Sequence` | `PARALLEL` — question numbers, wording, and mandatory flags must match |
-| Authority File Gate | `### Authority File Gate` (between Q7 and Q9 in both files) — status table triggers on Q1 (platform) and Q7 (design system); Make Kit triggered by Q1=Figma Make, DESIGN.md by Q1=Google Stitch | `#### Authority File Gate` | `PARALLEL` — status table and four preamble variants must match |
+| Question Sequence | `### Question Sequence` (Q1–Q15, Q5a, Q1a/Q1b/Q1c) — Q7=Design System, Q9=Constraints (conditional); Q8/Q8b removed (authority now established by Q1 platform choice for Figma Make / Google Stitch); Q1a/Q1b/Q1c are Claude Code + Figma MCP follow-ups (target file URL, Component Library URL, Variable Collections/Groups) | `#### Question Sequence` | `PARALLEL` — question numbers, wording, and mandatory flags must match |
+| Authority File Gate | `### Authority File Gate` (between Q7 and Q9 in both files) — status table triggers on Q1 (platform), Q1b/Q1c (Figma library/Variables for Claude Code + Figma MCP), and Q7 (design system). Make Kit triggered by Q1=Figma Make; DESIGN.md by Q1=Google Stitch; Figma Component Library by Q1b; Figma Variables by Q1c | `#### Authority File Gate` | `PARALLEL` — status table (six rows) and seven preamble variants (Make Kit / DESIGN.md / Library+Variables / Library only / Variables only / named system / none) must match |
 | Phase 1 closing summary | After Question Sequence | After Question Sequence | `PARALLEL` — summary field list must match; Gem adds *(recalled / new)* annotations |
-| Phase 2 flag order | `## Phase 2: Clarify and Analyze` | `### Phase 2 — Clarify` | `PARALLEL` — flag order must be identical: Scope → Ambiguity → CTA → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Accessibility → L10n → AC → Platform |
+| Phase 2 flag order | `## Phase 2: Clarify and Analyze` | `### Phase 2 — Clarify` | `PARALLEL` — flag order must be identical: Scope → Ambiguity → CTA → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Figma MCP → Accessibility → L10n → AC → Platform |
 | Scope Flag | `### Scope Flags` | `**Scope**` | `PARALLEL` |
 | Ambiguity Flag | `### Ambiguity Flags` | `**Ambiguity**` | `PARALLEL` |
 | CTA Flag | `### CTA Flag` | `**CTA Flag**` | `PARALLEL` |
@@ -44,6 +44,7 @@ Annotation key:
 | Design System Flags | `### Design System Flags` | `**Design System and Guidelines File**` | `PARALLEL` |
 | Make Kit Flag | `### Make Kit Flag` | `**Make Kit**` | `PARALLEL` |
 | DESIGN.md Flag | `### DESIGN.md Flag` | `**DESIGN.md**` | `PARALLEL` |
+| Figma MCP Flag | `### Figma MCP Flag` | `**Figma MCP**` | `PARALLEL` — verify `figma-use` prerequisite, `use_figma` instruction, target URL, library/variable references, section-by-section assembly |
 | Accessibility Flag | `### Accessibility Flag` | `**Accessibility Flag**` | `PARALLEL` |
 | L10n Flag | `### L10n Flag` | `**L10n Flag**` | `PARALLEL` |
 | Acceptance Criteria Flags | `### Acceptance Criteria Flags` | `**Acceptance Criteria**` | `PARALLEL` — mandatory AC item lists must match |
@@ -56,10 +57,12 @@ Annotation key:
 | Output template L10n section | `## Localisation & I18n` inside ` ``` ` | `## Localisation & I18n` inside ` ``` ` | `PARALLEL` — all fields and sub-notes must match |
 | Output template Design Guidelines | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` |
 | Output template Make Kit | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` |
+| Output template Figma MCP | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` — target file URL, Component Library URL, Variables, and `use_figma` instruction block must match |
 | Output template AC block | Inside ` ``` ` block — mandatory items pre-populated | Inside ` ``` ` block — mandatory items pre-populated | `PARALLEL` — mandatory items, L10n commented items, and project-specific slots must match |
 | Post-generation tips | `## Post-Generation Guidance` | `## After You Generate` | `PARALLEL` — topics must match; Gem uses bold headers, SKILL.md uses bullet list |
 | Principles | `## Key Principles (always in effect)` | `## Principles` | `PARALLEL` — every principle must appear in both files, in the same order |
-| Version history | *(absent)* | `## Version History` | `FILE-SPECIFIC` (Gem only) |
+| Version history (table) | *(absent — see version marker row below)* | `## Version History` | `FILE-SPECIFIC` (Gem only) |
+| Version marker (single-line) | YAML comment `# Version: X.Y.Z (date) — synced with vibe-prompt-architect-gem.md vX.Y.Z` + italic byline directly under H1 `*Version X.Y.Z · date · Synced with vibe-prompt-architect-gem.md vX.Y.Z*` | *(implicit — the version history table fills this role)* | `EQUIVALENT` — both files surface a current version visibly; SKILL.md's marker must match the Gem's "Current version" line on every bump |
 | Human editors note | *(two-line comment in YAML header)* | Blockquote after version table | `EQUIVALENT` — both reference this manifest |
 
 ---
@@ -71,11 +74,13 @@ When adding or changing any feature, every checked location below must be update
 
 ### Adding or changing a question (Q-number)
 
-- [ ] `### Question Sequence` / `#### Question Sequence` — question text and wording
+Questions may be **top-level** (Q1, Q2, … Q15) or **conditional follow-ups** that fire only when a specific upstream answer is given. Conditional follow-ups use letter-suffixed numbering (e.g., Q5a for primary CTA after Q5; Q1a/Q1b/Q1c for Claude Code + Figma MCP follow-ups after Q1). When adding either kind, run the touchpoints below.
+
+- [ ] `### Question Sequence` / `#### Question Sequence` — question text and wording (state the trigger condition explicitly for conditional follow-ups)
 - [ ] `### Cadence Rules` / `#### Cadence Rules` — if the question has mandatory/skip rules
-- [ ] `### [Relevant Phase 1 section]` — if the question triggers a Phase 1 behaviour (e.g., grid guidance fires at Q9)
+- [ ] `### [Relevant Phase 1 section]` — if the question triggers a Phase 1 behaviour (e.g., grid guidance fires at Q9; Q1a/Q1b/Q1c fire after Q1 = Claude Code + Figma MCP)
 - [ ] `### [Relevant Phase 2 flag]` — the flag that audits this question's answer
-- [ ] Phase 1 closing summary — if the question produces a summary field
+- [ ] Phase 1 closing summary — if the question produces a summary field (and whether the field is omitted when the question doesn't fire)
 - [ ] Memory Consultation stable/fresh table — classify the new question (Gem only)
 - [ ] Key Principles / Principles — if the question enforces a principle
 - [ ] Version history (Gem only)
@@ -165,10 +170,32 @@ When adding or changing any feature, every checked location below must be update
 - [ ] `## Post-Generation Guidance` / `## After You Generate` — relevant tip
 - [ ] Version history (Gem only)
 
+### Adding or changing the Claude Code + Figma MCP scenario
+
+- [ ] Phase 1 — Q1 post-response conditional notice — Figma MCP readiness notice (MCP server, `figma-use` skill, edit access)
+- [ ] Phase 1 — Q1a (target file URL), Q1b (Component Library URL), Q1c (Variables — Collections/Groups) conditional follow-ups
+- [ ] Phase 1 — Authority File Gate — Figma Component Library and Figma Variables rows in status table; "both active", "library only", "variables only" preamble variants
+- [ ] Phase 1 — Raw Value Translation section — Figma Variables redirect to `{group/variable-name}` form with Collection captured separately at Q1c; Component Library inspect-for-variables note
+- [ ] Phase 1 — Q7 — Claude Code + Figma MCP scope rule (skip / gap-fill / standard form depending on Q1b/Q1c)
+- [ ] Phase 1 — Q9 — branches for "both active", "library only", "variables only"
+- [ ] Phase 1 closing summary — Figma target file/page, Component Library, Variables fields; authority file status row expanded
+- [ ] Phase 2 — Raw Value Translation Flag — Figma Variables and Component Library branches
+- [ ] Phase 2 — Design System Flag — Figma Component Library and Variables verification bullets
+- [ ] Phase 2 — Figma MCP Flag (new) — parallel to Make Kit Flag and DESIGN.md Flag
+- [ ] Phase 2 — Platform Flag — Claude Code + Figma MCP bullet
+- [ ] Phase 3 TC-EBC Constraints — Figma MCP instruction clause
+- [ ] Output template — Figma MCP conditional section (target URL, library URL, Variables, `use_figma` instruction with components/variables/modes/auto-layout/naming guidance)
+- [ ] Output template — Constraints token rows include Figma Variable convention example
+- [ ] Post-Generation Guidance — Figma MCP tip
+- [ ] Key Principles / Principles — "Authority file gates primitive intake" updated to include Figma library/variables
+- [ ] Key Principles / Principles — new "Figma MCP routes to Figma Design" principle
+- [ ] Memory Consultation table — Figma Component Library, Figma Variables, Figma target file/page rows; token naming convention row includes Figma Variable form (Gem only)
+- [ ] Version history (Gem only)
+
 ### Adding or changing the Authority File Gate
 
 - [ ] Phase 1 — Q1 post-response conditional notice — Figma Make and Google Stitch platform notices in both files
-- [ ] Phase 1 — Authority File Gate block (between Q7 and Q9) in both files — status table trigger logic (Q1 platform + Q7 design system) and four preamble variants
+- [ ] Phase 1 — Authority File Gate block (between Q7 and Q9) in both files — status table trigger logic (Q1 platform + Q1b/Q1c Figma library/Variables + Q7 design system) and seven preamble variants (Make Kit / DESIGN.md / Figma Component Library and Variables both active / only Figma Component Library / only Figma Variables / named system / none)
 - [ ] Phase 1 — Raw Value Translation section — authority file gate block at top (both files)
 - [ ] Phase 1 — Grid Conformance — proactive grid guidance Q reference (Q9, not Q8)
 - [ ] Phase 1 — Question Sequence — Q8/Q8b presence or absence; Q9 conditional branch text for each status
@@ -202,6 +229,16 @@ When adding or changing any feature, every checked location below must be update
 - [ ] Check Cadence Rules, Phase 1 notification examples, Phase 2 opening framing, Phase 1 closing summary, Post-Generation tips, Principles
 - [ ] Version history (Gem only)
 
+### Bumping the version
+
+Run this every time the version number changes. Both files must move in lockstep.
+
+- [ ] Gem `## Version History` table — add a new row with date and summary
+- [ ] Gem `**Current version: X.Y.Z**` line — update to the new version
+- [ ] SKILL.md YAML front matter `# Version: X.Y.Z (date) — synced with vibe-prompt-architect-gem.md vX.Y.Z` comment — update version and date
+- [ ] SKILL.md italic byline under H1 `*Version X.Y.Z · YYYY-MM-DD · Synced with vibe-prompt-architect-gem.md vX.Y.Z*` — update version, date, and Gem-parity reference (all three must match each other and the Gem)
+- [ ] SYNC-MANIFEST.md Section 5 Sync Health Log — add an entry describing the change
+
 ---
 
 ## Section 3 — Pre-Commit Checklist
@@ -230,8 +267,10 @@ Pre-commit checklist — vibe-prompt-architect
 6. Did I update the Phase 2 flag order if a new flag was added?
    [ ] Yes — no flag order changes   [ ] Yes — order updated   [ ] No — fix now
 
-7. Did I bump the Gem version table with a changelog entry?
-   [ ] Yes   [ ] No — do it now
+7. Did I bump the Gem version table AND the SKILL.md version marker (YAML
+   comment + italic byline under H1) to the same version and date?
+   [ ] Yes   [ ] No — do it now. All three locations must match: Gem table row,
+   SKILL.md YAML comment, and SKILL.md byline.
 
 8. Did I update this SYNC-MANIFEST.md if a new feature, section, or touch-map entry
    was introduced?
@@ -254,7 +293,7 @@ The following differences between the files are correct and must not be "fixed."
 | What differs | SKILL.md | Gem | Why |
 |---|---|---|---|
 | Memory Consultation | Absent | Present | Claude handles cross-session memory natively; Gemini requires explicit instructions |
-| Version history table | Absent | Present | Gem is a versioned document edited by humans; SKILL.md is managed at file-system level |
+| Version history table | Absent | Present | Gem is a versioned document edited by humans; SKILL.md is managed at file-system level. As of v2.16.0, SKILL.md carries a single-line version marker (YAML comment + italic byline under H1) so the current version is visible at a glance and copies of the file found outside version control can be dated, but the full history table remains Gem-only. |
 | Human editors note | Two-line YAML comment | Blockquote after version table | Different appropriate locations in each file format |
 | Role / persona description | YAML front matter description | `## Role` section with explicit persona statement | Claude Skill format vs Gem instruction format |
 | Recalled / new annotations | Absent | Present in Phase 1 closing summary | Applies only when Memory Consultation is active |
@@ -276,3 +315,7 @@ Record any known drift or deferred fixes here. Clear entries when resolved.
 | 2026-05-03 | Initial manifest created after 15-finding quality check. Both files are fully synced as of SKILL.md (no version) and Gem v2.10.0. | ✅ Resolved — both files clean at manifest creation |
 | 2026-05-08 | Authority File Gate introduced (v2.12.0). Q7/Q8/Q8b moved before Q9. Q9 now conditional on authority file status. Raw Value Translation gains authority file gate. New "Authority file gates primitive intake" principle added. "Translate, don't discard" updated. SKILL.md and Gem fully synced. | ✅ Resolved |
 | 2026-05-08 | Platform-implied authority file (v2.13.0). Q8 and Q8b removed as explicit questions; Figma Make (Q1) automatically establishes Make Kit authority, Google Stitch (Q1) establishes DESIGN.md authority. Readiness warning added to Phase 1 after Q1 and to Make Kit / Design Guidelines output template sections. Phase 2 flags, Principles, and Memory Consultation (Gem) updated. SKILL.md and Gem fully synced. | ✅ Resolved |
+| 2026-05-19 | Output delivery format (v2.14.0). "File Creation Rule" renamed to "Output Delivery Rule" in both files and expanded to require raw Markdown delivered in-line in chat (wrapped in a fenced code block), never as a file/canvas/doc/Drive artifact or rendered preview. Output Format section gains explicit delivery instruction. New "Output is raw Markdown, in-line in the chat" principle added to both Principles lists. Gem Role line updated. SKILL.md and Gem fully synced. | ✅ Resolved |
+| 2026-05-19 | Claude Code + Figma MCP scenario (v2.15.0). Third platform-implied authority alongside Figma Make and Google Stitch — Component Library (Q1b) and Variables (Q1c) act as granular dual authority (each independently active). New Q1 readiness notice plus Q1a/Q1b/Q1c follow-up questions, Authority File Gate expanded from 4 to 6 status-table rows and from 4 to 7 preamble variants (Make Kit / DESIGN.md / Figma Component Library + Variables both / only Library / only Variables / named system / none), Raw Value Translation gate redirects to `{group/variable-name}` form (initially documented as `{Collection}/{Group}/{variable-name}`; corrected to literal Figma form in v2.16.1), new Phase 2 Figma MCP Flag, new conditional output template section with `use_figma` instruction, new "Figma MCP routes to Figma Design" principle, Memory Consultation table extended. Sync Manifest gains new "Adding or changing the Claude Code + Figma MCP scenario" sub-section. SKILL.md and Gem fully synced. | ✅ Resolved |
+| 2026-05-19 | Human-readable version marker added to SKILL.md (v2.16.0). YAML front-matter comment plus italic byline directly under the H1 surface the current version, date, and Gem-parity reference visibly without polluting the Skills schema. Lets "vintage" SKILL.md copies found outside version control be dated at a glance. Sync Manifest: new "Version marker (single-line)" row in Section 1 Anatomy Map, Section 4 Intentional Differences updated to clarify the marker / full-table split, new "Bumping the version" Feature Touch Map sub-section in Section 2, Pre-Commit Checklist item 7 expanded to require all three locations (Gem table, SKILL.md YAML comment, SKILL.md byline) move in lockstep. SKILL.md and Gem fully synced at v2.16.0. | ✅ Resolved |
+| 2026-05-19 | Quality-audit cleanup patch (v2.16.1). Resolved 6 HIGH, 6 MEDIUM, and 4 LOW findings from a cross-file audit of v2.14–v2.16. Most impactful changes: (1) Figma Variable reference syntax corrected from invented `{Collection}/{Group}/{variable-name}` to literal Figma `{group/variable-name}` with Collection as separate metadata; (2) Phase 2 "dependency chain" principle updated to name Figma MCP in the flag order in both files; (3) output template AC block + Phase 2 AC Flags gain Figma-MCP-conditional mandatory items (target file, library binding, Variable binding, modes, naming, auto-layout); (4) Phase 1 closing summary "Authority file status" line rewritten to enumerate active states atomically rather than introducing a third compound name; (5) Authority Gate "None" row scope clarified for Claude Code + Figma MCP with empty Q1b/Q1c/Q7; (6) "Translate don't discard" principle and Post-Generation Authority tip extended to Figma Variables; (7) SYNC-MANIFEST Section 1 row + Authority Gate touchpoint + "Adding or changing a question" sub-section all updated; (8) cosmetic — Q1a/b/c rendered as nested list items; blank lines added before Authority File Gate heading. SKILL.md and Gem fully synced at v2.16.1. | ✅ Resolved |
