@@ -111,7 +111,13 @@ carry all 24 principles in the same order.
     any Component Library URL (Q1b) and Variable Collection(s)/Group(s) (Q1c) the user
     provided. Variable references use literal Figma form `{group/variable-name}` with
     Collection captured as separate metadata — not CSS variable or DESIGN.md dot-path
-    syntax.
+    syntax. Two best-practice defaults are enforced for Variable bindings: (1) **prefer
+    semantic-tier Variables** (e.g., `color/text/primary`) over primitive-tier Variables
+    (e.g., `color/gray/900`) because semantic Variables preserve design intent and adapt
+    across modes; (2) **bindings are mode-aware** when Collections include modes (Light/
+    Dark, Density, Brand) — reference the Collection so Figma resolves the active mode
+    at render time, never hardcode a specific mode's value. Both defaults apply unless
+    the user explicitly overrides them at Q1c.
 
 12. **8px grid is the default.** All spacing and radius on the 8px grid (4px microgrid
     for fine detail). Off-grid values are rounded, corrected before tokenisation, and
@@ -309,7 +315,7 @@ Make Kit and DESIGN.md authority became platform-implied by Q1.
 | Q1 | Platform | Prompt-drift note fires immediately after Q1 if metered platform. Readiness notice fires for Figma Make, Google Stitch, or Claude Code + Figma MCP |
 | Q1a | Figma target file/page URL | Claude Code + Figma MCP only. Required. Page-level URL (`?node-id=...`) preferred |
 | Q1b | Component Library URL | Claude Code + Figma MCP only. Optional. Prompt instructs AI to inspect library for embedded Variable Collections |
-| Q1c | Variables (Collection(s) / Group(s)) | Claude Code + Figma MCP only. Optional. Specifies whether Variables live in target file, Component Library, or both |
+| Q1c | Variables (Collection(s) / Group(s) + modes + tier preference + exclusions) | Claude Code + Figma MCP only. Structured four-part ask in a single turn: (1) Collection(s)/Group(s) and location; (2) optional exclusions; (3) modes per Collection + default mode for this screen — bindings must be mode-aware for theme-switchable designs; (4) optional tier preference, default semantic — semantic-tier Variables preserve intent and adapt across modes |
 | Q2 | UI type | |
 | Q3 | Product and user | |
 | Q4 | User moment | |
@@ -327,11 +333,13 @@ Make Kit and DESIGN.md authority became platform-implied by Q1.
 | Q15 | Localisation (L10n / I18n) | **Mandatory** — all products have a posture |
 
 **Memory / recall behaviour (Gem-only Memory Consultation):**
-- Stable inputs (Q1, Q1b Component Library, Q1c Variables, Q7, Q12, Q14, Q15, grid, token
-  naming convention) are recalled across sessions and not re-asked
+- Stable inputs (Q1, Q1b Component Library, Q1c Variables/modes/tier preference, Q7, Q12,
+  Q14, Q15, grid, token naming convention) are recalled across sessions and not re-asked
 - Always-fresh inputs (Q1a target file/page, Q4, Q5, Q5a, Q6, Q9, Q10, Q11, Q13) are
   gathered fresh each screen
-- Q3 (product/user) and Q2 (UI type) are ⚠️ Verify — recalled but confirmed before use
+- ⚠️ Verify — recalled but confirmed before use: Q2 (UI type), Q3 (product/user),
+  Q1c modes default for this screen, Q1c exclusions (may be project-stable or
+  screen-specific)
 
 ---
 
@@ -423,7 +431,10 @@ These are not optional even if the user did not mention them.
 - 3 Claude Code + Figma MCP baseline items (commented out, uncommented when Q1 = Claude
   Code + Figma MCP)
 - 2 Component Library items (commented out, uncommented when Q1b is provided)
-- 3 Figma Variables items (commented out, uncommented when Q1c is provided)
+- 5 Figma Variables items (commented out, uncommented when Q1c is provided): all
+  properties bound where Variables exist, no hardcoded raw values, mode-aware bindings
+  when Collections have modes, semantic-tier preference over primitive-tier, and no
+  bindings to excluded Collections/Groups
 - Project-specific slots at the end
 
 ---
@@ -505,9 +516,9 @@ Do not "fix" these differences — they are correct.
 
 | File | Version | Last updated |
 |---|---|---|
-| SKILL.md | 2.16.1 (YAML comment + italic byline under H1) | 2026-05-19 |
-| vibe-prompt-architect-gem.md | 2.16.1 | 2026-05-19 |
-| SYNC-MANIFEST.md | No version (living document) | 2026-05-19 |
+| SKILL.md | 2.17.0 (YAML comment + italic byline under H1) | 2026-05-20 |
+| vibe-prompt-architect-gem.md | 2.17.0 | 2026-05-20 |
+| SYNC-MANIFEST.md | No version (living document) | 2026-05-20 |
 | README.md | No version | 2026-05-03 |
 | vibe-prompt-architect-reconstruction-brief.md | No version (this file) | 2026-05-20 |
 
@@ -550,6 +561,19 @@ Do not "fix" these differences — they are correct.
   conditional AC items added to output template + Phase 2 AC Flags; authority-state
   label drift fixed; Translate-don't-discard principle extended to Figma Variables;
   SYNC-MANIFEST touchpoints corrected
+- 2.17.0: Q1c expanded into a structured four-part ask (still one turn): Collection(s)/
+  Group(s) + location; optional exclusions; modes per Collection + default mode for this
+  screen; optional tier preference (semantic default). Embedded best-practice guidance:
+  for theme-switching designs, bindings must be mode-aware (reference the Collection,
+  never hardcode a mode); semantic-tier Variables preserve intent and adapt across modes.
+  Q1 readiness notice gains a fourth pre-flight item — library-published Variables must
+  be enabled in the target file. Phase 1 closing summary gains three conditional rows
+  (modes, tier preference, exclusions). Output template Figma MCP block gains three new
+  metadata lines and three new instruction bullets. Phase 2 Figma MCP Flag + AC Flags +
+  output template AC block all extended with the new captures. "Figma MCP routes to
+  Figma Design" principle extended with semantic-tier-preferred and mode-aware defaults.
+  Gem Memory Consultation table extended with Variable modes, Variable tier preference,
+  and Variable exclusions rows
 
 ---
 

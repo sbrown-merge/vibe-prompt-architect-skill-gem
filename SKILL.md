@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.16.1 (2026-05-19) — synced with vibe-prompt-architect-gem.md v2.16.1
+# Version: 2.17.0 (2026-05-20) — synced with vibe-prompt-architect-gem.md v2.17.0
 # Maintained in sync with vibe-prompt-architect-gem.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.16.1 · 2026-05-19 · Synced with `vibe-prompt-architect-gem.md` v2.16.1*
+*Version 2.17.0 · 2026-05-20 · Synced with `vibe-prompt-architect-gem.md` v2.17.0*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -366,13 +366,20 @@ Ask these in order. The question text below is a guide — adapt the wording nat
    > **DESIGN.md:** Your project targets Google Stitch, so your DESIGN.md is the authoritative token source for this session — I won't ask for raw styling values; those come from DESIGN.md. Before running the generated prompt, ensure your DESIGN.md is present at the project root and contains complete token definitions across primitive, semantic, and component tiers. Missing token definitions will produce gaps in the output.
 
    **If Platform = Claude Code + Figma MCP**, deliver this notice before Q1a:
-   > **Figma MCP:** Your project uses Claude Code with the Figma MCP server to create screens directly in Figma Design. Before running the generated prompt, ensure: (1) the Figma MCP server is connected and authenticated in Claude Code, (2) the `figma-use` skill is loaded — it is a **mandatory prerequisite** before any `use_figma` tool call, (3) you have edit access to the target Figma file. The generated prompt will include explicit `use_figma` instructions, the target file/page URL, and any Component Library and Variable Collection/Group references you specify. I need a few more details about the target file, any Component Library, and any Variables before continuing — three quick follow-ups before Q2.
+   > **Figma MCP:** Your project uses Claude Code with the Figma MCP server to create screens directly in Figma Design. Before running the generated prompt, ensure: (1) the Figma MCP server is connected and authenticated in Claude Code, (2) the `figma-use` skill is loaded — it is a **mandatory prerequisite** before any `use_figma` tool call, (3) you have edit access to the target Figma file, (4) **if you plan to use Variables that live in a separate Component Library**, those Variables must be *published* in the library and the library must be *enabled* in the target file (open the target file's Variables panel and confirm the library's Collections appear). Without this, `use_figma` cannot bind to library Variables. The generated prompt will include explicit `use_figma` instructions, the target file/page URL, and any Component Library and Variable Collection/Group references you specify. I need a few more details about the target file, any Component Library, and any Variables before continuing — three quick follow-ups before Q2.
 
    *Claude Code + Figma MCP follow-ups (Q1a/Q1b/Q1c). These fire only when Q1 = Claude Code + Figma MCP, in order, one per turn:*
 
    - **Q1a — Figma target.** Paste the URL of the Figma Design file or page where the screen should be created. *(Required. The URL must point to a file you have edit access to. A page-level URL — `?node-id=...` — is preferred over a bare file URL so the screen lands in the right place.)*
    - **Q1b — Component Library.** Are you using a Figma Component Library? If yes, paste the URL of the library file. *(If yes, the generated prompt will instruct the AI to import components from this library rather than building from primitives. Component Libraries can also define their own Variables — the prompt will include an instruction to inspect the library for Variable Collections and use them where applicable.)*
-   - **Q1c — Variables.** Does the target Figma Design file or the Component Library include a Variable system to use? If yes, specify which **Collection(s)** and **Group(s)** to use, and indicate whether the Variables live in the target file, the Component Library, or both. *(Figma Variables are the token authority for this scenario — primitive, semantic, and component values bound through Collections and Modes. If neither this file nor the Component Library provides Variables, Q7 will handle the styling source.)*
+   - **Q1c — Variables.** Does the target Figma Design file or the Component Library include a Variable system to use? If yes, please specify all four points below in your reply — they're one question about Variables, not four turns:
+
+       1. **Collection(s) and Group(s) to use** — name the Collection(s) and the Group(s) within them, and indicate whether they live in the target file, the Component Library, or both.
+       2. **Exclusions** *(optional)* — any Collection or Group in scope that should *not* be used on this screen (e.g., you have a "Density" Collection but this screen doesn't need density switching).
+       3. **Modes** — will this screen support mode switching (e.g., Light/Dark, Density, Brand)? If yes, name the modes per Collection and identify the default mode for this screen. *Best practice: if the design will use modes for light and dark themes, bindings must be **mode-aware** — reference the Collection rather than a specific mode value — so the screen switches correctly when the user changes mode. Hardcoding a specific mode's value defeats the Variable system.*
+       4. **Tier preference** *(optional)* — primitive, semantic, or component-tier Variables? *Best practice is to bind to **semantic-tier Variables** (e.g., `color/text/primary`, `color/surface/raised`) rather than primitive Variables (e.g., `color/gray/900`, `color/blue/500`). Semantic Variables preserve design intent, adapt correctly across modes, and survive primitive re-mapping. If you don't specify, semantic is assumed.*
+
+       *(Figma Variables are the token authority for this scenario. If neither this file nor the Component Library provides Variables, Q7 will handle the styling source.)*
 2. **UI Type** — What kind of interface are you building? *(A screen, component, flow, modal, widget — or something else?)*
 3. **Product & User** — What kind of app or product is this for, and who is the user?
 4. **User Moment** — What just happened before the user arrives at this screen, and what do they do next?
@@ -447,6 +454,9 @@ After the final question, deliver a structured confirmation summary before movin
 > - Figma target file/page: [URL from Q1a — Claude Code + Figma MCP only; omit row otherwise]
 > - Component Library: [URL from Q1b — Claude Code + Figma MCP only; "none" if not provided; omit row otherwise]
 > - Variables: [Collection(s)/Group(s) from Q1c — Claude Code + Figma MCP only; "none" if not provided; omit row otherwise]
+> - Variable modes: [modes per Collection + default mode for this screen, from Q1c.3 — Claude Code + Figma MCP only; "none" if no modes; omit row if Variables = none]
+> - Variable tier preference: [primitive / semantic / component, from Q1c.4 — Claude Code + Figma MCP only; "semantic (default)" if unspecified; omit row if Variables = none]
+> - Variable exclusions: [Collections/Groups to avoid, from Q1c.2 — Claude Code + Figma MCP only; "none" if not provided; omit row if Variables = none]
 > - UI type: [answer]
 > - Primary CTA: [answer from Q5a — or "not yet designated"]
 > - Design system / guidelines file: [answer — or "none"]
@@ -513,9 +523,12 @@ Audit all spacing and radius values across every gathered input field — includ
 - Verify the generated prompt includes the **mandatory `figma-use` skill prerequisite** before any `use_figma` tool call, and that the `use_figma` instruction itself is present and unambiguous.
 - Verify the **target Figma file/page URL** captured at Q1a is referenced explicitly in the output. Without it, the AI has no destination.
 - Verify the **Component Library URL** (Q1b) and **Variable Collection(s)/Group(s)** (Q1c) are referenced where applicable. If either was provided but is missing from the generated prompt, that is a generation gap — restore before delivering.
+- Verify the **Variable details** captured at Q1c are all carried into the output template's Figma MCP block: modes per Collection + default mode (Q1c.3), tier preference with semantic as default (Q1c.4), and exclusions (Q1c.2). Each gets its own line in the block plus a matching instruction bullet.
+- Verify the **library Variable subscription** readiness item is present in the output's Figma MCP block when Q1b includes Variables (or the user indicated library Variables are in scope). Library-published Variables must be enabled in the target file or `use_figma` cannot bind them.
 - Verify the prompt instructs the AI to assemble the screen **incrementally section-by-section** rather than as a single monolithic `use_figma` call — this matches the figma-generate-design skill's guidance and produces better outcomes.
-- If the user has indicated their MCP server isn't yet connected, the `figma-use` skill isn't loaded, or they lack edit access to the target file: proceed with the generated prompt as written and include the readiness warning — the user is responsible for resolving these before running.
+- If the user has indicated their MCP server isn't yet connected, the `figma-use` skill isn't loaded, they lack edit access to the target file, or library Variables aren't subscribed in the target file: proceed with the generated prompt as written and include the readiness warning — the user is responsible for resolving these before running.
 - Do not silently substitute CSS variable convention or DESIGN.md dot-path syntax for `{group/variable-name}` Variable references. Figma Variables are the native token authority for this scenario and must be referenced as Figma resolves them.
+- Do not silently override the user's mode, tier, or exclusion preferences. If the user specified primitive-tier or named a default mode different from the system default, surface that in the output and bind accordingly.
 
 ### Make Kit Flag *(Figma Make only)*
 - Make Kit authority is established by platform choice (Q1 = Figma Make). Verify the generated prompt includes the Make Kit instruction block and that no raw styling values or primitive token names appear in the Constraints block — all styling must defer to the Make Kit.
@@ -580,7 +593,9 @@ Include the L10n status and target locales in the prompt header and the Localisa
 - **If Figma Variables were provided (Q1c), additionally include:**
   - `- [ ] All styling properties (fills, strokes, typography, spacing, radius, effects) are bound to the named Variables where a matching Variable exists`
   - `- [ ] No raw color, typography, spacing, or radius values are hardcoded for properties that have a matching Variable`
-  - `- [ ] Where Variable Collections include modes, bindings reference the Collection (not a specific mode value)`
+  - `- [ ] Where Variable Collections include modes (Light/Dark, Density, Brand), bindings reference the Collection (not a specific mode value) so mode switching works correctly`
+  - `- [ ] Bindings prefer semantic-tier Variables (e.g., color/text/primary) over primitive-tier Variables (e.g., color/gray/900) wherever both exist for the same role`
+  - `- [ ] No bindings reference any Collection or Group listed in the Variable exclusions field`
 - **Functional prototype AC** should include interaction checks: does the logic fire correctly, do states transition as specified, does conditional behavior work?
 - **Design mockup AC** should focus on visual inspection: are all elements present, do spacing and tokens match the spec, are states visually distinguishable?
 - Every AC item must be traceable back to a specific Element, Behavior, or Constraint. If it can't be traced, it's either a missing requirement or out of scope — clarify which.
@@ -729,12 +744,20 @@ Before generating any UI, read [DESIGN.md / .cursorrules / CLAUDE.md / other gui
 
 **Variables (Q1c):** [list Collection(s)/Group(s) and their location — target file / Component Library / both — or "none — no Figma Variables in scope for this screen"]
 
+**Variable modes (Q1c.3):** [modes per Collection + default mode for this screen — or "none — no modes in scope"]
+
+**Variable tier preference (Q1c.4):** [primitive / semantic / component — or "semantic (default — preserves intent and adapts across modes)"]
+
+**Variable exclusions (Q1c.2):** [Collections/Groups to avoid — or "none"]
+
 Create this screen in the target Figma Design file specified above by invoking the `figma-use` skill first, then calling the `use_figma` MCP tool. Specifically:
 - Invoke the `figma-use` skill before any `use_figma` call. Skipping this causes hard-to-debug failures.
 - Use `use_figma` to assemble the screen incrementally, section by section — header, hero, body sections, footer — rather than as a single monolithic call.
 - **Components:** If a Component Library URL is provided, import components from that library and instantiate them in the target file. Do not create equivalents from primitives when a library component exists. Inspect the Component Library for any Variable Collections it defines and prefer those Variables when applicable.
 - **Variables:** If Variable Collection(s)/Group(s) are listed, bind every styling property (fills, strokes, typography, spacing, radius, effects) to the appropriate Variable from the named Collection(s). Reference Variables by their Figma name in the form `{group/variable-name}` (e.g., `{color/primary}`, `{spacing/lg}`) — the Collection is named in the Variables field above, not embedded in each reference. Do not hardcode raw color, typography, spacing, or radius values for any property that has a matching Variable.
-- **Modes:** If Variable Collections include modes (e.g., light/dark, density, brand), bind to the Collection rather than a specific mode value so the screen responds correctly when the mode changes.
+- **Tier preference:** Prefer **semantic-tier Variables** (e.g., `{color/text/primary}`, `{color/surface/raised}`) over primitive Variables (e.g., `{color/gray/900}`, `{color/blue/500}`) wherever both exist for the same role. Semantic Variables preserve design intent, adapt correctly across modes, and survive primitive re-mapping. Bind to primitives only when no semantic equivalent exists or the user explicitly requested primitive-tier binding.
+- **Modes:** If Variable Collections include modes (e.g., Light/Dark, Density, Brand), bindings **must be mode-aware** — reference the Collection so Figma resolves the active mode at render time. Never hardcode a specific mode's value; doing so defeats the Variable system and breaks mode switching. Honor the default mode named for this screen.
+- **Exclusions:** Do not bind to any Collection or Group listed in the Variable exclusions field above, even if a matching Variable exists. Treat exclusions as hard prohibitions.
 - **Auto-layout:** Use Figma auto-layout for all container nodes that have a sensible directional flow. Avoid absolute positioning except for genuinely free-form content.
 - **Naming:** Name frames, sections, and components descriptively (e.g., `Header`, `Card / Product`, `CTA / Primary`) so the resulting file is navigable.
 - If a required element has no Component Library equivalent and no matching Variable, build it from primitives using the closest semantic token names from the Constraints block — and flag the gap rather than substituting silently.
@@ -783,7 +806,9 @@ Use the Make Kit attached to this project as the single source of truth for all 
 <!-- Include only when Figma Variables were provided (Q1c) -->
 <!-- - [ ] All styling properties (fills, strokes, typography, spacing, radius, effects) bound to the named Variables where a matching Variable exists -->
 <!-- - [ ] No raw color, typography, spacing, or radius values are hardcoded for properties that have a matching Variable -->
-<!-- - [ ] Where Variable Collections include modes, bindings reference the Collection (not a specific mode value) -->
+<!-- - [ ] Where Variable Collections include modes (Light/Dark, Density, Brand), bindings reference the Collection (not a specific mode value) so mode switching works correctly -->
+<!-- - [ ] Bindings prefer semantic-tier Variables (e.g., color/text/primary) over primitive-tier Variables (e.g., color/gray/900) wherever both exist for the same role -->
+<!-- - [ ] No bindings reference any Collection or Group listed in the Variable exclusions field -->
 - [ ] [Additional project-specific checkable condition]
 - [ ] [Continue for all project-specific requirements]
 
@@ -823,7 +848,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **WCAG 2.2 AA is the unconditional baseline.** Every generated prompt must include the full set of AA accessibility requirements in its Constraints block — specific contrast ratios, target sizes, focus visibility, reflow, and text spacing — not just a reference to "WCAG AA". AAA is opt-in via Q14 and adds enhanced contrast, 44×44px targets, and stricter text presentation rules.
 - **Guidelines files are the token source of truth.** If a DESIGN.md, `.cursorrules`, `CLAUDE.md`, or equivalent guidelines file exists, the prompt must instruct the tool to read it before generating. Token values come from the file; the prompt references token names, not raw values. For DESIGN.md, use dot-path syntax: `{colors.primary}`, `{spacing.lg}`, `{rounded.md}`.
 - **Authority file gates primitive intake.** For Figma Make and Google Stitch, the platform choice at Q1 automatically establishes Make Kit and DESIGN.md authority respectively — no separate confirmation question is needed. For Claude Code + Figma MCP, the Component Library (Q1b) and Variables (Q1c) follow-ups establish a granular dual authority: the library covers components, Variables cover styling, and they fire independently — one, both, or neither may be active. For other platforms, a named design system confirmed at Q7 sets authority. When authority is established, Q9 (Constraints) must be scoped accordingly: suppress requests for raw styling values — colors, font sizes, spacing, radius — and ask only for platform constraints and explicit overrides. For Make Kit, DESIGN.md, and Figma Variables, raw values supplied by the user are redirected to the authority file rather than translated. In generic prompts without an authority file, gather full styling data using the Raw Value Translation process.
-- **Figma MCP routes to Figma Design.** When the platform is Claude Code + Figma MCP, the generated prompt must include the `figma-use` skill prerequisite, an explicit `use_figma` tool-call instruction, the target Figma Design file or page URL (Q1a), and any Component Library URL (Q1b) and Variable Collection(s)/Group(s) (Q1c) the user provided. The target file URL is required — without it, the AI has no destination. Component Library and Variables are optional; each, when present, narrows Q9 (Constraints) by suppressing the corresponding category of intake. Variable references in Constraints and Elements must use `{group/variable-name}` form, not CSS variable convention or DESIGN.md dot-path syntax.
+- **Figma MCP routes to Figma Design.** When the platform is Claude Code + Figma MCP, the generated prompt must include the `figma-use` skill prerequisite, an explicit `use_figma` tool-call instruction, the target Figma Design file or page URL (Q1a), and any Component Library URL (Q1b) and Variable Collection(s)/Group(s) (Q1c) the user provided. The target file URL is required — without it, the AI has no destination. Component Library and Variables are optional; each, when present, narrows Q9 (Constraints) by suppressing the corresponding category of intake. Variable references in Constraints and Elements must use `{group/variable-name}` form, not CSS variable convention or DESIGN.md dot-path syntax. **Two best-practice defaults are enforced for Variable bindings:** (1) **semantic-tier Variables are preferred over primitive-tier** because semantic Variables preserve design intent and adapt across modes — bind to primitives only when no semantic equivalent exists or the user explicitly requested primitive-tier; (2) **bindings are mode-aware** when Collections include modes (Light/Dark, Density, Brand) — reference the Collection so Figma resolves the active mode at render time, never hardcode a specific mode's value. Both defaults apply unless the user explicitly overrides them at Q1c.
 - **8px grid is the default.** All spacing and radius values must land on the 8px base grid, or the 4px microgrid for fine-grained contexts. Off-grid values are rounded to the nearest 4px multiple, corrected before tokenisation, and the user is informed of the change.
 - **Token names beat raw values.** Reference design tokens and CSS variables by name (`--font-size-body`, `--color-primary`) rather than hard-coded values. Raw values like `#0057FF` or `16px` belong in the token file, not the prompt.
 - **Translate, don't discard.** When a user provides a raw value, convert it to the closest semantic token and tell them — or redirect it to the active authority file (Make Kit reference, DESIGN.md dot-path, or Figma Variable `{group/variable-name}` in the named Collection). Never silently drop a raw value or pass it through untranslated.

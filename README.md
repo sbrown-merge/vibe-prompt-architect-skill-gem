@@ -19,11 +19,17 @@ The workflow has three phases:
 1. **Gather** — A sequential question-by-question intake covering the 15+ inputs that
    determine prompt quality: platform, UI type, product context, required elements, primary
    CTA, behaviors, constraints, design system, accessibility level, and localisation scope.
+   Platform-specific follow-ups fire for Figma Make, Google Stitch, and Claude Code +
+   Figma MCP — including the target Figma file, any Component Library, and any Variable
+   Collections in use.
 2. **Clarify** — An automated audit of your inputs that catches ambiguity, off-grid spacing
    values, raw color/type values that need tokenising, missing CTA hierarchy, accessibility
    risks, and localisation gaps — before the prompt is generated.
 3. **Generate** — A structured TC-EBC prompt (Task, Context, Elements, Behavior,
-   Constraints) in native Markdown, ready to copy into your tool of choice.
+   Constraints) in **raw Markdown delivered in-line in the chat** (wrapped in a fenced
+   code block) so you can copy it verbatim into your tool of choice. The output is never
+   delivered as a file, canvas, document, or rendered preview — keeping the Markdown
+   syntax visible and the copy/paste flow trivial.
 
 ---
 
@@ -54,7 +60,8 @@ specific support for:
 |---|---|
 | **Figma Make** | Detects and enforces Make Kit as the sole source of truth for components and styling when one is attached |
 | **Google Stitch** | Detects and enforces DESIGN.md as the authoritative token source; uses dot-path token references (`{colors.primary}`, `{spacing.lg}`, `{rounded.md}`) |
-| **Cursor, Claude Code** | References platform guidelines files (`.cursorrules`, `CLAUDE.md`) using the "read before generating" pattern |
+| **Claude Code + Figma MCP** | Creates screens directly in Figma Design via the `use_figma` MCP tool. Captures the target Figma file/page URL, an optional Component Library URL, and any Variable Collections/Groups (with modes, default mode for the screen, tier preference, and exclusions). Generated prompt includes the mandatory `figma-use` skill prerequisite and an explicit `use_figma` instruction block. Variable references use literal Figma form `{group/variable-name}` with the Collection captured as separate metadata |
+| **Cursor, Claude Code (generic)** | References platform guidelines files (`.cursorrules`, `CLAUDE.md`) using the "read before generating" pattern |
 | **All other tools** | Platform-neutral token and constraint format using CSS variable convention (`--color-primary`, `--space-lg`) |
 
 ---
@@ -80,9 +87,10 @@ Every prompt produced by this workflow includes:
 **Conditional sections** (included only when relevant)
 - `## Localisation & I18n` — target locales, directionality, string expansion headroom, format tokens, font fallback stacks, pluralisation requirements, pseudo-localisation guidance
 - `## Design Guidelines` — instruction for the AI to read DESIGN.md or another guidelines file before generating
-- `## Make Kit` — instruction for Figma Make to use the attached Make Kit as its sole source of truth
+- `## Make Kit (Figma Make only)` — instruction for Figma Make to use the attached Make Kit as its sole source of truth
+- `## Figma MCP (Claude Code + Figma MCP only)` — readiness warning (MCP server, `figma-use` skill, edit access, library Variable subscription), target Figma file/page URL, Component Library URL, Variables (Collections/Groups), Variable modes + default mode, Variable tier preference, Variable exclusions, plus an explicit `use_figma` instruction block covering components, Variables, tier preference, modes, exclusions, auto-layout, and naming
 
-**Acceptance Criteria** — a pre-populated checklist of binary pass/fail items covering CTA hierarchy (4 items), WCAG 2.2 AA (5 items), and conditional L10n items (6 items), plus project-specific slots
+**Acceptance Criteria** — a pre-populated checklist of binary pass/fail items covering CTA hierarchy (4 items), WCAG 2.2 AA (5 items), conditional L10n items (6 items), and Claude Code + Figma MCP items (3 baseline + 2 when a Component Library is provided + 5 when Variables are provided — all commented out and uncommented as applicable), plus project-specific slots
 
 ---
 
@@ -134,6 +142,43 @@ Localisation scope is a mandatory intake question — every project has a locali
 
 ---
 
+## Figma Variables support (Claude Code + Figma MCP)
+
+When the platform is **Claude Code + Figma MCP**, the workflow treats your Figma
+Component Library and Figma Variables as a granular dual authority — Component Library
+covers components, Variables cover styling, and the two fire independently. The intake
+asks you to provide:
+
+- **Target Figma file/page URL** — where the screen should be created. Required.
+- **Component Library URL** *(optional)* — if you have one, the prompt instructs the AI
+  to import components from it rather than building from primitives, and to inspect the
+  library for any embedded Variable Collections
+- **Variable Collection(s) and Group(s)** *(optional)* — which ones to use, where they
+  live (target file / Component Library / both), modes per Collection and the default
+  mode for the screen, optional tier preference, and any exclusions
+- **Library Variable subscription** is checked as a pre-flight item — Variables published
+  in a Component Library must be enabled in the target file or `use_figma` cannot bind
+  to them
+
+Two best-practice defaults are enforced for Variable bindings unless you override them
+at intake:
+
+- **Semantic-tier preferred.** Bindings reference semantic-tier Variables (e.g.,
+  `{color/text/primary}`, `{color/surface/raised}`) over primitive-tier Variables (e.g.,
+  `{color/gray/900}`, `{color/blue/500}`). Semantic Variables preserve design intent,
+  adapt correctly across modes, and survive primitive re-mapping.
+- **Mode-aware.** When a Collection includes modes (Light/Dark, Density, Brand),
+  bindings reference the Collection so Figma resolves the active mode at render time.
+  A specific mode's value is never hardcoded — that would defeat the Variable system
+  and break mode switching.
+
+Variable references in the generated prompt use literal Figma form `{group/variable-name}`,
+matching how Variables appear in Figma's Variables panel. The Collection is captured
+separately at intake and named in the prompt's Variables field, not embedded in each
+reference.
+
+---
+
 ## Installation and use
 
 ### Claude Skill (SKILL.md)
@@ -180,12 +225,13 @@ specifics that most prompts leave out.
 
 ## Design token support
 
-The workflow supports three token naming conventions simultaneously:
+The workflow supports four token naming conventions simultaneously:
 
 | Convention | When used | Example |
 |---|---|---|
 | CSS variable | Default for all platforms | `--color-primary`, `--space-xl`, `--radius-md` |
 | DESIGN.md dot-path | When a DESIGN.md is confirmed | `{colors.primary}`, `{spacing.xl}`, `{rounded.md}` |
+| Figma Variable | When Claude Code + Figma MCP with Variables in scope | `{color/primary}`, `{spacing/xl}`, `{rounded/md}` — Collection captured separately |
 | Tailwind / Material 3 | When that design system is named | `bg-primary`, `p-6`, `rounded-md` / `md-sys-color-primary` |
 
 All four value categories have translation tables:
@@ -200,9 +246,10 @@ All four value categories have translation tables:
 
 | File | Purpose |
 |---|---|
-| `SKILL.md` | Claude Skill — drop into your Skills directory |
+| `SKILL.md` | Claude Skill — drop into your Skills directory. Carries a version marker (YAML comment + italic byline under H1) matching the Gem |
 | `vibe-prompt-architect-gem.md` | Gemini Gem instructions — paste into a new Gem |
 | `SYNC-MANIFEST.md` | Maintenance document — section map, feature touch map, pre-commit checklist, and intentional differences list for keeping the two implementation files in sync |
+| `vibe-prompt-architect-reconstruction-brief.md` | Reconstruction brief — design authority for rebuilding the file set from scratch in a new Claude session, or for onboarding a collaborator. Explains the *why* alongside the four content files' *what* |
 | `README.md` | This file |
 
 ---
@@ -215,12 +262,16 @@ in sync using `SYNC-MANIFEST.md`. If you extend or modify the workflow:
 1. Open `SYNC-MANIFEST.md` first and identify which Feature Touch Map entries are affected
 2. Upload all three files (`SKILL.md`, `vibe-prompt-architect-gem.md`, `SYNC-MANIFEST.md`) to Claude
 3. Describe your change — Claude will apply it consistently to both files
-4. Bump the Gem version number and add a changelog entry
+4. Bump the Gem version number and add a changelog entry — and update SKILL.md's matching version marker (YAML comment + italic byline under H1) in lockstep
 5. Update `SYNC-MANIFEST.md` if the change introduces a new feature or section
 
-The Gem uses semantic versioning. The current version is **2.10.0**. Major versions (X.0.0)
+The Gem uses semantic versioning. The current version is **2.17.0**. Major versions (X.0.0)
 indicate breaking changes to the output format or workflow structure. Minor versions (X.Y.0)
 indicate new capabilities. Patch versions (X.Y.Z) indicate fixes and clarifications.
+
+For a full rebuild from scratch (e.g., recovering from file loss or onboarding a new
+collaborator), use `vibe-prompt-architect-reconstruction-brief.md` as the design authority
+alongside any surviving content files.
 
 ---
 
@@ -230,4 +281,6 @@ indicate new capabilities. Patch versions (X.Y.Z) indicate fixes and clarificati
 - **Acceptance criteria require manual verification.** The AC checklist tells you what to check; it doesn't run automatically against the generated output.
 - **Color contrast is flagged, not calculated.** The workflow identifies likely contrast risks (light grey on white, low-saturation combinations) but doesn't compute exact ratios. Use the [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/) to verify.
 - **DESIGN.md token names are referenced, not validated.** If a token name in your DESIGN.md has changed, the workflow won't detect the mismatch — it references the name you provided.
+- **Claude Code + Figma MCP requires pre-flight setup that the workflow can't verify automatically.** Before running a Figma-MCP-targeted prompt, you must independently confirm: (1) the Figma MCP server is connected and authenticated in Claude Code; (2) the `figma-use` skill is loaded (it is a mandatory prerequisite before any `use_figma` call); (3) you have edit access to the target Figma file; (4) any Variables published in a separate Component Library are *enabled* (subscribed) in the target file. The generated prompt includes a readiness warning that lists these, but the workflow itself cannot check them on your behalf.
+- **Figma Variable names are referenced, not validated.** As with DESIGN.md, if a Variable name or Collection name has changed in Figma since you captured it, the workflow won't detect the mismatch.
 - **The Gem has no persistent memory between browser sessions** unless Gemini Gems memory is enabled in your account. The Memory Consultation section of the Gem scans the current conversation thread for prior context, but cannot access previous sessions unless that session's history is available.
