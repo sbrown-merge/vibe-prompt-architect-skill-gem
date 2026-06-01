@@ -4,6 +4,8 @@ A structured intake and prompt-generation workflow for AI-powered UI prototyping
 code-generation tools. Available as a **Claude Skill** and a **Gemini Gem** — two
 implementations of the same workflow for two different AI platforms.
 
+> 🚀 **New here?** Read the [Cheat Sheet](CHEATSHEET.md) — a ~5-minute reference on what to prepare before a session and how to get the best result.
+
 ---
 
 ## What it does
@@ -265,6 +267,7 @@ All four value categories have translation tables:
 |---|---|
 | `SKILL.md` | Claude Skill — drop into your Skills directory. Carries a version marker (YAML comment + italic byline under H1) matching the Gem |
 | `vibe-prompt-architect-gem.md` | Gemini Gem instructions — paste into a new Gem |
+| `CHEATSHEET.md` | User cheat sheet — a ~5-minute reference covering what the Skill/Gem does, what to prepare, the intake at a glance, built-in quality, and tips for a better session |
 | `SYNC-MANIFEST.md` | Maintenance document — section map, feature touch map, pre-commit checklist, and intentional differences list for keeping the two implementation files in sync |
 | `vibe-prompt-architect-reconstruction-brief.md` | Reconstruction brief — design authority for rebuilding the file set from scratch in a new Claude session, or for onboarding a collaborator. Explains the *why* alongside the four content files' *what* |
 | `README.md` | This file |

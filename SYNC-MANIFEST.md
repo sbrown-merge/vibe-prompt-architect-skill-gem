@@ -9,6 +9,8 @@ Run the Pre-Commit Checklist before closing any session.
 `vibe-prompt-architect-gem.md`, and `SYNC-MANIFEST.md` — when requesting changes in
 Claude. The manifest must be in context for Claude to apply it.
 
+**Companion user docs:** `README.md` (overview) and `CHEATSHEET.md` (user quick-reference) are `DERIVED` from the workflow — they are not part of the SKILL ↔ Gem sync pair, but must be refreshed when user-visible behavior changes. See "Updating companion user docs" in Section 2 and item 11 of the Pre-Commit Checklist.
+
 ---
 
 ## Section 1 — File Anatomy Map
@@ -243,6 +245,17 @@ Run this every time the version number changes. Both files must move in lockstep
 - [ ] SKILL.md italic byline under H1 `*Version X.Y.Z · YYYY-MM-DD · Synced with vibe-prompt-architect-gem.md vX.Y.Z*` — update version, date, and Gem-parity reference (all three must match each other and the Gem)
 - [ ] SYNC-MANIFEST.md Section 5 Sync Health Log — add an entry describing the change
 
+### Updating companion user docs (README + Cheat Sheet)
+
+`README.md` and `CHEATSHEET.md` are **`DERIVED`** user-facing docs — not part of the SKILL.md ↔ Gem sync pair, but they describe the workflow and drift out of date when it changes. Refresh them whenever a change alters user-visible behavior. `CHEATSHEET.md` is platform-neutral (covers both Skill and Gem in one file); there is no per-platform variant to keep in sync.
+
+Touch `README.md` **and** `CHEATSHEET.md` when a change affects any of:
+- [ ] The intake questions (count, wording, what to prepare) — both docs summarise the question set
+- [ ] The built-in quality requirements (accessibility, CTA, grid, tokens, casing, elevation, motion, L10n)
+- [ ] The set of supported platforms or per-platform prep (Make Kit / DESIGN.md / Figma MCP / guidelines files)
+- [ ] The generation flow (e.g., guided review vs full prompt) or the output delivery format
+- [ ] The list of files in the package (add/rename/remove a file → update both the README file table and the Cheat Sheet's companion-doc footer)
+
 ---
 
 ## Section 3 — Pre-Commit Checklist
@@ -286,6 +299,10 @@ Pre-commit checklist — vibe-prompt-architect
 
 10. Is the Phase 2 flag sequence in both files identical?
     [ ] Yes   [ ] No — fix now
+
+11. If user-visible behavior changed (intake questions, built-in quality, platforms,
+    generation flow, or the file list), did I refresh README.md AND CHEATSHEET.md?
+    [ ] Yes — no user-visible changes   [ ] Yes — both updated   [ ] No — fix now
 ```
 
 ---
