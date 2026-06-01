@@ -18,7 +18,8 @@ The workflow has three phases:
 
 1. **Gather** — A sequential question-by-question intake covering the 15+ inputs that
    determine prompt quality: platform, UI type, product context, required elements, primary
-   CTA, behaviors, constraints, design system, accessibility level, and localisation scope.
+   CTA, behaviors, constraints, design system, accessibility level, localisation scope, and
+   casing convention.
    Platform-specific follow-ups fire for Figma Make, Google Stitch, and Claude Code +
    Figma MCP — including the target Figma file, any Component Library, and any Variable
    Collections in use.
@@ -29,7 +30,9 @@ The workflow has three phases:
    Constraints) in **raw Markdown delivered in-line in the chat** (wrapped in a fenced
    code block) so you can copy it verbatim into your tool of choice. The output is never
    delivered as a file, canvas, document, or rendered preview — keeping the Markdown
-   syntax visible and the copy/paste flow trivial.
+   syntax visible and the copy/paste flow trivial. You can take the full prompt at once,
+   or opt into a **guided review** that walks each section (Task, Context, Elements, and
+   so on) for approve-or-revise before assembling the final block.
 
 ---
 
@@ -81,8 +84,8 @@ Every prompt produced by this workflow includes:
 - **Task** — one sentence, action verb, UI type, product context
 - **Context** — 2–4 sentences covering user type, prior step, next step, emotional context
 - **Elements** — exhaustive component list with CTA tier labels (`[Primary]`, `[Secondary]`, `[Tertiary]`, `[Destructive]`), alt text for images, and pluralisation flags for count-dependent strings
-- **Behavior** — all interactive states, conditional logic, transitions, and a mandatory focus ring entry for keyboard/switch access
-- **Constraints** — platform, 8px grid with token names, design system reference, colour/typography/spacing/radius token rows (both CSS variable and DESIGN.md dot-path), full WCAG 2.2 AA/AAA requirements with numeric values, CTA hierarchy rules, and explicit prohibitions
+- **Behavior** — all interactive states, conditional logic, transitions (referencing motion tokens), a mandatory focus ring entry for keyboard/switch access, and a `prefers-reduced-motion` rule when motion is present
+- **Constraints** — platform, 8px grid with token names, design system reference, colour/typography/spacing/radius/elevation token rows (both CSS variable and DESIGN.md dot-path), a casing convention row, a motion row when applicable, full WCAG 2.2 AA/AAA requirements with numeric values, CTA hierarchy rules, and explicit prohibitions
 
 **Conditional sections** (included only when relevant)
 - `## Localisation & I18n` — target locales, directionality, string expansion headroom, format tokens, font fallback stacks, pluralisation requirements, pseudo-localisation guidance
@@ -90,7 +93,7 @@ Every prompt produced by this workflow includes:
 - `## Make Kit (Figma Make only)` — instruction for Figma Make to use the attached Make Kit as its sole source of truth
 - `## Figma MCP (Claude Code + Figma MCP only)` — readiness warning (MCP server, `figma-use` skill, edit access, library Variable subscription), target Figma file/page URL, Component Library URL, Variables (Collections/Groups), Variable modes + default mode, Variable tier preference, Variable exclusions, plus an explicit `use_figma` instruction block covering components, Variables, tier preference, modes, exclusions, auto-layout, and naming
 
-**Acceptance Criteria** — a pre-populated checklist of binary pass/fail items covering CTA hierarchy (4 items), WCAG 2.2 AA (5 items), conditional L10n items (6 items), and Claude Code + Figma MCP items (3 baseline + 2 when a Component Library is provided + 5 when Variables are provided — all commented out and uncommented as applicable), plus project-specific slots
+**Acceptance Criteria** — a pre-populated checklist of binary pass/fail items covering CTA hierarchy (4 items), casing (1 item), WCAG 2.2 AA (5 items), a conditional reduced-motion item (when motion is in scope), conditional L10n items (6 items), and Claude Code + Figma MCP items (3 baseline + 2 when a Component Library is provided + 5 when Variables are provided — all commented out and uncommented as applicable), plus project-specific slots
 
 ---
 
@@ -123,6 +126,20 @@ AAA compliance (7:1 contrast, 44×44px mandatory targets, enhanced focus, strict
 - Raw hex colors, pixel measurements, and hard-coded type sizes are automatically translated to the nearest semantic token name
 - DESIGN.md projects use dot-path syntax; all others use CSS variable convention
 - Ambiguous values are flagged for your confirmation rather than silently assigned
+
+### Elevation tokens
+- Raw `box-shadow` and drop-shadow values are translated to a semantic elevation scale (`--shadow-none` through `--shadow-xl`, or `elevation.*` in DESIGN.md), mapped by depth and role (resting card, dropdown, modal)
+- Every prompt carries an Elevation row in Constraints, defaulting to "flat / no elevation unless specified"
+
+### Casing
+- Sentence case is the default for all UI text — buttons, labels, headings, nav ("Create account", not "Create Account") — the modern design-system standard and the safest for localisation
+- ALL CAPS is reserved for short overline/eyebrow labels and applied via `text-transform`, never hardcoded — this keeps accessible names and translation sources in natural case
+- all-lowercase and Title Case are deliberate brand choices you can opt into; the convention is recalled across sessions
+
+### Motion
+- When behaviors include transitions or animation, timing and curve reference motion tokens (`--duration-fast/base/slow`, `--easing-standard/decelerate/accelerate`) instead of raw milliseconds or easings
+- Non-essential motion respects `prefers-reduced-motion` (WCAG 2.3.3) — reduced or removed for users who request it
+- Screens with no motion carry no motion guidance — the workflow never invents animation
 
 ---
 
@@ -265,7 +282,7 @@ in sync using `SYNC-MANIFEST.md`. If you extend or modify the workflow:
 4. Bump the Gem version number and add a changelog entry — and update SKILL.md's matching version marker (YAML comment + italic byline under H1) in lockstep
 5. Update `SYNC-MANIFEST.md` if the change introduces a new feature or section
 
-The Gem uses semantic versioning. The current version is **2.17.0**. Major versions (X.0.0)
+The Gem uses semantic versioning. The current version is **2.18.0**. Major versions (X.0.0)
 indicate breaking changes to the output format or workflow structure. Minor versions (X.Y.0)
 indicate new capabilities. Patch versions (X.Y.Z) indicate fixes and clarifications.
 

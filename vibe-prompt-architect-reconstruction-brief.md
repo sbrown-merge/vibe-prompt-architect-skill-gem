@@ -58,46 +58,52 @@ A fourth file provides user-facing documentation:
 
 These principles govern every decision in the workflow. When recreating or extending the
 files, every change should be checked against this list. Both SKILL.md and the Gem must
-carry all 24 principles in the same order.
+carry all 27 principles in the same order.
 
 1. **Output is raw Markdown, in-line in the chat.** The generated prompt is always delivered
    in the chat as raw Markdown wrapped in a fenced code block — never as a file attachment,
    downloadable artifact, canvas/document, Google Doc, or rendered preview. The user must
    see literal Markdown syntax so they can copy it verbatim into the target tool.
 
-2. **Platform neutrality.** The workflow never names or implies a preferred tool. Q1 is
+2. **Generation mode is the user's choice; final delivery is fixed.** Phase 3 offers a
+   full-prompt-now or guided section-by-section review (preference recalled across
+   sessions). Guided review shows each section as rendered text for approve-or-revise,
+   then assembles and delivers the complete prompt as one raw Markdown fenced code block.
+   The mode changes how the prompt is reviewed, never how it is finally delivered.
+
+3. **Platform neutrality.** The workflow never names or implies a preferred tool. Q1 is
    an open question; the user names their platform.
 
-3. **A11y and L10n are always required inputs.** Q14 (accessibility level) and Q15
+4. **A11y and L10n are always required inputs.** Q14 (accessibility level) and Q15
    (localisation scope) are mandatory on first encounter and cannot be skipped. Every
    product has both postures, even if the answers are "AA" and "English only."
 
-4. **Tone: professional and direct.** Senior product designer register. No filler, no
+5. **Tone: professional and direct.** Senior product designer register. No filler, no
    flattery, no preambles. Warm means collegial, not effusive.
 
-5. **Phase 2 is a dependency chain, not a checklist.** The audit flags run in order:
-   Scope → Ambiguity → CTA → Raw Value Translation → Grid → Design System → Make Kit →
-   DESIGN.md → Figma MCP → Accessibility → L10n → Acceptance Criteria → Platform. Token
-   corrections precede design system verification; design system verification precedes
-   authority file checks (Make Kit, DESIGN.md, Figma MCP); authority file checks precede
-   accessibility and L10n audits; all audits precede AC generation. Reordering breaks the
-   chain.
+6. **Phase 2 is a dependency chain, not a checklist.** The audit flags run in order:
+   Scope → Ambiguity → CTA → Casing → Raw Value Translation → Grid → Design System →
+   Make Kit → DESIGN.md → Figma MCP → Accessibility → L10n → Acceptance Criteria →
+   Platform. Token corrections precede design system verification; design system
+   verification precedes authority file checks (Make Kit, DESIGN.md, Figma MCP); authority
+   file checks precede accessibility and L10n audits; all audits precede AC generation.
+   Reordering breaks the chain.
 
-6. **Localisation is a layout constraint, not a content task.** L10n affects string
+7. **Localisation is a layout constraint, not a content task.** L10n affects string
    expansion headroom, RTL spatial layout, format tokens, font fallback stacks, and
    pluralisation — all of which must appear in the generated prompt.
 
-7. **One primary CTA per screen, strict hierarchy below it.** No equal-weight competing
+8. **One primary CTA per screen, strict hierarchy below it.** No equal-weight competing
    actions. Helper text used to explain a CTA is a design smell.
 
-8. **WCAG 2.2 AA is the unconditional baseline.** Full numeric requirements in Constraints,
+9. **WCAG 2.2 AA is the unconditional baseline.** Full numeric requirements in Constraints,
    not just the level name. AAA is opt-in via Q14.
 
-9. **Guidelines files are the token source of truth.** If a DESIGN.md, .cursorrules,
-   CLAUDE.md, or equivalent file exists, the prompt instructs the AI to read it before
-   generating. DESIGN.md uses dot-path syntax: `{colors.primary}`, `{spacing.lg}`.
+10. **Guidelines files are the token source of truth.** If a DESIGN.md, .cursorrules,
+    CLAUDE.md, or equivalent file exists, the prompt instructs the AI to read it before
+    generating. DESIGN.md uses dot-path syntax: `{colors.primary}`, `{spacing.lg}`.
 
-10. **Authority file gates primitive intake.** For Figma Make and Google Stitch, the
+11. **Authority file gates primitive intake.** For Figma Make and Google Stitch, the
     platform choice at Q1 automatically establishes Make Kit and DESIGN.md authority
     respectively. For Claude Code + Figma MCP, the Component Library (Q1b) and Variables
     (Q1c) follow-ups establish a granular dual authority — the library covers components,
@@ -105,7 +111,7 @@ carry all 24 principles in the same order.
     design system confirmed at Q7 sets authority. When authority is established, Q9
     (Constraints) suppresses raw styling intake for the categories the authority covers.
 
-11. **Figma MCP routes to Figma Design.** When the platform is Claude Code + Figma MCP,
+12. **Figma MCP routes to Figma Design.** When the platform is Claude Code + Figma MCP,
     the generated prompt must include the `figma-use` skill prerequisite, an explicit
     `use_figma` tool-call instruction, the target Figma Design file/page URL (Q1a), and
     any Component Library URL (Q1b) and Variable Collection(s)/Group(s) (Q1c) the user
@@ -119,42 +125,54 @@ carry all 24 principles in the same order.
     at render time, never hardcode a specific mode's value. Both defaults apply unless
     the user explicitly overrides them at Q1c.
 
-12. **8px grid is the default.** All spacing and radius on the 8px grid (4px microgrid
+13. **8px grid is the default.** All spacing and radius on the 8px grid (4px microgrid
     for fine detail). Off-grid values are rounded, corrected before tokenisation, and
     the user is notified.
 
-13. **Token names beat raw values.** CSS variable, DESIGN.md dot-path, or Figma Variable
+14. **Sentence case by default.** All UI text uses sentence case unless the user sets
+    another convention at Q16 (recalled across sessions). ALL CAPS is reserved for short
+    overline/eyebrow labels and applied via `text-transform`, never hardcoded — hardcoded
+    capitals break accessible names and localisation source strings. all-lowercase and
+    Title Case are deliberate brand choices, not defaults.
+
+15. **Token names beat raw values.** CSS variable, DESIGN.md dot-path, or Figma Variable
     convention; never raw hex, px, or pt values in the prompt.
 
-14. **Translate, don't discard.** Raw values are converted to the closest semantic token
+16. **Motion uses tokens and respects reduced-motion.** When behaviors involve transitions
+    or animation, reference motion tokens (`--duration-fast/base/slow`,
+    `--easing-standard/decelerate/accelerate`) rather than raw durations or easings, and
+    instruct the AI to honour `prefers-reduced-motion`. Screens with no non-essential
+    motion carry no motion guidance — never invent animation.
+
+17. **Translate, don't discard.** Raw values are converted to the closest semantic token
     and shown to the user — or redirected to the active authority file (Make Kit reference,
     DESIGN.md dot-path, or Figma Variable `{group/variable-name}` in the named Collection).
     Never silently dropped or passed through.
 
-15. **Elements list is exhaustive.** Anything not listed may be omitted or replaced.
+18. **Elements list is exhaustive.** Anything not listed may be omitted or replaced.
 
-16. **One screen at a time.** Multi-screen flows use sequential prompts.
+19. **One screen at a time.** Multi-screen flows use sequential prompts.
 
-17. **Design system = ingredient list.** Named systems constrain the AI toward the brand.
+20. **Design system = ingredient list.** Named systems constrain the AI toward the brand.
 
-18. **Make Kit is law.** For Figma Make, Make Kit authority is established by the platform
+21. **Make Kit is law.** For Figma Make, Make Kit authority is established by the platform
     choice at Q1. It is the sole source of truth for components, styling, and usage rules.
     No overrides. If the Make Kit isn't yet configured, the user must set it up before
     running.
 
-19. **AC makes iteration precise.** Binary pass/fail criteria replace vague dissatisfaction.
+22. **AC makes iteration precise.** Binary pass/fail criteria replace vague dissatisfaction.
 
-20. **Prototype type shapes AC.** Functional prototype: interaction checks. Design mockup:
+23. **Prototype type shapes AC.** Functional prototype: interaction checks. Design mockup:
     visual inspection. Same format, different subject matter.
 
-21. **Behaviors need states.** Default, focused, and active at minimum. Focus state is a
+24. **Behaviors need states.** Default, focused, and active at minimum. Focus state is a
     mandatory AA requirement.
 
-22. **Implicit context is a liability.** Make everything explicit in the prompt.
+25. **Implicit context is a liability.** Make everything explicit in the prompt.
 
-23. **Prompt drift is real.** In metered tools, refine before running, not after.
+26. **Prompt drift is real.** In metered tools, refine before running, not after.
 
-24. **Platform matters.** iOS, Android, and Web have different conventions. Always confirm.
+27. **Platform matters.** iOS, Android, and Web have different conventions. Always confirm.
 
 ---
 
@@ -251,7 +269,7 @@ A Gemini Gem instruction file. The user pastes the full contents into a new Gem'
 instructions field.
 
 **Structural additions over SKILL.md:**
-- Version History table (semantic versioning, current version 2.16.1)
+- Version History table (semantic versioning, current version 2.18.0)
 - Human editors note (references this manifest, session protocol)
 - Role / persona statement (explicit senior product design collaborator framing)
 - Memory Consultation section (Gemini-only — scans prior context for stable inputs,
@@ -331,10 +349,12 @@ Make Kit and DESIGN.md authority became platform-implied by Q1.
 | Q13 | Acceptance criteria | |
 | Q14 | Accessibility level | **Mandatory** — AA default, AAA opt-in |
 | Q15 | Localisation (L10n / I18n) | **Mandatory** — all products have a posture |
+| Q16 | Casing convention | Sentence-case default (override-only); Title Case / ALL CAPS / lowercase policy. Recalled across sessions |
 
 **Memory / recall behaviour (Gem-only Memory Consultation):**
 - Stable inputs (Q1, Q1b Component Library, Q1c Variables/modes/tier preference, Q7, Q12,
-  Q14, Q15, grid, token naming convention) are recalled across sessions and not re-asked
+  Q14, Q15, Q16 casing convention, generation mode, grid, token naming convention) are
+  recalled across sessions and not re-asked
 - Always-fresh inputs (Q1a target file/page, Q4, Q5, Q5a, Q6, Q9, Q10, Q11, Q13) are
   gathered fresh each screen
 - ⚠️ Verify — recalled but confirmed before use: Q2 (UI type), Q3 (product/user),
@@ -345,34 +365,39 @@ Make Kit and DESIGN.md authority became platform-implied by Q1.
 
 ## Phase 2 flag sequence (current, ordered)
 
-The 13 flags run in this exact order — changing the order breaks downstream dependencies.
+The 14 flags run in this exact order — changing the order breaks downstream dependencies.
 
 1. **Scope** — catch too-broad or too-narrow requests first
 2. **Ambiguity** — resolve unclear inputs before content audits
 3. **CTA Flag** — verify Q5a designation; audit labels, hierarchy, compensatory affordances
-4. **Raw Value Translation** — clean up tokens before design system check; redirects raw
-   styling values to the active authority file (Figma Variable, DESIGN.md, Make Kit)
-5. **Grid Flag** — clean up spacing before design system check
-6. **Design System** — confirm token convention and authority source (covers named systems,
+4. **Casing Flag** — normalise mixed casing, hardcoded ALL CAPS, Title Case CTAs, and
+   unconfirmed lowercase to the active convention (sentence case by default, per Q16)
+5. **Raw Value Translation** — clean up tokens before design system check; redirects raw
+   styling values (incl. elevation/shadows and motion timing) to the active authority file
+   (Figma Variable, DESIGN.md, Make Kit)
+6. **Grid Flag** — clean up spacing before design system check
+7. **Design System** — confirm token convention and authority source (covers named systems,
    DESIGN.md, Figma Component Library, Figma Variables)
-7. **Make Kit** — Figma Make authority file (verify reference and readiness warning)
-8. **DESIGN.md** — Google Stitch authority file (verify reference and readiness warning)
-9. **Figma MCP** — Claude Code + Figma MCP authority (verify `figma-use` prerequisite,
-   `use_figma` instruction, target URL, library/variable references, section-by-section
-   assembly, readiness warning)
-10. **Accessibility** — contrast risks, target sizes, focus states, alt text, reflow
-11. **L10n** — fixed-width containers, hardcoded formats, RTL, font stacks, pluralisation
-12. **Acceptance Criteria** — generate/verify AC after all flags have run; includes
+8. **Make Kit** — Figma Make authority file (verify reference and readiness warning)
+9. **DESIGN.md** — Google Stitch authority file (verify reference and readiness warning)
+10. **Figma MCP** — Claude Code + Figma MCP authority (verify `figma-use` prerequisite,
+    `use_figma` instruction, target URL, library/variable references, section-by-section
+    assembly, readiness warning)
+11. **Accessibility** — contrast risks, target sizes, focus states, alt text, reflow,
+    motion / reduced-motion
+12. **L10n** — fixed-width containers, hardcoded formats, RTL, font stacks, pluralisation
+13. **Acceptance Criteria** — generate/verify AC after all flags have run; includes
     Figma-MCP-conditional items when Q1a/Q1b/Q1c apply
-13. **Platform** — final platform-specific checks (Figma Make, Google Stitch, Claude Code
+14. **Platform** — final platform-specific checks (Figma Make, Google Stitch, Claude Code
     + Figma MCP, generic)
 
 ---
 
 ## Token naming conventions
 
-All four value categories support three side-by-side conventions in the output template's
-Constraints rows: CSS variable, DESIGN.md dot-path, and Figma Variable. Use whichever
+All six value categories (color, typography, spacing, radius, elevation, motion) support
+side-by-side conventions in the output template's Constraints rows: CSS variable,
+DESIGN.md dot-path, and Figma Variable. Use whichever
 matches the active authority file (or all three as example syntax when no authority is
 active and the user is choosing).
 
@@ -382,6 +407,8 @@ active and the user is choosing).
 | Typography | `--font-size-base` | `{typography.body}` | `{typography/body}` in Collection `[name]` | Map by scale position, not absolute px value |
 | Spacing | `--space-xl` | `{spacing.xl}` | `{spacing/xl}` in Collection `[name]` | Always grid-correct before tokenising |
 | Radius | `--radius-md` | `{rounded.md}` | `{rounded/md}` in Collection `[name]` | DESIGN.md uses `rounded`, not `radius` |
+| Elevation | `--shadow-md` | `{elevation.md}` | effect Variable in Collection `[name]` | Scale none/xs/sm/md/lg/xl; map raw `box-shadow` by depth + role; DESIGN.md uses `elevation` key (not a standard tier — define when present) |
+| Motion | `--duration-base`, `--easing-standard` | `{motion.duration.base}` (if file defines a motion tier) | effect/number Variable | Durations fast/base/slow (~150/250/400ms); easings standard/decelerate/accelerate; reference tokens, never raw ms/easings |
 
 **Figma Variable syntax:** Use the literal Figma form `{group/variable-name}` — the
 slash-grouped Variable name as it appears in the Variables panel. The Collection is
@@ -414,6 +441,8 @@ These are not optional even if the user did not mention them.
 **In Behavior block:**
 - Mandatory focus ring line: `[All interactive elements show a visible focus ring on
   keyboard/switch access focus]`
+- When motion is present: transitions reference motion tokens, plus a `prefers-reduced-motion`
+  rule
 
 **In Constraints block:**
 - 8px grid with token name examples
@@ -421,12 +450,17 @@ These are not optional even if the user did not mention them.
 - Typography tokens row (both conventions)
 - Spacing tokens row (both conventions)
 - Radius tokens row (both conventions)
+- Elevation row (always present; defaults to "flat / no elevation unless specified")
+- Casing row (always present; sentence case by default + ALL CAPS / lowercase policy)
+- Motion row (only when behaviors involve transitions/animation; tokens + reduced-motion rule)
 - Full WCAG 2.2 AA block with numeric values (not just "WCAG AA")
 - CTA hierarchy block with tier assignments
 
 **In Acceptance Criteria block (pre-populated, not placeholder text):**
 - 4 CTA hierarchy items (always present)
+- 1 casing item (always present)
 - 5 WCAG 2.2 AA items (always present)
+- 1 reduced-motion item (commented out, uncommented when motion is in scope)
 - 6 L10n items (commented out, uncommented when L10n is required)
 - 3 Claude Code + Figma MCP baseline items (commented out, uncommented when Q1 = Claude
   Code + Figma MCP)
@@ -516,11 +550,11 @@ Do not "fix" these differences — they are correct.
 
 | File | Version | Last updated |
 |---|---|---|
-| SKILL.md | 2.17.0 (YAML comment + italic byline under H1) | 2026-05-20 |
-| vibe-prompt-architect-gem.md | 2.17.0 | 2026-05-20 |
-| SYNC-MANIFEST.md | No version (living document) | 2026-05-20 |
-| README.md | No version | 2026-05-03 |
-| vibe-prompt-architect-reconstruction-brief.md | No version (this file) | 2026-05-20 |
+| SKILL.md | 2.18.0 (YAML comment + italic byline under H1) | 2026-06-01 |
+| vibe-prompt-architect-gem.md | 2.18.0 | 2026-06-01 |
+| SYNC-MANIFEST.md | No version (living document) | 2026-06-01 |
+| README.md | No version | 2026-06-01 |
+| vibe-prompt-architect-reconstruction-brief.md | No version (this file) | 2026-06-01 |
 
 **Gem version history summary:**
 - 1.0–1.6: TC-EBC framework, Figma Make / Make Kit, cadence rules, AC, raw value
@@ -574,6 +608,20 @@ Do not "fix" these differences — they are correct.
   Figma Design" principle extended with semantic-tier-preferred and mode-aware defaults.
   Gem Memory Consultation table extended with Variable modes, Variable tier preference,
   and Variable exclusions rows
+- 2.18.0: Four built-in capabilities from the TODO backlog. **Casing & Capitalization** —
+  standing rule + Q16 (sentence-case default; ALL CAPS via `text-transform` only;
+  lowercase/Title Case as brand choices), Casing Flag (after CTA), always-present Casing
+  Constraints row, mandatory casing AC item, new principle. **Guided generation review** —
+  Phase 3 Generation Mode offers full-prompt vs section-by-section approve/revise, then
+  assembles one raw Markdown block; preference recalled; new principle. **Elevation tokens** —
+  Raw Value Translation maps `box-shadow`/depth to `--shadow-*` / `elevation.*` (none–xl);
+  always-present Elevation Constraints row. **Motion tokens** — Motion & Animation standing
+  rule (`--duration-fast/base/slow`, `--easing-standard/decelerate/accelerate`); raw
+  durations/easings translated; reduced-motion (`prefers-reduced-motion`, WCAG 2.3.3)
+  required when motion present, with conditional Motion Constraints row, Behavior guidance,
+  Accessibility-flag check, conditional motion AC item; new principle. Phase 2 flag count
+  4→ (Casing inserted after CTA). Gem Memory Consultation gains Casing convention and
+  Generation mode rows
 
 ---
 
