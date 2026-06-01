@@ -88,7 +88,7 @@ Applied to every prompt by default — no need to ask:
 
 | Area | What's enforced |
 |---|---|
-| **Accessibility** | WCAG 2.2 **AA** baseline with numeric values (contrast, 24×24px targets, visible focus, reflow); AAA opt-in |
+| **Accessibility** | WCAG 2.2 **AA** baseline with numeric values (contrast; touch targets **≥ 44×44px (iOS) / ≥ 48×48px (Android)** — 24×24px is the bare AA floor, not a target; visible focus; reflow); AAA opt-in |
 | **CTA hierarchy** | Exactly **one primary CTA**; outcome-oriented labels ("Create account", not "Submit"); no equal-weight rivals |
 | **8px grid** | Spacing/radius snapped to the 8px grid (4px microgrid for fine detail); off-grid values corrected and shown to you |
 | **Token-first values** | Raw hex / px / pt translated to semantic token names; ambiguous values flagged for confirmation |

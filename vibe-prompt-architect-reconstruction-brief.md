@@ -269,7 +269,7 @@ A Gemini Gem instruction file. The user pastes the full contents into a new Gem'
 instructions field.
 
 **Structural additions over SKILL.md:**
-- Version History table (semantic versioning, current version 2.18.0)
+- Version History table (semantic versioning, current version 2.18.1)
 - Human editors note (references this manifest, session protocol)
 - Role / persona statement (explicit senior product design collaborator framing)
 - Memory Consultation section (Gemini-only — scans prior context for stable inputs,
@@ -550,8 +550,8 @@ Do not "fix" these differences — they are correct.
 
 | File | Version | Last updated |
 |---|---|---|
-| SKILL.md | 2.18.0 (YAML comment + italic byline under H1) | 2026-06-01 |
-| vibe-prompt-architect-gem.md | 2.18.0 | 2026-06-01 |
+| SKILL.md | 2.18.1 (YAML comment + italic byline under H1) | 2026-06-01 |
+| vibe-prompt-architect-gem.md | 2.18.1 | 2026-06-01 |
 | SYNC-MANIFEST.md | No version (living document) | 2026-06-01 |
 | README.md | No version | 2026-06-01 |
 | vibe-prompt-architect-reconstruction-brief.md | No version (this file) | 2026-06-01 |
@@ -622,6 +622,12 @@ Do not "fix" these differences — they are correct.
   Accessibility-flag check, conditional motion AC item; new principle. Phase 2 flag count
   4→ (Casing inserted after CTA). Gem Memory Consultation gains Casing convention and
   Generation mode rows
+- 2.18.1: Patch — touch-target guidance corrected. WCAG 2.2 AA target size (SC 2.5.8) is
+  24×24px but is an absolute floor (allowed only with spacing), not a touch design size.
+  Accessibility Requirements, Q14, Phase 2 target-size flag, Constraints output row, and
+  AC items now lead with recommended ≥ 44×44px (iOS HIG) / ≥ 48×48px (Android Material)
+  and label 24×24px the bare AA floor. Fixed iOS/Android conflation (Android Material =
+  48×48dp, not 44). README + CHEATSHEET refreshed. Literal WCAG criteria values unchanged
 
 ---
 

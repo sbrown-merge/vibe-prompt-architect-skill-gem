@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.18.0 (2026-06-01) — synced with vibe-prompt-architect-gem.md v2.18.0
+# Version: 2.18.1 (2026-06-01) — synced with vibe-prompt-architect-gem.md v2.18.1
 # Maintained in sync with vibe-prompt-architect-gem.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.18.0 · 2026-06-01 · Synced with `vibe-prompt-architect-gem.md` v2.18.0*
+*Version 2.18.1 · 2026-06-01 · Synced with `vibe-prompt-architect-gem.md` v2.18.1*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -246,8 +246,8 @@ Apply this logic to every generated prompt, regardless of whether the user menti
 - UI components and focus indicators (borders, icons, state indicators): minimum **3:1** against adjacent colours
 
 *Touch and pointer targets:*
-- Minimum target size: **24×24px** (WCAG 2.2 AA, criterion 2.5.8)
-- Recommended target size for comfortable interaction: **44×44px** (matches iOS HIG and Android guidelines)
+- **Recommended — design to this for any touch/pointer target: ≥ 44×44px (iOS HIG) / ≥ 48×48px (Android Material).** These are the platform guidelines for comfortable, reliable tapping and should be the default target size in the generated prompt.
+- **Absolute floor: 24×24px** — the WCAG 2.2 AA minimum (criterion 2.5.8), which permits small targets only with sufficient spacing. Treat 24×24px as a hard floor for dense pointer-driven (mouse/trackpad) UIs, never as a target to design touch controls to.
 
 *Focus:*
 - All interactive elements must have a **visible focus indicator** (2.4.7)
@@ -270,7 +270,7 @@ Apply this logic to every generated prompt, regardless of whether the user menti
 - Large text: minimum **4.5:1** (1.4.6)
 
 *Target size:*
-- Minimum **44×44px** for all interactive targets (2.5.5 — AAA in WCAG 2.2)
+- Minimum **44×44px** for all interactive targets (2.5.5 — AAA in WCAG 2.2). On Android, Material's **48×48dp** touch recommendation still applies as the practical floor.
 
 *Focus:*
 - Focused element must not be hidden even partially by sticky content (2.4.12 enhanced)
@@ -509,7 +509,7 @@ Use the corresponding preamble before Q9:
 11. **Scope** — Are you targeting a single component, one screen, or a multi-screen flow?
 12. **Prototype Type** — Are you building a functional prototype (real interactions, logic, and data) or a design mockup (visual fidelity and click-through flows)?
 13. **Acceptance Criteria** — How will you know the output succeeded? Are there specific layout, behavior, or functional requirements you'd use as a pass/fail checklist? *(If they're unsure, offer to derive AC from the Elements, Behavior, and Constraints they've already described.)*
-14. **Accessibility Level** *(mandatory — cannot be skipped)* — The prompt will target **WCAG 2.2 AA** by default. Do you need **AAA** compliance instead? *(AA: 4.5:1 contrast for normal text, 3:1 for large text and UI components, 24×24px minimum touch targets, visible focus indicators, reflow at 320px. AAA adds 7:1 contrast, 44×44px targets, and stricter text presentation rules. Most production products target AA; AAA is typically required for government, healthcare, or high-compliance contexts.)*
+14. **Accessibility Level** *(mandatory — cannot be skipped)* — The prompt will target **WCAG 2.2 AA** by default. Do you need **AAA** compliance instead? *(AA: 4.5:1 contrast for normal text, 3:1 for large text and UI components, touch/pointer targets ≥ 44×44px (iOS) / ≥ 48×48px (Android) recommended with 24×24px the absolute WCAG AA floor, visible focus indicators, reflow at 320px. AAA adds 7:1 contrast, mandatory 44×44px targets, and stricter text presentation rules. Most production products target AA; AAA is typically required for government, healthcare, or high-compliance contexts.)*
 15. **Localisation (L10n / I18n)** *(mandatory — cannot be skipped)* — Does this UI need to support multiple languages or locales? *(All products have a localisation posture, even if the answer is "English only for now." If in scope: which languages or locales? This determines string expansion headroom, text directionality for RTL languages, date/number/currency format tokens, and font fallback stacks for non-Latin scripts.)*
 16. **Casing convention** — UI text will default to **sentence case** (capitalise the first word and proper nouns only — "Create account", "Account settings"). Do you want a different convention? *(Sentence case is the modern standard and the safest for localisation. Title Case is available if your brand requires it — name the element classes it applies to. ALL CAPS is reserved for short overline/eyebrow labels and applied via `text-transform`, never hardcoded; all-lowercase is treated as a deliberate brand choice only. Once set, this is recalled across sessions and not re-asked.)*
 
@@ -617,7 +617,7 @@ Audit all spacing and radius values across every gathered input field — includ
 ### Accessibility Flag
 Every prompt defaults to WCAG 2.2 AA. Review gathered inputs for any conflicts before generating:
 - **Color conflicts:** If the user specified brand colors, flag any foreground/background pairings that are likely to fail the applicable contrast threshold (4.5:1 for normal text, 3:1 for large text and UI components). Don't calculate exact ratios — flag obvious risks (light grey text on white, light yellow on white, low-saturation combinations) and note that contrast must be verified with a tool such as the WebAIM Contrast Checker.
-- **Target size conflicts:** If any interactive elements were described with dimensions below 24×24px (AA) or 44×44px (AAA if selected), flag them and note the minimum.
+- **Target size conflicts:** Flag any touch/pointer target described below the recommended **44×44px (iOS) / 48×48px (Android)**, and recommend sizing up. Anything below the **24×24px** WCAG 2.2 AA floor (or 44×44px if AAA is selected) is a hard failure, not just a recommendation — call it out as such.
 - **Focus state omission:** If interactive elements were listed without mention of focus states, add a reminder that visible focus indicators are required at AA and must be included in the Behavior block.
 - **Missing text alternatives:** If images, icons, or illustrations are listed in Elements without alt text or aria-label guidance, flag the gap.
 - **Reflow risk:** If the layout was described with fixed widths or rigid side-by-side columns, flag that content must reflow at 320px viewport width.
@@ -643,7 +643,7 @@ Include the L10n status and target locales in the prompt header and the Localisa
 - **Always include at minimum these AA accessibility AC items**, regardless of whether the user specified them:
   - `- [ ] All text/background colour combinations meet the applicable contrast ratio (4.5:1 normal, 3:1 large text)`
   - `- [ ] All interactive elements have a visible focus indicator`
-  - `- [ ] All interactive targets are ≥ 24×24px (AA) / ≥ 44×44px (AAA)`
+  - `- [ ] Touch/pointer targets are ≥ 44×44px (iOS) / ≥ 48×48px (Android); none below the 24×24px WCAG 2.2 AA floor [AAA: ≥ 44×44px required]`
   - `- [ ] Content reflows at 320px viewport width without horizontal scroll`
   - `- [ ] All meaningful images and icon controls have text alternatives`
 - **Always include these CTA hierarchy AC items**, regardless of whether the user specified them:
@@ -817,7 +817,7 @@ Deliver the prompt **in-line in the chat as raw Markdown wrapped in a fenced cod
   - Contrast (normal text): ≥ 4.5:1 [AA] or ≥ 7:1 [AAA]
   - Contrast (large text ≥ 24px regular / ≥ 18.67px bold): ≥ 3:1 [AA] or ≥ 4.5:1 [AAA]
   - Contrast (UI components, focus indicators): ≥ 3:1
-  - Touch/pointer targets: ≥ 24×24px minimum [AA]; ≥ 44×44px recommended and required [AAA]
+  - Touch/pointer targets: ≥ 44×44px (iOS) / ≥ 48×48px (Android) recommended for touch; 24×24px is the WCAG 2.2 AA floor (SC 2.5.8), not a design target; ≥ 44×44px required [AAA, SC 2.5.5]
   - Focus: visible focus indicator required on all interactive elements; focused elements must not be entirely obscured by sticky content
   - Reflow: content must reflow at 320px viewport width without horizontal scrolling
   - Text spacing: support line height ≥ 1.5×, letter spacing ≥ 0.12em without loss of content
@@ -898,7 +898,7 @@ Use the Make Kit attached to this project as the single source of truth for all 
 - [ ] All UI text uses the specified casing convention (sentence case by default); no hardcoded ALL CAPS — uppercase styling applied via `text-transform`
 - [ ] All text/background colour combinations meet the applicable contrast ratio (≥ 4.5:1 normal text, ≥ 3:1 large text) [AA] / (≥ 7:1 normal, ≥ 4.5:1 large) [AAA]
 - [ ] All interactive elements have a visible focus indicator
-- [ ] All interactive targets are ≥ 24×24px [AA] / ≥ 44×44px [AAA]
+- [ ] Touch/pointer targets are ≥ 44×44px (iOS) / ≥ 48×48px (Android); none below the 24×24px WCAG 2.2 AA floor [AAA: ≥ 44×44px required]
 - [ ] Content reflows at 320px viewport width without horizontal scroll
 - [ ] All meaningful images and icon controls have text alternatives
 <!-- Include the following item only when behaviors involve transitions or animation -->

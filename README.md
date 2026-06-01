@@ -105,7 +105,7 @@ These requirements are applied to every prompt by default — you don't need to 
 
 ### Accessibility — WCAG 2.2 AA
 - Text contrast ≥ 4.5:1 (normal), ≥ 3:1 (large text and UI components)
-- Touch/pointer targets ≥ 24×24px minimum (AA); 44×44px recommended
+- Touch/pointer targets ≥ 44×44px (iOS) / ≥ 48×48px (Android) recommended for touch; 24×24px is the bare WCAG 2.2 AA floor (SC 2.5.8), not a design target
 - Visible focus indicator on all interactive elements
 - Content reflows at 320px viewport width
 - Text spacing overridable (line height, letter spacing, word spacing)
@@ -285,7 +285,7 @@ in sync using `SYNC-MANIFEST.md`. If you extend or modify the workflow:
 4. Bump the Gem version number and add a changelog entry — and update SKILL.md's matching version marker (YAML comment + italic byline under H1) in lockstep
 5. Update `SYNC-MANIFEST.md` if the change introduces a new feature or section
 
-The Gem uses semantic versioning. The current version is **2.18.0**. Major versions (X.0.0)
+The Gem uses semantic versioning. The current version is **2.18.1**. Major versions (X.0.0)
 indicate breaking changes to the output format or workflow structure. Minor versions (X.Y.0)
 indicate new capabilities. Patch versions (X.Y.Z) indicate fixes and clarifications.
 
