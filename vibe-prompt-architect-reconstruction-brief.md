@@ -58,7 +58,7 @@ A fourth file provides user-facing documentation:
 
 These principles govern every decision in the workflow. When recreating or extending the
 files, every change should be checked against this list. Both SKILL.md and the Gem must
-carry all 27 principles in the same order.
+carry all 28 principles in the same order.
 
 1. **Output is raw Markdown, in-line in the chat.** The generated prompt is always delivered
    in the chat as raw Markdown wrapped in a fenced code block — never as a file attachment,
@@ -174,6 +174,8 @@ carry all 27 principles in the same order.
 
 27. **Platform matters.** iOS, Android, and Web have different conventions. Always confirm.
 
+28. **Execution Boundary.** This skill/Gem generates a text prompt, not live tool commands. When a user names an environment like "Claude Code + Figma MCP", neither the Gem nor the Skill should attempt to simulate connecting to it, nor refuse the request under the assumption that they are being asked to run it. The output is always copy-ready text instructions that the user runs in that environment themselves. The Gem's Role section additionally carries an explicit statement that it has no ability to execute code or connect to MCP servers — this is a Gemini-specific signal to safety classifiers; Claude Code can connect to MCP servers, making an analogous statement in SKILL.md inaccurate. (*Note: This principle appears as the first entry in both files' principles lists. It is listed last here to avoid renumbering the existing entries.*)
+
 ---
 
 ## The TC-EBC prompt format
@@ -250,14 +252,14 @@ triggers it automatically when the user asks to prompt a vibe-coding tool.
   - Authority File Gate (block between Q7 and Q9 — 6-row status table + 7 preamble
     variants; evaluates Q1 platform, Q1b/Q1c Figma library/Variables, and Q7 design system)
   - Phase 1 closing summary (12-field structured format + correction handling)
-- Phase 2: Clarify and Analyze (13 flags in dependency order — adds Figma MCP Flag between
+- Phase 2: Clarify and Analyze (14 flags in dependency order — adds Figma MCP Flag between
   DESIGN.md Flag and Accessibility Flag)
 - Phase 3: Generate the TC-EBC Prompt
   - TC-EBC Framework description
   - Output Format (complete template in fenced code block with conditional sections for
     L10n, Design Guidelines, Make Kit, and Figma MCP)
 - Post-Generation Guidance (~9 topics — includes a Figma MCP tip)
-- Key Principles (24 principles)
+- Key Principles (28 principles)
 
 **Does not contain:** Version history table (the byline + YAML comment surface the current
 version instead), Memory Consultation, human editors note (longer form), Role persona
@@ -269,9 +271,12 @@ A Gemini Gem instruction file. The user pastes the full contents into a new Gem'
 instructions field.
 
 **Structural additions over SKILL.md:**
-- Version History table (semantic versioning, current version 2.18.1)
+- Version History table (semantic versioning, current version 2.18.2)
 - Human editors note (references this manifest, session protocol)
 - Role / persona statement (explicit senior product design collaborator framing)
+- Execution boundary statement in Role (Gem-only — explicitly states no ability to execute
+  code, connect to MCP servers, open terminal instances, or interact directly with live
+  Figma files; signals the Gem's text-only nature to Gemini safety classifiers)
 - Memory Consultation section (Gemini-only — scans prior context for stable inputs,
   presents recalled/new summary, validates before use; includes rows for Figma Component
   Library and Figma Variables — both stable across sessions — and Figma target file/page
@@ -504,6 +509,7 @@ Do not "fix" these differences — they are correct.
 | Version marker (single-line) | YAML comment + italic byline under H1 | Implicit (the version table fills this role) |
 | Human editors note | Two-line YAML comment | Blockquote with full session protocol |
 | Role / persona | YAML description | `## Role` section |
+| Execution boundary in Role | Absent (Claude Code can connect to MCPs; an analogous claim would be factually inaccurate for the Skill) | Present — "no ability to execute code, connect to MCP servers..." statement in the Role section | Addresses Gemini safety-classifier false-positives. The shared Execution Boundary principle covers the functional constraint in both files; this role-level statement is Gem-only. |
 | Recalled/new annotations | Absent | Present in Phase 1 summary |
 | TC-EBC detail level | Fuller (sub-bullets, examples) | Concise (one-liners) |
 | Phase 1 heading depth | `###` | `####` |
@@ -550,11 +556,11 @@ Do not "fix" these differences — they are correct.
 
 | File | Version | Last updated |
 |---|---|---|
-| SKILL.md | 2.18.1 (YAML comment + italic byline under H1) | 2026-06-01 |
-| vibe-prompt-architect-gem.md | 2.18.1 | 2026-06-01 |
-| SYNC-MANIFEST.md | No version (living document) | 2026-06-01 |
+| SKILL.md | 2.18.2 (YAML comment + italic byline under H1) | 2026-06-03 |
+| vibe-prompt-architect-gem.md | 2.18.2 | 2026-06-03 |
+| SYNC-MANIFEST.md | No version (living document) | 2026-06-03 |
 | README.md | No version | 2026-06-01 |
-| vibe-prompt-architect-reconstruction-brief.md | No version (this file) | 2026-06-01 |
+| vibe-prompt-architect-reconstruction-brief.md | No version (this file) | 2026-06-03 |
 
 **Gem version history summary:**
 - 1.0–1.6: TC-EBC framework, Figma Make / Make Kit, cadence rules, AC, raw value
@@ -628,6 +634,14 @@ Do not "fix" these differences — they are correct.
   AC items now lead with recommended ≥ 44×44px (iOS HIG) / ≥ 48×48px (Android Material)
   and label 24×24px the bare AA floor. Fixed iOS/Android conflation (Android Material =
   48×48dp, not 44). README + CHEATSHEET refreshed. Literal WCAG criteria values unchanged
+- 2.18.2: Patch — execution boundary hardening. Added explicit execution boundary statement
+  to Gem Role section (no ability to execute code, connect to MCP servers, open terminal
+  instances, or interact directly with live Figma files). Added Execution Boundary principle
+  to both files' principles lists as the first entry. Updated Claude Code + Figma MCP Q1
+  readiness notice in both files to explicitly attribute responsibility to the user (Gem:
+  "Because I cannot connect to external environments, before you run…"; SKILL.md: "Because
+  this skill only generates a text prompt, before you run…"). SYNC-MANIFEST Section 4 gains
+  a row for the Gem-only role-level execution boundary statement
 
 ---
 
@@ -648,11 +662,12 @@ If you are Claude reading this document to recreate the file set, follow these s
 4. **Apply the intentional differences.** Do not make the Gem and SKILL.md identical.
    The differences listed above are correct.
 
-5. **Apply all 24 design principles.** Every section of every file should be consistent
-   with the principles listed in this brief. Both SKILL.md and the Gem must carry all 24
-   in the same order.
+5. **Apply all 28 design principles.** Every section of every file should be consistent
+   with the principles listed in this brief. Both SKILL.md and the Gem must carry all 28
+   in the same order. The Execution Boundary principle (#28 in this brief) must appear as
+   the *first* principle in both files' principles lists.
 
-6. **Verify the Phase 2 flag order.** Both files must have the 13 flags in the exact
+6. **Verify the Phase 2 flag order.** Both files must have the 14 flags in the exact
    dependency order listed in this brief — including the Figma MCP Flag between DESIGN.md
    Flag and Accessibility Flag.
 
