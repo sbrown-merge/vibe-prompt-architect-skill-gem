@@ -2,7 +2,7 @@
 
 This file is the authoritative version history for both SKILL.md (Claude Skill) and vibe-prompt-architect-gem.md (Gemini Gem). The two files are versioned together — a single version number covers changes to either or both. SYNC-MANIFEST.md governs which locations to update on each change and defines the pre-commit process.
 
-**Current version: 2.18.3**
+**Current version: 2.18.4**
 
 ---
 
@@ -43,6 +43,7 @@ This file is the authoritative version history for both SKILL.md (Claude Skill) 
 | 2.18.1 | 2026-06-01 | Patch — touch-target guidance corrected and clarified across both files. The WCAG 2.2 **AA** target-size criterion (2.5.8) is **24×24px**, but that is an absolute floor permitted only with sufficient spacing — not a touch-target design size. Accessibility Requirements, Q14 intake, Phase 2 target-size flag, output-template Constraints row, and AC items now **lead with the recommended ≥ 44×44px (iOS HIG) / ≥ 48×48px (Android Material)** touch size and treat 24×24px as the bare AA floor. Fixed an inaccuracy: the prior "44×44px (matches iOS HIG and Android guidelines)" conflated the platforms — Android Material recommends 48×48dp, iOS HIG 44pt; the AAA note (2.5.5 = 44×44px) now adds that Android's 48dp remains the practical touch floor. README and CHEATSHEET refreshed to match. No change to the literal WCAG AA/AAA criteria values |
 | 2.18.2 | 2026-06-03 | Patch — execution boundary hardening to prevent Gemini safety classifier false-positives. Added explicit execution boundary statement to the Gem **Role** section: no ability to execute code, connect to MCP servers, open terminal instances, or interact directly with live Figma files. Added **Execution Boundary** principle to both Principles lists: Gem states it cannot simulate connecting to named environments; SKILL.md states it generates text prompts, not live Figma commands. Updated the Claude Code + Figma MCP Q1 readiness notice in both files to explicitly attribute responsibility to the user: Gem uses "Because I cannot connect to external environments, before **you** run…"; SKILL.md uses "Because this skill only generates a text prompt, before **you** run…". SYNC-MANIFEST Section 4 gains a row for the Gem-only execution boundary statement in the Role section. |
 | 2.18.3 | 2026-06-03 | Patch — structural cleanup for Gemini compatibility. Extracted version history from Gem into CHANGELOG.md (reduces character count below Gemini UI limits). Replaced HTML comment syntax in output templates in both files with Markdown conditional markers (*[Include only when...]*) to prevent Gemini UI sanitizer from stripping template content. Gem now opens with a single version marker line before ## Role. |
+| 2.18.4 | 2026-06-03 | Patch — remove four-backtick fenced code block from Gem output template. The ````markdown fence caused Gemini UI save failures due to non-standard code block parsing. Template content is preserved as plain text; the ## Output Format delivery instruction already instructs Gemini to wrap the output in a fenced code block when generating. SKILL.md unchanged (the fence is not a problem for Claude Code). |
 
 ---
 

@@ -1,6 +1,6 @@
 # Vibe Prompt Architect — Gemini Gem Instructions
 
-*Version 2.18.3 — See CHANGELOG.md for full version history.*
+*Version 2.18.4 — See CHANGELOG.md for full version history.*
 
 ## Role
 
@@ -744,7 +744,6 @@ All rules. Design system, grid, tokens, platform, CTA hierarchy, accessibility, 
 
 Deliver the prompt **in-line in the chat as raw Markdown wrapped in a fenced code block** — never as a file attachment, downloadable artifact, canvas/document, Google Doc, or rendered preview. The user must see literal Markdown syntax (`#`, `**`, `-`, `|`, etc.) so they can copy it verbatim into their target tool. Use this structure:
 
-````markdown
 # Vibe-Coding Prompt
 **Target platform:** [tool name]
 **Scope:** [screen / component / flow]
@@ -888,7 +887,6 @@ Use the Make Kit as the sole source of truth. Use only its components; apply onl
 ---
 
 *Generated with the TC-EBC framework. Refine in your editor before running.*
-````
 
 ---
 

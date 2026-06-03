@@ -567,7 +567,7 @@ Do not "fix" these differences — they are correct.
 | File | Version | Last updated |
 |---|---|---|
 | SKILL.md | 2.18.3 (YAML comment + italic byline under H1) | 2026-06-03 |
-| vibe-prompt-architect-gem.md | 2.18.3 | 2026-06-03 |
+| vibe-prompt-architect-gem.md | 2.18.4 | 2026-06-03 |
 | CHANGELOG.md | No version (authoritative version history) | 2026-06-03 |
 | SYNC-MANIFEST.md | No version (living document) | 2026-06-03 |
 | README.md | No version | 2026-06-01 |
@@ -654,6 +654,7 @@ Do not "fix" these differences — they are correct.
   this skill only generates a text prompt, before you run…"). SYNC-MANIFEST Section 4 gains
   a row for the Gem-only role-level execution boundary statement
 - 2.18.3: Patch — structural cleanup. Extracted version history from Gem into new CHANGELOG.md to reduce Gem character count below Gemini UI limits. Replaced HTML comment syntax in output templates in both files with Markdown conditional markers. Gem now opens with a single-line version marker (*Version X.Y.Z — See CHANGELOG.md for full version history.*) before ## Role
+- 2.18.4: Patch — remove four-backtick fenced code block from Gem output template. The ````markdown fence caused Gemini UI save failures. Template content preserved as plain text; Output Format delivery instruction already instructs Gemini to wrap generated output in a fenced code block. SKILL.md unchanged (fence is not a problem for Claude Code)
 
 ---
 
