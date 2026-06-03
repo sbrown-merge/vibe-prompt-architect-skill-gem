@@ -271,8 +271,7 @@ A Gemini Gem instruction file. The user pastes the full contents into a new Gem'
 instructions field.
 
 **Structural additions over SKILL.md:**
-- Version History table (semantic versioning, current version 2.18.2)
-- Human editors note (references this manifest, session protocol)
+- Version marker — single line: *Version X.Y.Z — See CHANGELOG.md for full version history.* (full history moved to CHANGELOG.md in v2.18.3)
 - Role / persona statement (explicit senior product design collaborator framing)
 - Execution boundary statement in Role (Gem-only — explicitly states no ability to execute
   code, connect to MCP servers, open terminal instances, or interact directly with live
@@ -314,6 +313,17 @@ A maintenance document. Opened at the start of every editing session.
    be "fixed."
 5. **Sync Health Log** — records known drift or deferred fixes; updated with a dated entry
    for each version release.
+
+### CHANGELOG.md
+
+Authoritative version history for both SKILL.md and vibe-prompt-architect-gem.md. Introduced in v2.18.3 to reduce the Gem's character count below Gemini UI limits; prior to v2.18.3, this history was maintained inline inside the Gem file itself.
+
+**Three sections (in order):**
+1. Intro paragraph describing the file's purpose + a **Current version** line (e.g., `Current version: 2.18.3`)
+2. **Version History table** — one row per release, columns: Version, Type (Major/Minor/Patch), Summary
+3. **Maintenance notes** — instructions for keeping the file current alongside the Gem and SKILL.md
+
+The Gem references this file via its opening version marker line (*Version X.Y.Z — See CHANGELOG.md for full version history.*) which appears before ## Role.
 
 ### README.md
 
@@ -529,7 +539,7 @@ Do not "fix" these differences — they are correct.
    change
 3. Describe the change to Claude — it will apply it consistently to both files
 4. Run the Pre-Commit Checklist in `SYNC-MANIFEST.md` before closing the session
-5. Bump the Gem version number and add a changelog entry
+5. Update CHANGELOG.md — add a row to the Version History table and update the Current version line. Also update the Gem version marker line (*Version X.Y.Z — See CHANGELOG.md...*) near the top of the Gem file
 6. Update `SYNC-MANIFEST.md` if the change introduces a new feature, section, or
    touch-map entry
 
@@ -556,8 +566,9 @@ Do not "fix" these differences — they are correct.
 
 | File | Version | Last updated |
 |---|---|---|
-| SKILL.md | 2.18.2 (YAML comment + italic byline under H1) | 2026-06-03 |
-| vibe-prompt-architect-gem.md | 2.18.2 | 2026-06-03 |
+| SKILL.md | 2.18.3 (YAML comment + italic byline under H1) | 2026-06-03 |
+| vibe-prompt-architect-gem.md | 2.18.3 | 2026-06-03 |
+| CHANGELOG.md | No version (authoritative version history) | 2026-06-03 |
 | SYNC-MANIFEST.md | No version (living document) | 2026-06-03 |
 | README.md | No version | 2026-06-01 |
 | vibe-prompt-architect-reconstruction-brief.md | No version (this file) | 2026-06-03 |
@@ -642,6 +653,7 @@ Do not "fix" these differences — they are correct.
   "Because I cannot connect to external environments, before you run…"; SKILL.md: "Because
   this skill only generates a text prompt, before you run…"). SYNC-MANIFEST Section 4 gains
   a row for the Gem-only role-level execution boundary statement
+- 2.18.3: Patch — structural cleanup. Extracted version history from Gem into new CHANGELOG.md to reduce Gem character count below Gemini UI limits. Replaced HTML comment syntax in output templates in both files with Markdown conditional markers. Gem now opens with a single-line version marker (*Version X.Y.Z — See CHANGELOG.md for full version history.*) before ## Role
 
 ---
 

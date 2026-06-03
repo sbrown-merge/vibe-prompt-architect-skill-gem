@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.18.2 (2026-06-03) — synced with vibe-prompt-architect-gem.md v2.18.2
+# Version: 2.18.3 (2026-06-03) — synced with vibe-prompt-architect-gem.md v2.18.3
 # Maintained in sync with vibe-prompt-architect-gem.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.18.2 · 2026-06-03 · Synced with `vibe-prompt-architect-gem.md` v2.18.2*
+*Version 2.18.3 · 2026-06-03 · Synced with `vibe-prompt-architect-gem.md` v2.18.3*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -804,7 +804,7 @@ Deliver the prompt **in-line in the chat as raw Markdown wrapped in a fenced cod
 - **Spacing tokens:** [Token names — e.g., `--space-xl` / `{spacing.xl}` / `{spacing/xl}` in Collection `[name]` (Figma Variable) — or "defer to authority file" — or "AI discretion"]
 - **Radius tokens:** [Token names — e.g., `--radius-md` / `{rounded.md}` / `{rounded/md}` in Collection `[name]` (Figma Variable) — or "defer to authority file" — or "AI discretion"]
 - **Elevation / shadow:** [Token names — e.g., `--shadow-md` / `{elevation.md}` / effect Variable in Collection `[name]` (Figma Variable) — or "flat / no elevation unless specified" — or "defer to authority file" — or "AI discretion"]
-<!-- Include the Motion row only when behaviors involve transitions or animation -->
+*[Include the Motion row only when behaviors involve transitions or animation.]*
 - **Motion:** [Transition timing/curve tokens — e.g., `--duration-base` / `--easing-standard`. Respect `prefers-reduced-motion: reduce` — reduce or remove non-essential motion, replacing it with an instant change or minimal fade. — or "defer to authority file"]
 - **Casing:** Sentence case for all UI text (capitalise first word + proper nouns only). [If Title Case specified: Title Case for [element classes].] ALL CAPS only for short overline/eyebrow labels, applied via `text-transform: uppercase` — never hardcoded. Do not hardcode capital letters; express any uppercase/lowercase styling as `text-transform` so accessible names and translation sources stay in natural case.
 - **CTA hierarchy:**
@@ -825,7 +825,7 @@ Deliver the prompt **in-line in the chat as raw Markdown wrapped in a fenced cod
   - Non-text content: all meaningful images and icon controls must have text alternatives
 - **Do not include:** [Explicit prohibitions if any]
 
-<!-- Include this section only when L10n / I18n is required -->
+*[Include this section only when L10n / I18n is required.]*
 ## Localisation & I18n
 **Target languages / locales:** [e.g., en-US (source), de-DE, fr-FR, ar-SA, ja-JP]
 **Text directionality:** [LTR only / LTR + RTL — full layout mirroring required for RTL locales]
@@ -835,17 +835,17 @@ Deliver the prompt **in-line in the chat as raw Markdown wrapped in a fenced cod
 **Pluralisation:** The following strings vary by count and require pluralisation token support: [list count-dependent strings, e.g., "N items selected", "N results found"]
 **Pseudo-localisation:** [If translations not yet available: Use pseudo-localised placeholder strings (e.g., `[Çréàté àccöûnt]`) in the prototype to simulate expansion and surface overflow early.]
 
-<!-- Include this section when the user has a DESIGN.md or other guidelines file -->
+*[Include this section only when the user has a DESIGN.md or other guidelines file.]*
 ## Design Guidelines
-<!-- When targeting Google Stitch with DESIGN.md: include the warning below -->
-<!-- > ⚠️ **Before running this prompt:** Verify that your DESIGN.md is present at the project root and contains complete token definitions across primitive, semantic, and component tiers. This prompt treats DESIGN.md as the authoritative token source — missing token definitions will produce gaps in the output. -->
-<!-- Replace the instruction below with the appropriate file reference for the target tool -->
+*[When targeting Google Stitch with DESIGN.md, include the following warning:]*
+> ⚠️ **Before running this prompt:** Verify that your DESIGN.md is present at the project root and contains complete token definitions across primitive, semantic, and component tiers. This prompt treats DESIGN.md as the authoritative token source — missing token definitions will produce gaps in the output.
+*[Replace the instruction below with the appropriate file reference for the target tool.]*
 Before generating any UI, read [DESIGN.md / .cursorrules / CLAUDE.md / other guidelines file] at the project root. Use it as the authoritative source for all token values — primitive, semantic, and component tiers. Reference tokens using the file's own naming convention:
 - For DESIGN.md: use dot-path syntax — `{colors.primary}`, `{spacing.lg}`, `{rounded.md}`, `{typography.h1}`, `{components.button.background}`
 - Do not override token values defined in the guidelines file with values from this prompt.
 - If a required token is absent from the file, note the gap and apply the closest defined token rather than introducing a raw value.
 
-<!-- Include the following block only when target is Claude Code + Figma MCP -->
+*[Include this section only when target is Claude Code + Figma MCP.]*
 ## Figma MCP (Claude Code + Figma MCP only)
 > ⚠️ **Before running this prompt:** Verify that (1) the Figma MCP server is connected and authenticated in Claude Code, (2) the `figma-use` skill is loaded — it is a **mandatory prerequisite** before any `use_figma` tool call, and (3) you have edit access to the target Figma Design file. Missing connections, an unloaded skill, or insufficient permissions will cause the prompt to fail at execution time.
 
@@ -873,7 +873,7 @@ Create this screen in the target Figma Design file specified above by invoking t
 - **Naming:** Name frames, sections, and components descriptively (e.g., `Header`, `Card / Product`, `CTA / Primary`) so the resulting file is navigable.
 - If a required element has no Component Library equivalent and no matching Variable, build it from primitives using the closest semantic token names from the Constraints block — and flag the gap rather than substituting silently.
 
-<!-- Include the following block only when target is Figma Make -->
+*[Include this section only when target is Figma Make.]*
 ## Make Kit (Figma Make only)
 > ⚠️ **Before running this prompt:** Verify that your Make Kit is attached to this Figma Make project and contains your complete component library, styling tokens, and usage instructions. This prompt treats the Make Kit as non-negotiable — missing or incomplete content will produce gaps in the output.
 
@@ -884,13 +884,7 @@ Use the Make Kit attached to this project as the single source of truth for all 
 - If a required element has no Make Kit equivalent, flag it rather than substituting a generic component.
 
 ## Acceptance Criteria
-<!--
-  Functional prototype: mix of interaction checks and visual checks.
-  Design mockup: visual inspection checks only.
-  Every item must map to a specific Element, Behavior, or Constraint above.
-  Write each as a binary, checkable statement — pass or fail, no gradients.
-  The items below are mandatory in every prompt. Add project-specific items after.
--->
+*[Functional prototype: mix of interaction checks and visual checks. Design mockup: visual inspection checks only. Every item must map to a specific Element, Behavior, or Constraint above. Write each as a binary, checkable statement — pass or fail, no gradients. The items below are mandatory in every prompt. Add project-specific items after.]*
 - [ ] Exactly one primary CTA is present and visually dominant
 - [ ] No two CTAs have equal visual weight
 - [ ] All CTA labels are outcome-oriented (not generic verbs like "Submit" or "Continue")
@@ -901,28 +895,28 @@ Use the Make Kit attached to this project as the single source of truth for all 
 - [ ] Touch/pointer targets are ≥ 44×44px (iOS) / ≥ 48×48px (Android); none below the 24×24px WCAG 2.2 AA floor [AAA: ≥ 44×44px required]
 - [ ] Content reflows at 320px viewport width without horizontal scroll
 - [ ] All meaningful images and icon controls have text alternatives
-<!-- Include the following item only when behaviors involve transitions or animation -->
-<!-- - [ ] Non-essential motion is reduced or removed under prefers-reduced-motion; transitions reference motion tokens, not raw durations/easings -->
-<!-- Include the following items only when L10n / I18n is required -->
-<!-- - [ ] All text containers flex to accommodate strings up to [X]% longer than the English source -->
-<!-- - [ ] No fixed-width text containers exist for UI labels, button copy, nav items, or badges -->
-<!-- - [ ] All dates, numbers, currencies, and units are rendered via format tokens, not hardcoded strings -->
-<!-- - [ ] RTL layout is fully mirrored for Arabic/Hebrew/Persian locales (if in scope) -->
-<!-- - [ ] Font fallback stack covers all script systems in scope -->
-<!-- - [ ] Count-dependent strings use pluralisation tokens -->
-<!-- Include the following items only when target is Claude Code + Figma MCP -->
-<!-- - [ ] Screen is created in the target Figma Design file/page specified at Q1a -->
-<!-- - [ ] Frames, sections, and component instances are descriptively named -->
-<!-- - [ ] Auto-layout is used for all container nodes with a directional flow -->
-<!-- Include only when a Figma Component Library URL was provided (Q1b) -->
-<!-- - [ ] All components with a Component Library equivalent are instantiated from the library, not built from primitives -->
-<!-- - [ ] Any element with no Component Library equivalent is flagged rather than substituted silently -->
-<!-- Include only when Figma Variables were provided (Q1c) -->
-<!-- - [ ] All styling properties (fills, strokes, typography, spacing, radius, effects) bound to the named Variables where a matching Variable exists -->
-<!-- - [ ] No raw color, typography, spacing, or radius values are hardcoded for properties that have a matching Variable -->
-<!-- - [ ] Where Variable Collections include modes (Light/Dark, Density, Brand), bindings reference the Collection (not a specific mode value) so mode switching works correctly -->
-<!-- - [ ] Bindings prefer semantic-tier Variables (e.g., color/text/primary) over primitive-tier Variables (e.g., color/gray/900) wherever both exist for the same role -->
-<!-- - [ ] No bindings reference any Collection or Group listed in the Variable exclusions field -->
+*[Include the following item only when behaviors involve transitions or animation:]*
+- [ ] Non-essential motion is reduced or removed under prefers-reduced-motion; transitions reference motion tokens, not raw durations/easings
+*[Include the following items only when L10n / I18n is required:]*
+- [ ] All text containers flex to accommodate strings up to [X]% longer than the English source
+- [ ] No fixed-width text containers exist for UI labels, button copy, nav items, or badges
+- [ ] All dates, numbers, currencies, and units are rendered via format tokens, not hardcoded strings
+- [ ] RTL layout is fully mirrored for Arabic/Hebrew/Persian locales (if in scope)
+- [ ] Font fallback stack covers all script systems in scope
+- [ ] Count-dependent strings use pluralisation tokens
+*[Include the following items only when target is Claude Code + Figma MCP:]*
+- [ ] Screen is created in the target Figma Design file/page specified at Q1a
+- [ ] Frames, sections, and component instances are descriptively named
+- [ ] Auto-layout is used for all container nodes with a directional flow
+*[Include the following items only when a Figma Component Library URL was provided (Q1b):]*
+- [ ] All components with a Component Library equivalent are instantiated from the library, not built from primitives
+- [ ] Any element with no Component Library equivalent is flagged rather than substituted silently
+*[Include the following items only when Figma Variables were provided (Q1c):]*
+- [ ] All styling properties (fills, strokes, typography, spacing, radius, effects) bound to the named Variables where a matching Variable exists
+- [ ] No raw color, typography, spacing, or radius values are hardcoded for properties that have a matching Variable
+- [ ] Where Variable Collections include modes (Light/Dark, Density, Brand), bindings reference the Collection (not a specific mode value) so mode switching works correctly
+- [ ] Bindings prefer semantic-tier Variables (e.g., color/text/primary) over primitive-tier Variables (e.g., color/gray/900) wherever both exist for the same role
+- [ ] No bindings reference any Collection or Group listed in the Variable exclusions field
 - [ ] [Additional project-specific checkable condition]
 - [ ] [Continue for all project-specific requirements]
 
