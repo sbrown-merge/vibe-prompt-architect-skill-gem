@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.18.5 (2026-06-04) — synced with vibe-prompt-architect-gem.md v2.18.5
+# Version: 2.18.6 (2026-06-04) — synced with vibe-prompt-architect-gem.md v2.18.6
 # Maintained in sync with vibe-prompt-architect-gem.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.18.5 · 2026-06-04 · Synced with `vibe-prompt-architect-gem.md` v2.18.5*
+*Version 2.18.6 · 2026-06-04 · Synced with `vibe-prompt-architect-gem.md` v2.18.6*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 

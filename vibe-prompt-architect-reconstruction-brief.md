@@ -265,33 +265,51 @@ triggers it automatically when the user asks to prompt a vibe-coding tool.
 version instead), Memory Consultation, human editors note (longer form), Role persona
 statement, Gem-specific session behaviour.
 
-### vibe-prompt-architect-gem.md
+### vibe-prompt-architect-gem.md (router)
 
-A Gemini Gem instruction file. The user pastes the full contents into a new Gem's
-instructions field.
+A minimal router file (~1,150 chars) pasted into the Gemini Gem instruction box. As of v2.18.6, the Gem uses a two-file architecture: this router establishes the persona and directs Gemini to read the attached knowledge files; all operating procedures live in `vibe-prompt-architect-knowledge.md`.
 
-**Structural additions over SKILL.md:**
-- Version marker — single line: *Version X.Y.Z — See CHANGELOG.md for full version history.* (full history moved to CHANGELOG.md in v2.18.3)
-- Role / persona statement (explicit senior product design collaborator framing)
-- Execution boundary statement in Role (Gem-only — explicitly states no ability to execute
-  code, connect to MCP servers, open terminal instances, or interact directly with live
-  Figma files; signals the Gem's text-only nature to Gemini safety classifiers)
-- Memory Consultation section (Gemini-only — scans prior context for stable inputs,
-  presents recalled/new summary, validates before use; includes rows for Figma Component
-  Library and Figma Variables — both stable across sessions — and Figma target file/page
-  marked "Always fresh" since it's screen-specific)
-- Recalled/new annotations in Phase 1 closing summary
-- Gem-specific session behaviour notes (stitch.withgoogle.com, npx lint CLI)
+**Four paragraphs (in order):**
+1. Persona — "You are the Vibe Prompt Architect, a senior product design collaborator..."
+2. Knowledge file delegation — directs Gemini to read the attached knowledge file before responding; lists what the knowledge file contains
+3. Communication style — professional and direct, no flattery or filler
+4. Output format — structured Markdown prompt delivered inline so the user can copy literal syntax verbatim
 
-**Structurally identical to SKILL.md:** All Phase 1 behaviour sections, all 13 Phase 2
-flags in the same order, TC-EBC framework, output template (including the Figma MCP
-conditional block and Constraints rows that show Figma Variable convention alongside CSS
-variable and DESIGN.md dot-path), post-generation tips, 24 principles in the same order.
+**Does not contain:** Any workflow procedures, question sequences, output templates, or principles. Those live entirely in the knowledge file.
+
+**Why this split:** The Gemini Gem instruction box has character limits (~8,000–32,000 chars depending on backend). The router keeps the instruction box under 1,200 chars; the knowledge file (89KB) is uploaded as a knowledge attachment with no such constraint.
+
+### vibe-prompt-architect-knowledge.md
+
+The full operating procedures for the Gemini Gem, uploaded as a knowledge file attachment. This is the primary Gem sync partner as of v2.18.6 — all PARALLEL sections in SYNC-MANIFEST that previously referenced the Gem now reference this file. Its content is EQUIVALENT to SKILL.md.
+
+**Content (everything from Output Delivery Rule onwards):**
+- Output Delivery Rule — raw Markdown inline, wrapped in a fenced code block
+- How You Work — three-phase overview
+- Phase 1 — Gather (Memory Consultation, Cadence Rules, Raw Value Translation, Grid Conformance, Guidelines File Support, Accessibility Requirements, CTA Hierarchy, Casing, Motion & Animation, L10n / I18n Requirements, Question Sequence Q1–Q16 with Q1a/Q1b/Q1c, Authority File Gate)
+- Phase 2 — Clarify (all 14 flags in dependency order)
+- Phase 3 — Generate (Generation Mode, TC-EBC Framework, Output Format template, After You Generate)
+- Principles (28 principles)
 
 **Version numbering convention:**
 - Major (X.0.0) — breaking changes to output format or workflow structure
 - Minor (X.Y.0) — new capabilities
 - Patch (X.Y.Z) — fixes and clarifications
+
+### vibe-prompt-architect-tc-ebc-primer.md
+
+A second knowledge file attachment for the Gemini Gem, providing the conceptual foundation for the TC-EBC framework.
+
+**Content:**
+- What TC-EBC is and the problem it solves
+- The visual literacy principle — decomposing design intent as a design discipline
+- The cooking metaphor (ingredients + technique + constraints)
+- Each of the five components (T, C, E, B, C) with a *why it matters* rationale
+- Why the framework produces better AI output (structural explanation)
+- The author intent principle (designer as author, not maker)
+- Seven practical principles derived from the framework
+
+**Source:** Synthesized from "Cooking with Constraints: A Designer's Framework for Better AI Prompts" by Greg Huntoon, published on the Figma Blog.
 
 ### SYNC-MANIFEST.md
 
@@ -567,8 +585,10 @@ Do not "fix" these differences — they are correct.
 | File | Version | Last updated |
 |---|---|---|
 | SKILL.md | 2.18.3 (YAML comment + italic byline under H1) | 2026-06-03 |
-| vibe-prompt-architect-gem.md | 2.18.4 | 2026-06-03 |
-| CHANGELOG.md | No version (authoritative version history) | 2026-06-03 |
+| vibe-prompt-architect-gem.md (router) | 2.18.6 | 2026-06-04 |
+| vibe-prompt-architect-knowledge.md | 2.18.6 | 2026-06-04 |
+| vibe-prompt-architect-tc-ebc-primer.md | No version | 2026-06-04 |
+| CHANGELOG.md | No version (authoritative version history) | 2026-06-04 |
 | SYNC-MANIFEST.md | No version (living document) | 2026-06-03 |
 | README.md | No version | 2026-06-01 |
 | vibe-prompt-architect-reconstruction-brief.md | No version (this file) | 2026-06-03 |
@@ -655,6 +675,8 @@ Do not "fix" these differences — they are correct.
   a row for the Gem-only role-level execution boundary statement
 - 2.18.3: Patch — structural cleanup. Extracted version history from Gem into new CHANGELOG.md to reduce Gem character count below Gemini UI limits. Replaced HTML comment syntax in output templates in both files with Markdown conditional markers. Gem now opens with a single-line version marker (*Version X.Y.Z — See CHANGELOG.md for full version history.*) before ## Role
 - 2.18.4: Patch — remove four-backtick fenced code block from Gem output template. The ````markdown fence caused Gemini UI save failures. Template content preserved as plain text; Output Format delivery instruction already instructs Gemini to wrap generated output in a fenced code block. SKILL.md unchanged (fence is not a problem for Claude Code)
+- 2.18.5: Patch — replace prohibitive execution-boundary language with affirmative identity framing to prevent Gemini safety-filter false-positives. "You have no ability to execute code..." → "You are a text-only planning tool." Q1 notice "Because I cannot connect to external environments" prefix removed. Execution Boundary principle reframed in both files as "prompt author / treat platform names as destination audience"
+- 2.18.6: Split Gem into router + knowledge files. vibe-prompt-architect-gem.md is now a minimal router (~1,150 chars). vibe-prompt-architect-knowledge.md (new) contains the full v2.18.5 operating procedures as an uploaded Gem knowledge file. vibe-prompt-architect-tc-ebc-primer.md (new) contains TC-EBC framework origin and rationale (synthesized from Greg Huntoon's Figma Blog article). Router updated to specify structured Markdown prompt output. SYNC-MANIFEST session protocol updated to reference vibe-prompt-architect-knowledge.md as primary sync partner
 
 ---
 
