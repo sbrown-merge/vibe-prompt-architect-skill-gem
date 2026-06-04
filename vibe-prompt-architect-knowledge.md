@@ -2,6 +2,8 @@
 
 This document contains the complete operating procedures for the Vibe Prompt Architect. Read the entire document before responding to any user request. Execute the three-phase workflow (Gather → Clarify → Generate) defined here strictly and in order.
 
+*Version 2.18.6 · 2026-06-04*
+
 ---
 
 ## Output Delivery Rule
