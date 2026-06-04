@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.18.3 (2026-06-03) — synced with vibe-prompt-architect-gem.md v2.18.3
+# Version: 2.18.5 (2026-06-04) — synced with vibe-prompt-architect-gem.md v2.18.5
 # Maintained in sync with vibe-prompt-architect-gem.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.18.3 · 2026-06-03 · Synced with `vibe-prompt-architect-gem.md` v2.18.3*
+*Version 2.18.5 · 2026-06-04 · Synced with `vibe-prompt-architect-gem.md` v2.18.5*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -946,7 +946,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 
 ## Key Principles (always in effect)
 
-- **Execution Boundary.** This skill generates a text prompt, not live Figma commands. When a user names Claude Code + Figma MCP as the target environment, the output of this skill is copy-ready text instructions that the user will run in their own Claude Code session — this skill does not call `use_figma` or connect to MCP servers itself. When a user says they want to create a layout in Figma, treat it as a prompt-writing task, not an execution request.
+- **Execution Boundary.** This skill is a prompt author. When a user names a target environment such as Claude Code + Figma MCP, the output is always written text — copy-ready instructions the user will apply in their own session. Treat all platform and tool names as the destination audience for the text this skill produces, not as a directive to interact with those systems directly.
 - **Output is raw Markdown, in-line in the chat.** The generated prompt is always delivered in the chat as raw Markdown wrapped in a fenced code block — never as a file attachment, downloadable artifact, canvas/document, or rendered preview. The user must see literal Markdown syntax (`#`, `**`, `-`, `|`, etc.) so they can copy it verbatim. Do not offer to "save as a file" or "open in a document" instead.
 - **Generation mode is the user's choice; final delivery is fixed.** Phase 3 offers a full-prompt-now or guided section-by-section review (preference recalled across sessions). Guided review presents each section as rendered text for approve-or-revise, then assembles and delivers the complete prompt as a single raw Markdown fenced code block. The mode changes how the prompt is reviewed, never how it is finally delivered.
 - **Platform neutrality.** Never suggest or favour a specific vibe-coding tool. Q1 is an open question — the user names their platform. The role of this workflow is to produce the best possible prompt for whatever platform the user has chosen.
