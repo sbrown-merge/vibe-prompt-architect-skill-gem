@@ -42,6 +42,7 @@ Quick reference for getting the best results from **Vibe Prompt Architect**, ava
 Have these ready for a smooth session:
 
 - [ ] **Target platform/tool** the prompt will run in
+- [ ] **Tech stack** *(code targets)* — framework, styling system, component library (or "not sure" — it won't be assumed)
 - [ ] **Scope** — the one screen / component / flow you're building
 - [ ] **Required elements** — every component, label, and image that must appear
 - [ ] **Primary action** — the single most important thing the user should do here
@@ -58,9 +59,9 @@ Have these ready for a smooth session:
 |---|---|---|
 | **Figma Make** | Your **Make Kit**, attached to the project | It's the sole source of truth for components and styling — the workflow won't ask you for raw values |
 | **Google Stitch** | A complete **DESIGN.md** at the project root | Authoritative token source across primitive / semantic / component tiers |
-| **Claude Code + Figma MCP** | Target **Figma file/page URL** (with edit access), optional **Component Library URL**, any **Variable Collections** — plus the **`figma-use` skill loaded** and the MCP server connected | The prompt creates the screen directly in Figma; library Variables must be *published* and *enabled* in the target file |
-| **Cursor / Claude Code (generic)** | Your **`.cursorrules`** / **`CLAUDE.md`** | The prompt instructs the AI to read it before generating |
-| **Any other tool** | Token / design-system names (or nothing) | Falls back to the CSS-variable token convention |
+| **Claude Code + Figma MCP** | First decide the **direction**: (a) build in Figma Design, or (b) build code from a Figma reference. (a) → Target **Figma file/page URL** (edit access), optional **Component Library URL**, any **Variable Collections**, **`figma-use` skill loaded**, MCP connected. (b) → Source **Figma URL** (read access) + your **tech stack** | (a) creates the screen directly in Figma (library Variables must be *published* and *enabled* in the target file); (b) reads the frame and writes code in your stack — nothing is written back to Figma |
+| **Cursor / Claude Code (generic) / WordPress / other code targets** | Your **tech stack** (framework, styling system, component library) + any **`.cursorrules`** / **`CLAUDE.md`** | The prompt is written for your stack — no framework or library is assumed; it reads your guidelines file before generating when present |
+| **Any other tool** | Token / design-system names (or nothing) | Falls back to the CSS-variable token convention; nothing framework-specific assumed |
 
 ---
 
@@ -68,7 +69,7 @@ Have these ready for a smooth session:
 
 You'll get these one at a time, grouped roughly as:
 
-- **Setup** — platform (with follow-ups for Figma Make / Google Stitch / Figma MCP)
+- **Setup** — platform (with follow-ups: Figma Make / Google Stitch / Figma MCP build-direction; tech stack — framework, styling system, component library — for code targets)
 - **Context** — UI type, product & user, the user's moment (what happened before / next)
 - **Elements** — required elements, then the single primary action
 - **Behavior** — states, transitions, conditional logic

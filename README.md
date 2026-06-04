@@ -24,7 +24,12 @@ The workflow has three phases:
    casing convention.
    Platform-specific follow-ups fire for Figma Make, Google Stitch, and Claude Code +
    Figma MCP — including the target Figma file, any Component Library, and any Variable
-   Collections in use.
+   Collections in use. For code-generation platforms, the intake also asks your **tech
+   stack** (framework, styling system, component library) so the prompt matches your project
+   instead of assuming React + Tailwind + shadcn/ui — when you don't know a detail, the
+   prompt stays framework-neutral and leaves a developer call-out rather than guessing. For
+   Claude Code + Figma MCP it first asks **which direction** you want: build the screen
+   directly in Figma Design, or build code in your project using a Figma frame as reference.
 2. **Clarify** — An automated audit of your inputs that catches ambiguity, off-grid spacing
    values, raw color/type values that need tokenising, missing CTA hierarchy, accessibility
    risks, and localisation gaps — before the prompt is generated.
@@ -65,9 +70,9 @@ specific support for:
 |---|---|
 | **Figma Make** | Detects and enforces Make Kit as the sole source of truth for components and styling when one is attached |
 | **Google Stitch** | Detects and enforces DESIGN.md as the authoritative token source; uses dot-path token references (`{colors.primary}`, `{spacing.lg}`, `{rounded.md}`) |
-| **Claude Code + Figma MCP** | Creates screens directly in Figma Design via the `use_figma` MCP tool. Captures the target Figma file/page URL, an optional Component Library URL, and any Variable Collections/Groups (with modes, default mode for the screen, tier preference, and exclusions). Generated prompt includes the mandatory `figma-use` skill prerequisite and an explicit `use_figma` instruction block. Variable references use literal Figma form `{group/variable-name}` with the Collection captured as separate metadata |
-| **Cursor, Claude Code (generic)** | References platform guidelines files (`.cursorrules`, `CLAUDE.md`) using the "read before generating" pattern |
-| **All other tools** | Platform-neutral token and constraint format using CSS variable convention (`--color-primary`, `--space-lg`) |
+| **Claude Code + Figma MCP** | First asks the **build direction**: (a) create the screen directly in Figma Design via `use_figma`, or (b) build code in your project using a Figma frame as a read-only reference (`get_design_context` / `get_screenshot`). Branch (a) captures the target Figma file/page URL, an optional Component Library URL, and any Variable Collections/Groups (with modes, default mode for the screen, tier preference, and exclusions), and includes the mandatory `figma-use` skill prerequisite plus an explicit `use_figma` instruction block; Variable references use literal Figma form `{group/variable-name}`. Branch (b) captures the source Figma URL plus your tech stack and produces read-from-Figma/write-to-code instructions with no `use_figma` |
+| **Cursor, Claude Code (generic), WordPress, and other code targets** | Asks your tech stack (framework, styling system, component library) and writes the prompt to match it — no assumed framework or library; references platform guidelines files (`.cursorrules`, `CLAUDE.md`) using the "read before generating" pattern when present |
+| **All other tools** | Platform-neutral token and constraint format using CSS variable convention (`--color-primary`, `--space-lg`); no framework or component library assumed unless you name one |
 
 ---
 

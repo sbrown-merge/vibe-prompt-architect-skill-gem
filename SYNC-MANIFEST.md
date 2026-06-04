@@ -31,10 +31,11 @@ Annotation key:
 | Casing & Capitalization | `### Casing & Capitalization` | `#### Casing & Capitalization` | `PARALLEL` — sentence-case default, ALL CAPS via `text-transform` rule, and lowercase/Title Case policy must match |
 | Motion & Animation | `### Motion & Animation` | `#### Motion & Animation` | `PARALLEL` — duration/easing token names + values and the reduced-motion (`prefers-reduced-motion`) rule must match |
 | L10n / I18n Requirements | `### L10n / I18n Requirements` | `#### L10n / I18n Requirements` | `PARALLEL` — expansion table rows must match |
-| Question Sequence | `### Question Sequence` (Q1–Q15, Q5a, Q1a/Q1b/Q1c) — Q7=Design System, Q9=Constraints (conditional); Q8/Q8b removed (authority now established by Q1 platform choice for Figma Make / Google Stitch); Q1a/Q1b/Q1c are Claude Code + Figma MCP follow-ups (target file URL, Component Library URL, Variable Collections/Groups) | `#### Question Sequence` | `PARALLEL` — question numbers, wording, and mandatory flags must match |
+| Question Sequence | `### Question Sequence` (Q1–Q16, Q5a, Q1-Direction, Q1a/Q1b/Q1c, Q1a-ref, Q1d/Q1e/Q1f) — Q7=Design Tokens/Guidelines File, Q9=Constraints (conditional); Q8/Q8b removed (authority established by Q1 platform choice for Figma Make / Google Stitch); Q1-Direction (build-in-Figma vs build-code) + Q1a/Q1b/Q1c (build-in-Figma branch) + Q1a-ref (build-code branch) are Claude Code + Figma MCP follow-ups; Q1d/Q1e/Q1f (framework / styling system / component library) are tech-stack follow-ups for code-generation platforms except Figma Make, Google Stitch, and the build-in-Figma branch | `#### Question Sequence` | `PARALLEL` — question numbers, wording, and mandatory flags must match |
 | Authority File Gate | `### Authority File Gate` (between Q7 and Q9 in both files) — status table triggers on Q1 (platform), Q1b/Q1c (Figma library/Variables for Claude Code + Figma MCP), and Q7 (design system). Make Kit triggered by Q1=Figma Make; DESIGN.md by Q1=Google Stitch; Figma Component Library by Q1b; Figma Variables by Q1c | `#### Authority File Gate` | `PARALLEL` — status table (six rows) and seven preamble variants (Make Kit / DESIGN.md / Library+Variables / Library only / Variables only / named system / none) must match |
 | Phase 1 closing summary | After Question Sequence | After Question Sequence | `PARALLEL` — summary field list must match; Gem adds *(recalled / new)* annotations |
-| Phase 2 flag order | `## Phase 2: Clarify and Analyze` | `### Phase 2 — Clarify` | `PARALLEL` — flag order must be identical: Scope → Ambiguity → CTA → Casing → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Figma MCP → Accessibility → L10n → AC → Platform |
+| Phase 2 flag order | `## Phase 2: Clarify and Analyze` | `### Phase 2 — Clarify` | `PARALLEL` — flag order must be identical: Scope → Ambiguity → CTA → Casing → Stack → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Figma MCP → Accessibility → L10n → AC → Platform |
+| Stack Flag | `### Stack Flag` | `**Stack Flag**` | `PARALLEL` — runs after Casing, before Raw Value Translation; no-assumed-stack, styling-system token naming, component-library references, Figma Make default, and build-code-from-Figma (b) checks must match |
 | Scope Flag | `### Scope Flags` | `**Scope**` | `PARALLEL` |
 | Ambiguity Flag | `### Ambiguity Flags` | `**Ambiguity**` | `PARALLEL` |
 | CTA Flag | `### CTA Flag` | `**CTA Flag**` | `PARALLEL` |
@@ -44,7 +45,7 @@ Annotation key:
 | Design System Flags | `### Design System Flags` | `**Design System and Guidelines File**` | `PARALLEL` |
 | Make Kit Flag | `### Make Kit Flag` | `**Make Kit**` | `PARALLEL` |
 | DESIGN.md Flag | `### DESIGN.md Flag` | `**DESIGN.md**` | `PARALLEL` |
-| Figma MCP Flag | `### Figma MCP Flag` | `**Figma MCP**` | `PARALLEL` — verify `figma-use` prerequisite, `use_figma` instruction, target URL, library/variable references, section-by-section assembly |
+| Figma MCP Flag | `### Figma MCP Flag` | `**Figma MCP**` | `PARALLEL` — direction-aware: (a) build-in-Figma verifies `figma-use` prerequisite, `use_figma` instruction, target URL, library/variable references, section-by-section assembly; (b) build-code verifies read-from-Figma (`get_design_context`/`get_screenshot`) with no `use_figma`/`figma-use` |
 | Accessibility Flag | `### Accessibility Flag` | `**Accessibility Flag**` | `PARALLEL` |
 | L10n Flag | `### L10n Flag` | `**L10n Flag**` | `PARALLEL` |
 | Acceptance Criteria Flags | `### Acceptance Criteria Flags` | `**Acceptance Criteria**` | `PARALLEL` — mandatory AC item lists must match |
@@ -54,11 +55,12 @@ Annotation key:
 | Output template header | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` — all five metadata fields must match |
 | Output template Elements | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` — inline hints must match |
 | Output template Behavior | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` — focus ring line must be present in both |
-| Output template Constraints | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` — all token rows (Color, Typography, Spacing, Radius, Elevation, Casing, Motion [conditional], Accessibility, CTA hierarchy) must match. Elevation and Casing rows are always present; Motion row appears only when behaviors involve motion |
+| Output template Constraints | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` — all token rows (Tech stack [framework/styling/component library, code-gen platforms only], Design token/guidelines file + availability, Color, Typography, Spacing, Radius, Elevation, Casing, Motion [conditional], Accessibility, CTA hierarchy) must match. Tech-stack rows use the ⚠️ developer call-out form when a part is unspecified and are omitted for Figma Make / Google Stitch / build-in-Figma; Elevation and Casing rows are always present; Motion row appears only when behaviors involve motion |
 | Output template L10n section | `## Localisation & I18n` inside ` ``` ` | `## Localisation & I18n` inside ` ``` ` | `PARALLEL` — all fields and sub-notes must match |
 | Output template Design Guidelines | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` |
 | Output template Make Kit | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` |
-| Output template Figma MCP | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` — target file URL, Component Library URL, Variables, and `use_figma` instruction block must match |
+| Output template Figma MCP | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` — the "Figma MCP — Build in Figma Design" section (direction (a) only): target file URL, Component Library URL, Variables, and `use_figma` instruction block must match |
+| Output template Build from Figma Reference | Inside ` ``` ` block | Inside ` ``` ` block | `PARALLEL` — the (b)-branch section: source URL (Q1a-ref) + read-from-Figma (`get_design_context`/`get_screenshot`) instructions with no `use_figma`/`figma-use`; mutually exclusive with the (a) section |
 | Output template AC block | Inside ` ``` ` block — mandatory items pre-populated | Inside ` ``` ` block — mandatory items pre-populated | `PARALLEL` — mandatory items, L10n commented items, and project-specific slots must match |
 | Post-generation tips | `## Post-Generation Guidance` | `## After You Generate` | `PARALLEL` — topics must match; Gem uses bold headers, SKILL.md uses bullet list |
 | Principles | `## Key Principles (always in effect)` | `## Principles` | `PARALLEL` — every principle must appear in both files, in the same order |
@@ -197,6 +199,43 @@ Questions may be **top-level** (Q1, Q2, … Q15) or **conditional follow-ups** t
 - [ ] Memory Consultation table — Figma Component Library, Figma Variables, Figma target file/page rows; token naming convention row includes Figma Variable form (Gem only)
 - [ ] Version history (Gem only)
 
+### Adding or changing the tech-stack intake (Q1d/Q1e/Q1f) or no-assumed-stack rule
+
+- [ ] Phase 1 — Question Sequence — Q1d (framework), Q1e (styling system), Q1f (component library), with conditionality (code-gen platforms only; skip Figma Make, Google Stitch, build-in-Figma branch)
+- [ ] Phase 1 — Raw Value Translation — token-naming convention keys off Q1e styling system; generic CSS variables + no Tailwind/shadcn when unknown
+- [ ] Phase 1 closing summary — Tech stack framework / styling system / component library rows (omitted for kit-governed platforms and build-in-Figma)
+- [ ] Phase 2 — Stack Flag (runs before Raw Value Translation)
+- [ ] Phase 2 — dependency-chain principle — Stack inserted after Casing
+- [ ] Output template header — Tech stack line
+- [ ] Output template Constraints — Tech stack rows + Design token/availability row, with ⚠️ developer call-out form
+- [ ] Output template AC block — conditional item when any stack part is "to be confirmed"
+- [ ] Acceptance Criteria Flags — matching conditional AC item
+- [ ] Key Principles / Principles — "No assumed tech stack" principle
+- [ ] `## Post-Generation Guidance` / `## After You Generate` — Tech stack tip
+- [ ] Memory Consultation table — tech-stack rows (Gem only) if classified as recallable
+- [ ] Version history (Gem only)
+
+### Adding or changing the Figma MCP build-direction gate (Q1-Direction)
+
+- [ ] Phase 1 — Q1 Figma MCP notice — bidirectional explanation + Q1-Direction question
+- [ ] Phase 1 — (a) build-in-Figma branch — readiness notice + Q1a/Q1b/Q1c
+- [ ] Phase 1 — (b) build-code branch — readiness notice + Q1a-ref + route into Q1d/Q1e/Q1f
+- [ ] Phase 1 closing summary — Figma MCP direction row + Figma source reference row
+- [ ] Phase 2 — Figma MCP Flag — direction-aware (a) vs (b) checks
+- [ ] Output template — "Figma MCP — Build in Figma Design" (a) section and "Build from Figma Reference" (b) section (mutually exclusive)
+- [ ] Output template AC block — (a) and (b) conditional items
+- [ ] Phase 3 TC-EBC Constraints — (a) and (b) instruction clauses
+- [ ] Key Principles / Principles — "Figma MCP is bidirectional" principle
+- [ ] Version history (Gem only)
+
+### Adding or changing asset-availability confirmation
+
+- [ ] Phase 1 — Q7 — availability confirmation (present-and-ready vs planned) + never-invent-a-style-asset rule
+- [ ] Phase 1 closing summary — Design token / guidelines file availability annotation
+- [ ] Output template Constraints — Design token / guidelines file availability row + readiness call-out
+- [ ] Key Principles / Principles — "Confirm assets; never invent them" principle
+- [ ] Version history (Gem only)
+
 ### Adding or changing the Authority File Gate
 
 - [ ] Phase 1 — Q1 post-response conditional notice — Figma Make and Google Stitch platform notices in both files
@@ -239,9 +278,10 @@ Questions may be **top-level** (Q1, Q2, … Q15) or **conditional follow-ups** t
 Run this every time the version number changes. Both files must move in lockstep.
 
 - [ ] CHANGELOG.md `## Version History` table — add a new row with date and summary
-- [ ] CHANGELOG.md `**Current version: X.Y.Z**` line AND Gem version marker line (*Version X.Y.Z — See CHANGELOG.md for full version history.*) — update both to the new version
-- [ ] SKILL.md YAML front matter `# Version: X.Y.Z (date) — synced with vibe-prompt-architect-gem.md vX.Y.Z` comment — update version and date
-- [ ] SKILL.md italic byline under H1 `*Version X.Y.Z · YYYY-MM-DD · Synced with vibe-prompt-architect-gem.md vX.Y.Z*` — update version, date, and Gem-parity reference (all three must match each other and the Gem)
+- [ ] CHANGELOG.md `**Current version: X.Y.Z**` line — update to the new version
+- [ ] `vibe-prompt-architect-knowledge.md` version marker under the H1 (`*Version X.Y.Z · YYYY-MM-DD*`) — the knowledge file is the Gem's content sync partner; update version and date
+- [ ] SKILL.md YAML front matter `# Version: X.Y.Z (date) — synced with vibe-prompt-architect-knowledge.md vX.Y.Z` comment — update version and date
+- [ ] SKILL.md italic byline under H1 `*Version X.Y.Z · YYYY-MM-DD · Synced with vibe-prompt-architect-knowledge.md vX.Y.Z*` — update version, date, and knowledge-file-parity reference (all must match each other and the knowledge file)
 - [ ] SYNC-MANIFEST.md Section 5 Sync Health Log — add an entry describing the change
 
 ### Updating companion user docs (README + Cheat Sheet)
@@ -285,9 +325,8 @@ Pre-commit checklist — vibe-prompt-architect
 
 7. Did I bump the version in all five required locations to the same version and date?
    [ ] Yes   [ ] No — do it now. All five locations must match: CHANGELOG.md Version
-   History table row, CHANGELOG.md Current version line, Gem version marker line
-   (*Version X.Y.Z — See CHANGELOG.md for full version history.*), SKILL.md YAML
-   comment, and SKILL.md italic byline under H1.
+   History table row, CHANGELOG.md Current version line, vibe-prompt-architect-knowledge.md
+   version marker under H1, SKILL.md YAML comment, and SKILL.md italic byline under H1.
 
 8. Did I update this SYNC-MANIFEST.md if a new feature, section, or touch-map entry
    was introduced?
@@ -348,4 +387,5 @@ Record any known drift or deferred fixes here. Clear entries when resolved.
 | 2026-06-03 | Structural cleanup (v2.18.3). Extracted version history from Gem into new CHANGELOG.md to reduce Gem character count below Gemini UI limits (~12,000 chars removed). Gem now shows only a one-line version marker at the top. Replaced all HTML comment syntax in output templates in both files with Markdown conditional markers (*[Include only when...]*) and live list items to prevent Gemini UI sanitizer from stripping template content. SKILL.md version markers updated to 2.18.3. | ✅ Resolved |
 | 2026-06-04 | Gem split into router + knowledge files (v2.18.6). vibe-prompt-architect-gem.md is now a minimal router (~1,150 chars) that establishes the persona and directs Gemini to attached knowledge files. vibe-prompt-architect-knowledge.md (new) contains the full v2.18.5 operating procedures. vibe-prompt-architect-tc-ebc-primer.md (new) contains the TC-EBC framework origin and rationale synthesized from Greg Huntoon's Figma Blog article. SYNC-MANIFEST updated: session protocol now references vibe-prompt-architect-knowledge.md as the primary sync partner; anatomy map gains three new rows (router, knowledge file, TC-EBC primer); Intentional Differences gains a file-architecture row. SKILL.md version markers updated to 2.18.6; CHANGELOG updated. | ✅ Resolved |
 | 2026-06-03 | Remove four-backtick fence from Gem output template (v2.18.4). The ````markdown / ```` block caused Gemini UI save failures due to non-standard code block parsing. Template content preserved as plain text — the Output Format delivery instruction already instructs Gemini to wrap the generated output in a fenced code block. This change is Gem-only; SKILL.md's fence is not a problem for Claude Code and is left in place. Gem version marker updated to 2.18.4; CHANGELOG.md updated. | ✅ Resolved |
+| 2026-06-04 | Tech-stack intake + Figma MCP direction gate (v2.19.0). Fixes assumed-stack failures (React/Tailwind/shadcn appearing unbidden; shadcn on WordPress) and wrong-direction failures ("create a design in Figma" when code was wanted; references to unconfirmed style assets). **(1)** New tech-stack questions Q1d/Q1e/Q1f (framework / styling system / component library), asked one-per-turn for code-generation platforms except Figma Make, Google Stitch, and the build-in-Figma branch. **(2)** No-assumed-stack rule — framework-neutral output + generic CSS-variable tokens + "to be confirmed by developer" call-out when unknown; Figma Make is the only sanctioned implicit default (React + Tailwind + shadcn/ui + Radix, overridable); Raw Value Translation keys token naming off Q1e. **(3)** Figma MCP direction gate (Q1-Direction): (a) build-in-Figma (`use_figma`) vs (b) build-code-from-a-Figma-reference (`get_design_context`/`get_screenshot`, Q1a-ref); new "Build from Figma Reference" output section; Figma MCP output section, Phase 2 flag, and AC items scoped to (a) with parallel (b) items added. **(4)** Asset-availability confirmation at Q7 (present-and-ready vs planned; never invent a style asset). New Phase 2 Stack Flag (before Raw Value Translation); dependency-chain principle updated (Stack after Casing); new principles "No assumed tech stack", "Confirm assets; never invent them", "Figma MCP is bidirectional". Applied to both SKILL.md and vibe-prompt-architect-knowledge.md. SYNC-MANIFEST: Section 1 Question Sequence + Phase 2 flag-order rows updated, new Stack Flag + Build-from-Figma-Reference anatomy rows, Constraints + Figma MCP Flag rows updated; Section 2 gains three new touch-map sub-sections (tech-stack intake, Figma MCP direction gate, asset-availability); version-bump references repointed to the knowledge-file marker. Version markers (SKILL.md ×2, knowledge file) bumped to 2.19.0; CHANGELOG updated. The router (vibe-prompt-architect-gem.md) earlier had its knowledge-file references made role-based; no router change this version. SKILL.md and knowledge file fully synced at v2.19.0. | ✅ Resolved |
 | 2026-05-20 | Q1c intake expanded (v2.17.0). Closed four UX/correctness gaps identified during the v2.16.1 audit review: (1) **Modes** — Q1c now asks which modes per Collection and which is the default for this screen, with embedded best-practice that bindings must be mode-aware for designs supporting Light/Dark or other mode switching; (2) **Variable tier preference** — Q1c now asks primitive/semantic/component with embedded best-practice that semantic is the default (preserves design intent, adapts across modes, survives primitive re-mapping); (3) **Exclusions** — Q1c now lets the user name Collections/Groups to avoid on this screen, treated as hard prohibitions; (4) **Library Variable subscription** — Q1 readiness notice gains a fourth pre-flight item requiring library-published Variables to be enabled in the target file. Phase 1 closing summary gains three new conditional rows (Variable modes, Variable tier preference, Variable exclusions). Output template Figma MCP block gains three new metadata lines and three new instruction bullets (Tier preference, expanded Modes with mode-aware requirement, Exclusions). Phase 2 Figma MCP Flag, Phase 2 AC Flags, and output template AC block all extended with the new captures. "Figma MCP routes to Figma Design" principle extended with two best-practice defaults (semantic-tier preferred, mode-aware bindings). Gem Memory Consultation table gains Variable modes (Stable — verify), Variable tier preference (Stable), and Variable exclusions (Verify) rows. SKILL.md and Gem fully synced at v2.17.0. | ✅ Resolved |
