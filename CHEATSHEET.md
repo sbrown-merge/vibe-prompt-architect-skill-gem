@@ -72,7 +72,7 @@ You'll get these one at a time, grouped roughly as:
 
 - **Setup** — platform (with follow-ups: Figma Make / Google Stitch / Figma MCP build-direction; tech stack — framework, styling system, component library — for code targets)
 - **Context** — UI type, product & user, the user's moment (what happened before / next)
-- **Elements** — required elements, then the single primary action
+- **Elements** — required elements, then the primary action(s)
 - **Behavior** — states, transitions, conditional logic
 - **Constraints** — design system / tokens / guidelines file, then constraints (scoped to your authority file)
 - **Wrap-up** — reference images, scope, prototype type, acceptance criteria
@@ -91,7 +91,7 @@ Applied to every prompt by default — no need to ask:
 | Area | What's enforced |
 |---|---|
 | **Accessibility** | WCAG 2.2 **AA** baseline with numeric values (contrast; touch targets **≥ 44×44px (iOS) / ≥ 48×48px (Android)** — 24×24px is the bare AA floor, not a target; visible focus; reflow); AAA opt-in |
-| **CTA hierarchy** | Exactly **one primary CTA**; outcome-oriented labels ("Create account", not "Submit"); no equal-weight rivals |
+| **CTA hierarchy** | Prefer **one dominant primary CTA** (co-equal primaries OK where the screen needs them, e.g., sign in / create account); outcome-oriented labels ("Create account", not "Submit"); no *unintended* equal-weight rivals |
 | **8px grid** | Spacing/radius snapped to the 8px grid (4px microgrid for fine detail); off-grid values corrected and shown to you |
 | **Token-first values** | Raw hex / px / pt translated to semantic token names; ambiguous values flagged for confirmation |
 | **Casing** | **Sentence case** default; ALL CAPS reserved for short overline labels via `text-transform`, never hardcoded |

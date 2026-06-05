@@ -122,8 +122,8 @@ These requirements are applied to every prompt by default — you don't need to 
 AAA compliance (7:1 contrast, 44×44px mandatory targets, enhanced focus, strict text presentation) is opt-in via a dedicated intake question.
 
 ### CTA hierarchy
-- Exactly one primary CTA per screen
-- Secondary and tertiary CTAs visually subordinate — no equal-weight competing actions
+- Prefer one dominant primary CTA per screen (a strong default, not a hard rule) — co-equal primaries are supported where the screen genuinely calls for them (auth entry, binary chooser) once intent is confirmed
+- Secondary and tertiary CTAs visually subordinate — unintended equal-weight competing actions are flagged
 - CTA labels are outcome-oriented ("Create account", not "Submit")
 - Helper text used to explain a CTA is flagged as a design smell — the label or layout is fixed instead
 

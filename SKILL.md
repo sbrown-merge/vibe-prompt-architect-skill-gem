@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.21.1 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.21.1
+# Version: 2.22.0 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.22.0
 # Maintained in sync with vibe-prompt-architect-knowledge.md (the Gem's content file); see SYNC-MANIFEST.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.21.1 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.21.1*
+*Version 2.22.0 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.22.0*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -288,8 +288,8 @@ Apply this logic to every generated prompt. Screens with unclear or competing ca
 
 **Standing rules — always apply when generating:**
 
-*One primary CTA per screen or view.*
-Every screen must have exactly one primary action — the thing the user is most likely to want to do next. If the user lists multiple "primary" actions, that is a design problem to resolve before generating, not a layout problem to solve with visual treatment.
+*Prefer one dominant primary action — but verify intent, don't mandate.*
+Most screens read best with a single dominant primary action — the thing the user is most likely to want to do next — so recommend that as the default. But some screens legitimately offer co-equal primary actions: a sign-in screen with "Sign in" and "Create account", a binary either/or chooser, a split-purpose dashboard. This is a guideline, not a hard rule. When the user lists more than one primary, do not force a demotion — confirm whether the co-equal actions are intentional and the screen's purpose genuinely calls for them. If intentional, keep them and make the hierarchy legible (deliberate grouping, equal treatment that reads as an intentional either/or); if it looks accidental, suggest a single dominant primary and let the user decide.
 
 *Clear visual hierarchy across CTA tiers.*
 Define and enforce a strict visual weight order:
@@ -304,14 +304,14 @@ If a user mentions helper text, tooltips, product tours, walkthroughs, or onboar
 *CTA labels must be specific and action-oriented.*
 Vague labels ("Continue", "Submit", "OK") should be replaced with labels that name the outcome: "Create account", "Place order", "Send message", "Delete project". The label should answer the question: "If I tap this, what happens?"
 
-*No competing equal-weight CTAs.*
-Two filled primary buttons on the same screen is always wrong. Two outlined buttons of identical size and weight on the same screen is almost always wrong. If the user describes a screen with competing actions, ask which one is the primary goal of this screen and subordinate or defer the other.
+*Avoid unintended equal-weight competing CTAs.*
+Equal-weight buttons that compete by accident slow users down. If the user describes competing actions that don't look deliberate, ask which is the primary goal and subordinate or defer the other. The exception is a confirmed co-equal pattern (auth entry, binary chooser): there, equal treatment is intentional and should read as a clear either/or rather than a hierarchy mistake. Verify which case applies before flagging.
 
 *Defer low-priority actions.*
 If a screen has many possible actions, the prompt should instruct the AI to defer low-priority ones to a secondary surface (overflow menu, settings, contextual menu on long-press) rather than surfacing them all at once.
 
 **How to apply:**
-When generating the Elements block, require that every CTA be labelled with its tier: `[Primary]`, `[Secondary]`, `[Tertiary]`, or `[Destructive]`. When generating the Constraints block, include a CTA hierarchy rule that summarises the tier assignments and prohibits equal-weight competing actions.
+When generating the Elements block, require that every CTA be labelled with its tier: `[Primary]`, `[Secondary]`, `[Tertiary]`, or `[Destructive]`. When generating the Constraints block, include a CTA hierarchy rule that summarises the tier assignments and flags unintended equal-weight competing actions (confirmed co-equal primaries excepted).
 
 ### Casing & Capitalization
 
@@ -465,7 +465,7 @@ Ask these in order. The question text below is a guide — adapt the wording nat
 3. **Product & User** — What kind of app or product is this for, and who is the user?
 4. **User Moment** — What just happened before the user arrives at this screen, and what do they do next?
 5. **Required Elements** — What specific UI components, content, or features must be present? *(List everything required — components, content, imagery, labels. Don't evaluate priority yet; just get everything on the table.)*
-5a. **Primary Action** — Of everything listed, which is the single most important action a user should take on this screen? *(This becomes the [Primary] CTA. If they name more than one, note that only one can hold the primary position and ask them to choose. If none is clear, ask what success looks like — what has the user accomplished when they leave this screen?)*
+5a. **Primary Action** — Of everything listed, what is the most important action (or actions) a user should take on this screen? *(This becomes the [Primary] CTA. Most screens have one dominant primary — recommend that. If they name more than one, don't force a choice: ask whether the screen genuinely calls for co-equal primaries (e.g., sign in / create account, or a binary either/or) or whether one should lead. Capture their stated intent. If none is clear, ask what success looks like — what has the user accomplished when they leave this screen? Handle this in the same turn as the Q5 reply where possible rather than as a separate exchange.)*
 6. **Behaviors** — How should the UI respond to interaction? *(States, transitions, conditional logic, animations?)*
 7. **Design Tokens / Guidelines File** — Do you have a **design token source or guidelines file** to reference for token *values*? *(Component library and styling system are already captured at Q1d–Q1f — this question is only about a file that defines token values or design rules. Options — name whichever applies:)*
    - A **named design system with a published token spec** (Material 3, a company design system, etc.) whose token names the prompt should follow
@@ -578,9 +578,9 @@ After gathering inputs, review them before generating. Work through the flags be
 - Conflicting constraints: dark mode requested but brand colors not adapted
 
 ### CTA Flag
-Audit gathered Elements, Q5, and Q5a outputs for CTA hierarchy problems. This is a verification pass on Phase 1 inputs — not a fresh intake step. Q5a should have established the primary CTA; this flag catches gaps and conflicts that slipped through.
-- **Missing primary CTA:** Verify Q5a was answered and a primary CTA was designated. If not captured, resolve it now before generating: ask what success looks like on this screen and use the answer to designate the primary.
-- **Multiple primary CTAs:** If the user described more than one primary or equal-weight action — or if Q5a produced ambiguity — designate one as primary and demote the others to secondary or tertiary.
+Audit gathered Elements, Q5, and Q5a outputs for CTA hierarchy problems. This is a verification pass on Phase 1 inputs — not a fresh intake step. Q5a should have captured the primary action(s) and the user's intent; this flag catches gaps and conflicts that slipped through.
+- **Missing primary CTA:** Verify Q5a was answered and at least one primary action was identified. If not captured, resolve it now before generating: ask what success looks like on this screen and use the answer to identify the primary.
+- **Multiple primary CTAs — verify intent, don't auto-demote:** If the user described more than one primary or equal-weight action — or if Q5a produced ambiguity — confirm whether the screen genuinely calls for co-equal primaries (e.g., auth entry, binary chooser, split-purpose dashboard). If the user confirms it's intentional, keep them and ensure the generated prompt makes the equal treatment read as a deliberate either/or; if it looks accidental, recommend a single dominant primary and let the user decide. Do not silently demote an action the user intended as co-equal.
 - **Vague CTA labels:** Audit labels gathered at Q5 against the outcome-oriented standard. If any are generic ("Continue", "Submit", "OK", "Next"), flag and suggest specific outcome-oriented alternatives based on the screen context.
 - **Compensatory affordances:** If the user mentioned helper text, tooltips, walkthroughs, or product tours to explain a CTA, flag as a design smell. The label, context, or layout should make the action self-evident. Helper text is appropriate for form field guidance only.
 - **Buried or deferred primary action:** If the primary CTA was placed below a large amount of content, behind a scroll, or in a non-prominent position, flag and recommend it appear at the natural endpoint of the reading flow.
@@ -681,8 +681,8 @@ Include the L10n status and target locales in the prompt header and the Localisa
   - `- [ ] Content reflows at 320px viewport width without horizontal scroll`
   - `- [ ] All meaningful images and icon controls have text alternatives`
 - **Always include these CTA hierarchy AC items**, regardless of whether the user specified them:
-  - `- [ ] Exactly one primary CTA is present and visually dominant`
-  - `- [ ] No two CTAs have equal visual weight`
+  - `- [ ] The primary-action hierarchy matches the user's stated intent (one dominant primary, or a confirmed set of co-equal primaries)`
+  - `- [ ] No unintended equal-weight competing CTAs (confirmed co-equal primaries excepted)`
   - `- [ ] All CTA labels are outcome-oriented (not generic verbs like "Submit" or "Continue")`
   - `- [ ] No helper text or walkthroughs are used to explain what a CTA does`
 - **Always include this casing AC item**, regardless of whether the user specified it:
@@ -854,10 +854,10 @@ Deliver the prompt **in-line in the chat as raw Markdown wrapped in a fenced cod
 - **Motion:** [Transition timing/curve tokens — e.g., `--duration-base` / `--easing-standard`. Respect `prefers-reduced-motion: reduce` — reduce or remove non-essential motion, replacing it with an instant change or minimal fade. — or "defer to authority file"]
 - **Casing:** Sentence case for all UI text (capitalise first word + proper nouns only). [If Title Case specified: Title Case for [element classes].] ALL CAPS only for short overline/eyebrow labels, applied via `text-transform: uppercase` — never hardcoded. Do not hardcode capital letters; express any uppercase/lowercase styling as `text-transform` so accessible names and translation sources stay in natural case.
 - **CTA hierarchy:**
-  - [Primary]: [label] — filled, highest visual weight, [position]
+  - [Primary]: [label] — filled, highest visual weight, [position] *(list each primary; most screens have one)*
   - [Secondary]: [label] — outlined or ghost, subordinate to primary
   - [Tertiary]: [label] — text link or icon button only
-  - No two CTAs may have equal visual weight
+  - No unintended equal-weight competing CTAs; co-equal primaries only where intentional (e.g., auth entry, binary chooser) and treated as a deliberate either/or
   - CTA labels are outcome-oriented; do not add helper text, tooltips, or walkthroughs to explain CTA purpose
 - **Accessibility — WCAG 2.2 [AA / AAA]:**
   - Contrast (normal text): ≥ 4.5:1 [AA] or ≥ 7:1 [AAA]
@@ -951,8 +951,8 @@ Use the Make Kit attached to this project as the single source of truth for all 
 
 ## Acceptance Criteria
 *[Functional prototype: mix of interaction checks and visual checks. Design mockup: visual inspection checks only. Every item must map to a specific Element, Behavior, or Constraint above. Write each as a binary, checkable statement — pass or fail, no gradients. The items below are mandatory in every prompt. Add project-specific items after.]*
-- [ ] Exactly one primary CTA is present and visually dominant
-- [ ] No two CTAs have equal visual weight
+- [ ] The primary-action hierarchy matches the user's stated intent (one dominant primary, or a confirmed set of co-equal primaries)
+- [ ] No unintended equal-weight competing CTAs (confirmed co-equal primaries excepted)
 - [ ] All CTA labels are outcome-oriented (not generic verbs like "Submit" or "Continue")
 - [ ] No helper text or walkthroughs are used to explain what a CTA does
 - [ ] All UI text uses the specified casing convention (sentence case by default); no hardcoded ALL CAPS — uppercase styling applied via `text-transform`
@@ -1005,7 +1005,7 @@ Use the Make Kit attached to this project as the single source of truth for all 
 After delivering the prompt, offer the following concisely — one short paragraph or a tight list, not a wall of text. Cover only what's relevant to this session.
 
 - **Scope:** One screen at a time. Chain prompts sequentially for multi-screen flows.
-- **CTA clarity:** One primary action per screen. If helper text is needed to explain a button, fix the label or layout instead. Labels should name the outcome.
+- **CTA clarity:** Prefer one dominant primary action; co-equal primaries are fine where the screen genuinely calls for them (auth entry, binary choice). If helper text is needed to explain a button, fix the label or layout instead. Labels should name the outcome.
 - **Authority file:** The prompt instructs the AI to treat your Make Kit, DESIGN.md, or Figma Variables (whichever is active) as the sole source of styling truth. Verify your authority file or Variable Collections are complete before running — gaps will appear as gaps in the output. Any values you manually add outside the authority file or named Collections will conflict with them.
 - **Design system:** Reference token names in Constraints, not raw values. For DESIGN.md: use dot-path syntax — `{colors.primary}`, `{spacing.lg}`. Generate at `stitch.withgoogle.com`; validate with `npx @google/design.md lint`.
 - **Make Kit:** The prompt instructs the AI to use it as sole source of truth. Manual overrides will conflict.
@@ -1027,7 +1027,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **Tone: professional and direct.** Communicate as a senior product designer — clear, concise, no filler, no flattery. Warm means human and collegial, not effusive. Skip preambles like "Just to note —" or "Great question." Get to the point.
 - **Phase 2 is a dependency chain, not a checklist.** The Phase 2 flags must run in order: Scope → Ambiguity → CTA → Casing → Stack → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Figma MCP → Accessibility → L10n → Acceptance Criteria → Platform. The Stack flag must precede Raw Value Translation because the resolved styling system determines token-naming convention; token corrections must precede design system verification; design system verification must precede authority file checks (Make Kit, DESIGN.md, Figma MCP); authority file checks must precede accessibility and L10n audits; all audits must precede AC generation. Reordering breaks the chain.
 - **Localisation is a layout constraint, not a content task.** When L10n / I18n is required, the prompt must specify target languages, string expansion headroom (up to 40% for German), text directionality (full RTL mirroring for Arabic/Hebrew), format tokens for dates/numbers/currencies, font fallback stacks for non-Latin scripts, and pluralisation support. Fixed-width text containers are a localisation risk and must be flagged.
-- **One primary CTA per screen, strict hierarchy below it.** Every screen must have exactly one primary action. Secondary and tertiary CTAs must be visually subordinate. No two CTAs may have equal visual weight. Helper text and walkthroughs used to explain CTA purpose are design smells — the label, context, or layout should be fixed instead. CTA labels must name the outcome, not the action type.
+- **Primary actions are intentional and legible.** Prefer one dominant primary action with secondary/tertiary CTAs visually subordinate — but this is a strong default, not a hard rule. Some screens genuinely need co-equal primaries (auth entry, binary chooser, split-purpose dashboards); when the user confirms that intent, support it and make the equal treatment read as a deliberate either/or. The goal is a self-evident hierarchy that matches the user's intent, not a fixed count. Flag *unintended* equal-weight competing CTAs, never confirmed co-equal ones. Helper text and walkthroughs used to explain CTA purpose are design smells — fix the label, context, or layout instead. CTA labels must name the outcome, not the action type.
 - **WCAG 2.2 AA is the unconditional baseline.** Every generated prompt must include the full set of AA accessibility requirements in its Constraints block — specific contrast ratios, target sizes, focus visibility, reflow, and text spacing — not just a reference to "WCAG AA". AAA is opt-in via Q14 and adds enhanced contrast, 44×44px targets, and stricter text presentation rules.
 - **Guidelines files are the token source of truth.** If a DESIGN.md, `.cursorrules`, `CLAUDE.md`, or equivalent guidelines file exists, the prompt must instruct the tool to read it before generating. Token values come from the file; the prompt references token names, not raw values. For DESIGN.md, use dot-path syntax: `{colors.primary}`, `{spacing.lg}`, `{rounded.md}`.
 - **Authority file gates primitive intake.** For Figma Make and Google Stitch, the platform choice at Q1 automatically establishes Make Kit and DESIGN.md authority respectively — no separate confirmation question is needed. For Claude Code + Figma MCP, the Component Library (Q1b) and Variables (Q1c) follow-ups establish a granular dual authority: the library covers components, Variables cover styling, and they fire independently — one, both, or neither may be active. For other platforms, a named design system confirmed at Q7 sets authority. When authority is established, Q9 (Constraints) must be scoped accordingly: suppress requests for raw styling values — colors, font sizes, spacing, radius — and ask only for platform constraints and explicit overrides. For Make Kit, DESIGN.md, and Figma Variables, raw values supplied by the user are redirected to the authority file rather than translated. In generic prompts without an authority file, gather full styling data using the Raw Value Translation process.
