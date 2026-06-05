@@ -19,7 +19,7 @@ Quick reference for getting the best results from **Vibe Prompt Architect**, ava
 ## What it does (3 phases)
 
 1. **Gather** — asks a focused set of questions, one at a time, about your screen (fewer than it looks — low-stakes ones are inferred and just confirmed). Prefer to go fast? Paste everything you know in one message and it fills the gaps (express lane).
-2. **Clarify** — audits your answers for ambiguity, off-grid spacing, raw values, and CTA / casing / accessibility / localisation gaps, then shows you the corrections.
+2. **Clarify** — audits your answers for ambiguity, off-grid spacing, raw values, and CTA / casing / accessibility / localisation gaps, then shows you the corrections. Also reconciles what you typed against anything you attached — reads reference images and flags where they disagree with your description, and confirms typed values/names match your DESIGN.md, token file, or Figma Variables.
 3. **Generate** — outputs a structured **TC-EBC** prompt as raw Markdown in a fenced code block, ready to copy.
 
 ## What you get

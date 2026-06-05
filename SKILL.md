@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.23.0 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.23.0
+# Version: 2.24.0 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.24.0
 # Maintained in sync with vibe-prompt-architect-knowledge.md (the Gem's content file); see SYNC-MANIFEST.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.23.0 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.23.0*
+*Version 2.24.0 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.24.0*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -228,7 +228,7 @@ DESIGN.md (Google Stitch's open-source format, Apache 2.0) has two parts:
 | Typography | `typography.h1` | `--font-size-h1` |
 | Component | `components.button.background` | `--button-background` |
 
-If DESIGN.md is confirmed: skip manual token translation for values already defined in the file. Flag conflicts between user-supplied raw values and file-defined tokens; ask which takes precedence before generating.
+If DESIGN.md is confirmed: skip manual token translation for values already defined in the file. **This skill does not read the file, so reconcile by stating each assumption and confirming with the user** — when redirecting a typed raw value to a token, say so and ask the user to confirm the file actually defines that token as that value (e.g., "I'm mapping `#0057FF` → `{colors.primary}`; confirm your DESIGN.md defines `colors.primary` as this blue — if it's a different value, the file wins and your typed hex is dropped"). Surface any conflict between a typed value and a file-defined token and ask which takes precedence before generating; never silently adopt one. The generated prompt also instructs the receiving tool (which can read the file) to compare inline values against DESIGN.md and flag mismatches rather than silently preferring one.
 
 **Platform guidelines files** (`.cursorrules`, `CLAUDE.md`, etc.): instruct the prompt to reference them by name and location using the "read before generating" pattern. No special token syntax required.
 
@@ -446,7 +446,7 @@ Ask these in order. The question text below is a guide — adapt the wording nat
    - **Q1b — Component Library.** Are you using a Figma Component Library? If yes, paste the URL of the library file. *(If yes, the generated prompt will instruct the AI to import components from this library rather than building from primitives. Component Libraries can also define their own Variables — the prompt will include an instruction to inspect the library for Variable Collections and use them where applicable.)*
    - **Q1c — Variables.** Does the target Figma Design file or the Component Library include a Variable system to use? If yes, the **only thing I need is point 1** — name the Collection(s)/Group(s). Points 2–4 are optional: reply with just the Collection name if that's all you need and I'll apply the defaults (semantic tier, no exclusions, modes only if your design switches themes). Answer in one reply, not four turns:
 
-       1. **Collection(s) and Group(s) to use** *(required)* — name the Collection(s) and the Group(s) within them, and indicate whether they live in the target file, the Component Library, or both.
+       1. **Collection(s) and Group(s) to use** *(required)* — name the Collection(s) and the Group(s) within them, and indicate whether they live in the target file, the Component Library, or both. Type the names **exactly as they appear in your Figma Variables panel** — including casing and slash-grouping (e.g., `color/text/primary`). They'll be used verbatim to bind, so a misspelled or mis-cased name won't resolve at runtime.
        2. **Exclusions** *(optional — default: none)* — any Collection or Group in scope that should *not* be used on this screen (e.g., you have a "Density" Collection but this screen doesn't need density switching).
        3. **Modes** *(optional — only if this screen switches themes)* — will this screen support mode switching (e.g., Light/Dark, Density, Brand)? If yes, name the modes per Collection and identify the default mode for this screen. *Best practice: when the design uses light/dark (or other) modes, bindings must be **mode-aware** — reference the Collection rather than a specific mode value — so the screen switches correctly. Hardcoding a specific mode's value defeats the Variable system.*
        4. **Tier preference** *(optional — default: semantic)* — primitive, semantic, or component-tier Variables? *Best practice is to bind to **semantic-tier Variables** (e.g., `color/text/primary`, `color/surface/raised`) rather than primitive Variables (e.g., `color/gray/900`, `color/blue/500`). Semantic Variables preserve design intent, adapt correctly across modes, and survive primitive re-mapping.*
@@ -528,7 +528,7 @@ Use the corresponding preamble before Q9:
    - **Only Figma Variables active:** Platform, behavioral overrides, and component-level decisions. Do not specify raw styling values for categories covered by Variables — reference `{group/variable-name}` instead.
    - **Named system active:** Platform (iOS / Android / Web) and token-convention overrides using that system's naming. Do not specify raw values.
    - **None:** Any rules to lock in — platform (iOS / Android / Web), grid, spacing, accessibility needs, brand rules, color, typography, radius.
-10. **Reference Images** — Do you have any screenshots, existing screens, or inspiration images to attach alongside the prompt?
+10. **Reference Images** — Do you have any screenshots, existing screens, or inspiration images? *(For each image you share, I'll read it and describe what I see — layout, key components, colours, copy, casing — and check it against what you've told me, flagging anything that disagrees (the Reference Reconciliation flag in Phase 2 handles this). Tell me each image's role: **inspiration only** (informs style/direction, doesn't dictate the build) or **exact target** (the build should match it). I'll carry that role into the generated prompt so the receiving tool knows how literally to follow each image. If you have none, we proceed from your typed inputs.)*
 11. **Scope** *(inferred-and-confirmed — don't ask cold when derivable from the UI type at Q2)* — single component, one screen, or a multi-screen flow? Infer from Q2 (e.g., "a checkout screen" → screen) and surface it in the closing summary for confirmation; ask directly only if the UI type left scope genuinely ambiguous.
 12. **Prototype Type** *(inferred-and-confirmed — often implied by the platform)* — functional prototype (real interactions, logic, and data) or design mockup (visual fidelity and click-through flows)? Infer a default from the platform and surface it in the closing summary for confirmation; ask directly only when the platform doesn't imply one.
 13. **Acceptance Criteria** — How will you know the output succeeded? Are there specific layout, behavior, or functional requirements you'd use as a pass/fail checklist? *(If they're unsure, offer to derive AC from the Elements, Behavior, and Constraints they've already described.)*
@@ -583,6 +583,13 @@ After gathering inputs, review them before generating. Work through the flags be
 - Underspecified behaviors: "a form" without describing what happens on submit
 - Conflicting constraints: dark mode requested but brand colors not adapted
 
+### Reference Reconciliation Flag *(only when reference images were provided at Q10)*
+Reconcile the typed inputs against each reference image before generating. For every image the user shared:
+- **Describe what the image shows** — layout and structure, key components, colour treatment, copy/labels, and casing — and compare it against the gathered Elements, Behavior, Constraints, and CTA labels.
+- **Surface every conflict explicitly and let the user resolve it** — e.g., "you typed a coral primary button at top-right; the reference shows a blue button bottom-centre — which governs?" or "your copy says 'Sign Up'; the reference reads 'Create account' — which is correct?" Do not silently pick one.
+- **Respect the image's role (captured at Q10).** For an *exact target*, the build should match the image and conflicts with typed inputs are high-priority to resolve. For *inspiration only*, the image informs style/direction but the typed spec governs the build — note divergences but don't treat them as errors.
+- **Carry the outcome into the output.** Ensure the generated prompt's Reference Images section names each attachment and its role so the receiving tool knows how literally to follow it; the image is never left as a silent attachment the AI may ignore.
+
 ### CTA Flag
 Audit gathered Elements, Q5, and Q5a outputs for CTA hierarchy problems. This is a verification pass on Phase 1 inputs — not a fresh intake step. Q5a should have captured the primary action(s) and the user's intent; this flag catches gaps and conflicts that slipped through.
 - **Missing primary CTA:** Verify Q5a was answered and at least one primary action was identified. If not captured, resolve it now before generating: ask what success looks like on this screen and use the answer to identify the primary.
@@ -631,6 +638,7 @@ Audit all spacing and radius values across every gathered input field — includ
 - **If a Figma Component Library is confirmed (Q1b):** verify the generated prompt references the library URL explicitly and instructs the AI (via the `use_figma` tool) to import components from the library rather than creating equivalents from primitives. Verify that an instruction to inspect the library for embedded Variable Collections is included.
 - **If Figma Variables are confirmed (Q1c):** verify the generated prompt references the named Collection(s) and Group(s) explicitly and uses `{group/variable-name}` references in Constraints, not CSS variable convention or dot-path syntax. Verify the prompt instructs the AI to bind variables via `use_figma` rather than hardcoding values.
 - **If another guidelines file is confirmed:** instruct the prompt to reference it by name and location. Note any design rules it contains that should be explicitly restated in Constraints for tools that don't automatically read such files.
+- **Input-vs-material reconciliation:** The skill can't read token or guidelines files, so reconcile by confirmation. When a DESIGN.md or token file is active, confirm with the user that any typed value redirected to a token actually matches the file's definition (state the assumption; if it differs, the file wins and the typed value is dropped). When a guidelines file (`CLAUDE.md`, `.cursorrules`, `BRAND.md`) is named, ask which wins wherever a typed Constraint contradicts a file rule, and state that precedence explicitly in the Constraints block. Ensure the generated prompt instructs the receiving tool to reconcile-and-flag rather than silently prefer one source.
 
 ### Figma MCP Flag *(Claude Code + Figma MCP only)*
 - Verify the generated prompt includes the **mandatory `figma-use` skill prerequisite** before any `use_figma` tool call, and that the `use_figma` instruction itself is present and unambiguous.
@@ -640,6 +648,7 @@ Audit all spacing and radius values across every gathered input field — includ
 - Verify the **library Variable subscription** readiness item is present in the output's Figma MCP block when Q1b includes Variables (or the user indicated library Variables are in scope). Library-published Variables must be enabled in the target file or `use_figma` cannot bind them.
 - Verify the prompt instructs the AI to assemble the screen **incrementally section-by-section** rather than as a single monolithic `use_figma` call — this matches the figma-generate-design skill's guidance and produces better outcomes.
 - *(Direction (a) only)* Verify the prompt includes the **Make-ready construction rules** so the resulting Figma file can be reused downstream as input for Figma Make or another vibe-coded target: nested auto-layout with no Groups; Fill/Hug + Min/Max sizing; higher-order library instances that are never detached; semantic, BEM-like layer names matched to codebase component names where known; Variable-based spacing; clean layers (no ghost or 0%-opacity layers, no frame-wrapped single text layers); and native Slots where the library uses them or the screen benefits. A canvas design a downstream tool can't ingest is a generation gap — add the rules before delivering.
+- **Name reconciliation:** The user typed Collection/Group and component names and the skill can't verify they exist in the Figma file. Confirm the names are exact — casing and slash-grouping as they appear in the Variables/Assets panel — and verify the generated prompt instructs the AI to **enumerate the actual Collections/components present and reconcile them against the names listed here, reporting any name that does not resolve rather than guessing or substituting.**
 - If the user has indicated their MCP server isn't yet connected, the `figma-use` skill isn't loaded, they lack edit access to the target file, or library Variables aren't subscribed in the target file: proceed with the generated prompt as written and include the readiness warning — the user is responsible for resolving these before running.
 - Do not silently substitute CSS variable convention or DESIGN.md dot-path syntax for `{group/variable-name}` Variable references. Figma Variables are the native token authority for this scenario and must be referenced as Figma resolves them.
 - Do not silently override the user's mode, tier, or exclusion preferences. If the user specified primitive-tier or named a default mode different from the system default, surface that in the output and bind accordingly.
@@ -648,6 +657,7 @@ Audit all spacing and radius values across every gathered input field — includ
 - Make Kit authority is established by platform choice (Q1 = Figma Make). Verify the generated prompt includes the Make Kit instruction block and that no raw styling values or primitive token names appear in the Constraints block — all styling must defer to the Make Kit.
 - The Make Kit is the single source of truth for all components, styling values, and usage rules. The generated prompt must instruct Figma Make to use the Make Kit exclusively and never override its explicit instructions.
 - If the user has indicated their Make Kit is not yet set up: proceed with the generated prompt as written and include the readiness warning — the user is responsible for configuring the Make Kit before running.
+- **Element-coverage reconciliation:** Walk the gathered Elements against the Make Kit (or, for Claude Code + Figma MCP, the Component Library) and ask the user to confirm each required element has an equivalent. Surface any element with no plausible equivalent as a **pre-run readiness gap** ("your Elements include a date-picker and a stepper — confirm your Make Kit provides both, or they'll be flagged at generation time") rather than leaving it for the user to discover after a metered run. The skill can't inspect the kit's contents, so this is a confirmation, not a guarantee.
 
 ### DESIGN.md Flag *(Google Stitch only)*
 - DESIGN.md authority is established by platform choice (Q1 = Google Stitch). Verify the generated prompt includes the Design Guidelines instruction block referencing DESIGN.md and that no primitive or raw values appear in the Constraints block.
@@ -693,6 +703,8 @@ Include the L10n status and target locales in the prompt header and the Localisa
   - `- [ ] No helper text or walkthroughs are used to explain what a CTA does`
 - **Always include this casing AC item**, regardless of whether the user specified it:
   - `- [ ] All UI text uses the specified casing convention (sentence case by default); no hardcoded ALL CAPS — uppercase styling applied via text-transform`
+- **If reference images were provided (Q10), include:**
+  - `- [ ] The build matches each exact-target reference image; inspiration-only images informed style without overriding the spec`
 - **If behaviors involve transitions or animation, include this motion AC item:**
   - `- [ ] Non-essential motion is reduced or removed under prefers-reduced-motion; transitions reference motion tokens, not raw durations/easings`
 - **If L10n / I18n is required, always include these AC items:**
@@ -877,6 +889,12 @@ Deliver the prompt **in-line in the chat as raw Markdown wrapped in a fenced cod
   - Non-text content: all meaningful images and icon controls must have text alternatives
 - **Do not include:** [Explicit prohibitions if any]
 
+*[Include this section only when reference images were provided at Q10.]*
+## Reference Images
+Each image below was reviewed against this spec. Treat each according to its role:
+- **[filename / description] — [exact target / inspiration only]:** [one-line note of what it shows and, for exact targets, what to match; for inspiration-only, what to draw from]
+- Where an exact-target image and this prompt's text disagree, follow the resolution noted here (reconciled with the author before generating); do not silently choose one. Where this prompt is silent and an exact-target image is explicit, follow the image. Inspiration-only images inform style and direction but do not override the Elements, Behavior, or Constraints above.
+
 *[Include this section only when L10n / I18n is required.]*
 ## Localisation & I18n
 **Target languages / locales:** [e.g., en-US (source), de-DE, fr-FR, ar-SA, ja-JP]
@@ -895,6 +913,7 @@ Deliver the prompt **in-line in the chat as raw Markdown wrapped in a fenced cod
 Before generating any UI, read [DESIGN.md / .cursorrules / CLAUDE.md / other guidelines file] at the project root. Use it as the authoritative source for all token values — primitive, semantic, and component tiers. Reference tokens using the file's own naming convention:
 - For DESIGN.md: use dot-path syntax — `{colors.primary}`, `{spacing.lg}`, `{rounded.md}`, `{typography.h1}`, `{components.button.background}`
 - Do not override token values defined in the guidelines file with values from this prompt.
+- **Reconcile, don't silently prefer:** if any value or rule stated inline in this prompt disagrees with the guidelines file you just read (a token value, a colour, a casing or spacing rule), stop and flag the mismatch rather than quietly choosing one. The file is authoritative for token values; for any other rule, follow the precedence the author noted, or ask.
 - If a required token is absent from the file, note the gap and apply the closest defined token rather than introducing a raw value.
 
 *[Include this section only when target is Claude Code + Figma MCP AND Q1-Direction = (a) build in Figma Design. For the (b) build-code-from-Figma branch, use the "Build from Figma Reference" section below instead — never both.]*
@@ -915,6 +934,7 @@ Before generating any UI, read [DESIGN.md / .cursorrules / CLAUDE.md / other gui
 
 Create this screen in the target Figma Design file specified above by invoking the `figma-use` skill first, then calling the `use_figma` MCP tool. Specifically:
 - Invoke the `figma-use` skill before any `use_figma` call. Skipping this causes hard-to-debug failures.
+- **Reconcile names before binding.** First enumerate the Variable Collections/Groups and library components actually present in the file, and reconcile them against the names listed in this prompt. If a named Collection, Group, or component does not resolve, report it and pause rather than guessing or substituting a near-match.
 - Use `use_figma` to assemble the screen incrementally, section by section — header, hero, body sections, footer — rather than as a single monolithic call.
 - **Components:** If a Component Library URL is provided, import components from that library and instantiate them in the target file. Do not create equivalents from primitives when a library component exists. Inspect the Component Library for any Variable Collections it defines and prefer those Variables when applicable.
 - **Variables:** If Variable Collection(s)/Group(s) are listed, bind every styling property (fills, strokes, typography, spacing, radius, effects) to the appropriate Variable from the named Collection(s). Reference Variables by their Figma name in the form `{group/variable-name}` (e.g., `{color/primary}`, `{spacing/lg}`) — the Collection is named in the Variables field above, not embedded in each reference. Do not hardcode raw color, typography, spacing, or radius values for any property that has a matching Variable.
@@ -939,6 +959,7 @@ Create this screen in the target Figma Design file specified above by invoking t
 **Source Figma file/frame (Q1a-ref):** [paste read-only reference URL]
 
 Build this screen as code in the tech stack named in the Constraints block, using the Figma frame above only as the visual reference. Specifically:
+- **Source of truth & precedence:** The Figma frame is the visual source of truth. Where a Constraint or Element stated in this prompt disagrees with what the frame actually shows, **report the divergence and follow the frame unless this prompt explicitly notes the typed value wins** — do not silently choose one. Where this prompt is silent, the frame governs.
 - Read the source frame with `get_design_context` (and `get_screenshot` for visual confirmation) to extract layout, hierarchy, spacing, and content. Do not call `use_figma` and do not write anything back to Figma.
 - Generate code in the confirmed framework and styling system. If the stack is marked "to be confirmed", generate framework-neutral, semantic HTML/CSS using the generic CSS-variable tokens in the Constraints block, and leave the developer call-out intact rather than assuming React/Tailwind/shadcn.
 - Match the Figma frame's structure to your component idiom: map Figma frames/auto-layout to the stack's layout primitives (flex/grid containers, stacks, etc.).
@@ -967,6 +988,8 @@ Use the Make Kit attached to this project as the single source of truth for all 
 - [ ] Touch/pointer targets are ≥ 44×44px (iOS) / ≥ 48×48px (Android); none below the 24×24px WCAG 2.2 AA floor [AAA: ≥ 44×44px required]
 - [ ] Content reflows at 320px viewport width without horizontal scroll
 - [ ] All meaningful images and icon controls have text alternatives
+*[Include the following item only when reference images were provided at Q10:]*
+- [ ] The build matches each exact-target reference image; inspiration-only images informed style without overriding the spec
 *[Include the following item only when behaviors involve transitions or animation:]*
 - [ ] Non-essential motion is reduced or removed under prefers-reduced-motion; transitions reference motion tokens, not raw durations/easings
 *[Include the following items only when L10n / I18n is required:]*
@@ -1031,7 +1054,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **Platform neutrality.** Never suggest or favour a specific vibe-coding tool. Q1 is an open question — the user names their platform. The role of this workflow is to produce the best possible prompt for whatever platform the user has chosen.
 - **A11y and L10n are always required inputs.** Q14 (accessibility level) and Q15 (localisation scope) are mandatory on first encounter and cannot be skipped. Every product has an accessibility posture and a localisation posture, even if the answers are "AA" and "English only." Once established, both are recalled and not re-asked.
 - **Tone: professional and direct.** Communicate as a senior product designer — clear, concise, no filler, no flattery. Warm means human and collegial, not effusive. Skip preambles like "Just to note —" or "Great question." Get to the point.
-- **Phase 2 is a dependency chain, not a checklist.** The Phase 2 flags must run in order: Scope → Ambiguity → CTA → Casing → Stack → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Figma MCP → Accessibility → L10n → Acceptance Criteria → Platform. The Stack flag must precede Raw Value Translation because the resolved styling system determines token-naming convention; token corrections must precede design system verification; design system verification must precede authority file checks (Make Kit, DESIGN.md, Figma MCP); authority file checks must precede accessibility and L10n audits; all audits must precede AC generation. Reordering breaks the chain.
+- **Phase 2 is a dependency chain, not a checklist.** The Phase 2 flags must run in order: Scope → Ambiguity → Reference Reconciliation → CTA → Casing → Stack → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Figma MCP → Accessibility → L10n → Acceptance Criteria → Platform. Reference Reconciliation runs only when reference images were provided (Q10), reconciling typed inputs against them before the downstream styling/token work depends on those inputs. The Stack flag must precede Raw Value Translation because the resolved styling system determines token-naming convention; token corrections must precede design system verification; design system verification must precede authority file checks (Make Kit, DESIGN.md, Figma MCP); authority file checks must precede accessibility and L10n audits; all audits must precede AC generation. Reordering breaks the chain.
 - **Localisation is a layout constraint, not a content task.** When L10n / I18n is required, the prompt must specify target languages, string expansion headroom (up to 40% for German), text directionality (full RTL mirroring for Arabic/Hebrew), format tokens for dates/numbers/currencies, font fallback stacks for non-Latin scripts, and pluralisation support. Fixed-width text containers are a localisation risk and must be flagged.
 - **Primary actions are intentional and legible.** Prefer one dominant primary action with secondary/tertiary CTAs visually subordinate — but this is a strong default, not a hard rule. Some screens genuinely need co-equal primaries (auth entry, binary chooser, split-purpose dashboards); when the user confirms that intent, support it and make the equal treatment read as a deliberate either/or. The goal is a self-evident hierarchy that matches the user's intent, not a fixed count. Flag *unintended* equal-weight competing CTAs, never confirmed co-equal ones. Helper text and walkthroughs used to explain CTA purpose are design smells — fix the label, context, or layout instead. CTA labels must name the outcome, not the action type.
 - **WCAG 2.2 AA is the unconditional baseline.** Every generated prompt must include the full set of AA accessibility requirements in its Constraints block — specific contrast ratios, target sizes, focus visibility, reflow, and text spacing — not just a reference to "WCAG AA". AAA is opt-in via Q14 and adds enhanced contrast, 44×44px targets, and stricter text presentation rules.
@@ -1046,6 +1069,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **Token names beat raw values.** Reference design tokens and CSS variables by name (`--font-size-body`, `--color-primary`) rather than hard-coded values. Raw values like `#0057FF` or `16px` belong in the token file, not the prompt.
 - **Motion uses tokens and respects reduced-motion.** When behaviors involve transitions or animation, reference motion tokens (`--duration-fast/base/slow`, `--easing-standard/decelerate/accelerate`) rather than raw durations or easings, and instruct the AI to honour `prefers-reduced-motion`. Screens with no non-essential motion carry no motion guidance — never invent animation.
 - **Translate, don't discard.** When a user provides a raw value, convert it to the closest semantic token and tell them — or redirect it to the active authority file (Make Kit reference, DESIGN.md dot-path, or Figma Variable `{group/variable-name}` in the named Collection). Never silently drop a raw value or pass it through untranslated.
+- **Reconcile inputs against provided materials; flag, don't silently resolve.** When the user supplies context materials — reference images, a DESIGN.md or token file, a guidelines file, a Figma file/Library/Variables, a Make Kit — check their typed answers against what those materials actually contain and surface any conflict for the user to resolve. Never silently pick a winner. When materials disagree within the same category, apply this precedence ladder: **active authority file or Figma Variables > named guidelines file > reference image > typed raw value** — and state the governing source in the prompt. This skill reads text and images but not arbitrary files, so reconciliation against an unreadable file is done two ways: ask the user to confirm the material's contents match their typed values, and instruct the receiving AI to reconcile-and-flag (not silently prefer one) at runtime.
 - **Elements list is exhaustive.** Anything not listed may be omitted or hallucinated.
 - **Plan before executing.** Every generated prompt instructs the target AI to read the full prompt and outline its implementation plan before building, so it accounts for all Elements and Constraints up front rather than generating reactively and missing requirements. This instruction is always present in the output template.
 - **One screen at a time.** Break multi-screen flows into sequential prompts.

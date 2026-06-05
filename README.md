@@ -35,7 +35,10 @@ The workflow has three phases:
    inferred from context and shown in the confirmation summary rather than asked cold.
 2. **Clarify** — An automated audit of your inputs that catches ambiguity, off-grid spacing
    values, raw color/type values that need tokenising, missing CTA hierarchy, accessibility
-   risks, and localisation gaps — before the prompt is generated.
+   risks, and localisation gaps — before the prompt is generated. It also **reconciles your
+   typed answers against any materials you provide** — reading reference images and flagging
+   where they disagree with what you described, and confirming that values/names you typed
+   match your DESIGN.md, token file, or Figma Variables rather than trusting them blindly.
 3. **Generate** — A structured TC-EBC prompt (Task, Context, Elements, Behavior,
    Constraints) in **raw Markdown delivered in-line in the chat** (wrapped in a fenced
    code block) so you can copy it verbatim into your tool of choice. The output is never
@@ -100,6 +103,7 @@ Every prompt produced by this workflow includes:
 - **Constraints** — platform, 8px grid with token names, design system reference, colour/typography/spacing/radius/elevation token rows (both CSS variable and DESIGN.md dot-path), a casing convention row, a motion row when applicable, full WCAG 2.2 AA/AAA requirements with numeric values, CTA hierarchy rules, and explicit prohibitions
 
 **Conditional sections** (included only when relevant)
+- `## Reference Images` — names each attached image and its authority (exact target vs inspiration only), so the receiving tool knows how literally to follow it
 - `## Localisation & I18n` — target locales, directionality, string expansion headroom, format tokens, font fallback stacks, pluralisation requirements, pseudo-localisation guidance
 - `## Design Guidelines` — instruction for the AI to read DESIGN.md or another guidelines file before generating
 - `## Make Kit (Figma Make only)` — instruction for Figma Make to use the attached Make Kit as its sole source of truth
