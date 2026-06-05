@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.21.0 (2026-06-04) — synced with vibe-prompt-architect-knowledge.md v2.21.0
+# Version: 2.21.1 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.21.1
 # Maintained in sync with vibe-prompt-architect-knowledge.md (the Gem's content file); see SYNC-MANIFEST.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.21.0 · 2026-06-04 · Synced with `vibe-prompt-architect-knowledge.md` v2.21.0*
+*Version 2.21.1 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.21.1*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -675,7 +675,7 @@ Include the L10n status and target locales in the prompt header and the Localisa
 - If the user provided AC: check that every criterion is **binary and verifiable** — it must be possible to look at the output and say yes or no. Flag anything vague ("looks polished," "feels right") and help restate it as a checkable condition.
 - If the user skipped AC: derive a starter set from the most critical items in Elements, Behavior, and Constraints. Present these to the user for confirmation before generating.
 - **Always include at minimum these AA accessibility AC items**, regardless of whether the user specified them:
-  - `- [ ] All text/background colour combinations meet the applicable contrast ratio (4.5:1 normal, 3:1 large text)`
+  - `- [ ] All text/background colour combinations meet the applicable contrast ratio (≥ 4.5:1 normal text, ≥ 3:1 large text) [AA] / (≥ 7:1 normal, ≥ 4.5:1 large) [AAA]`
   - `- [ ] All interactive elements have a visible focus indicator`
   - `- [ ] Touch/pointer targets are ≥ 44×44px (iOS) / ≥ 48×48px (Android); none below the 24×24px WCAG 2.2 AA floor [AAA: ≥ 44×44px required]`
   - `- [ ] Content reflows at 320px viewport width without horizontal scroll`
@@ -935,7 +935,7 @@ Create this screen in the target Figma Design file specified above by invoking t
 Build this screen as code in the tech stack named in the Constraints block, using the Figma frame above only as the visual reference. Specifically:
 - Read the source frame with `get_design_context` (and `get_screenshot` for visual confirmation) to extract layout, hierarchy, spacing, and content. Do not call `use_figma` and do not write anything back to Figma.
 - Generate code in the confirmed framework and styling system. If the stack is marked "to be confirmed", generate framework-neutral, semantic HTML/CSS using the generic CSS-variable tokens in the Constraints block, and leave the developer call-out intact rather than assuming React/Tailwind/shadcn.
-- Match the Figma frame's structure to your component idiom: map Figma frames/auto-layout to the stack's layout primitives (fl/grid containers, stacks, etc.).
+- Match the Figma frame's structure to your component idiom: map Figma frames/auto-layout to the stack's layout primitives (flex/grid containers, stacks, etc.).
 - Where the Figma file uses Variables or styles, map them to the project's token names per the styling-system convention — do not hardcode raw values pulled from Figma when a token equivalent exists.
 - Flag any part of the frame you cannot faithfully reproduce in the target stack rather than silently approximating it.
 
