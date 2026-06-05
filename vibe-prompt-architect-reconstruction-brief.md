@@ -584,9 +584,9 @@ Do not "fix" these differences — they are correct.
 
 | File | Version | Last updated |
 |---|---|---|
-| SKILL.md | 2.19.0 (YAML comment + italic byline under H1) | 2026-06-04 |
-| vibe-prompt-architect-gem.md (router) | No internal marker (tracked by git/CHANGELOG; project version 2.19.0) | 2026-06-04 |
-| vibe-prompt-architect-knowledge.md | 2.19.0 | 2026-06-04 |
+| SKILL.md | 2.20.0 (YAML comment + italic byline under H1) | 2026-06-04 |
+| vibe-prompt-architect-gem.md (router) | No internal marker (tracked by git/CHANGELOG; project version 2.20.0) | 2026-06-04 |
+| vibe-prompt-architect-knowledge.md | 2.20.0 | 2026-06-04 |
 | vibe-prompt-architect-tc-ebc-primer.md | No version | 2026-06-04 |
 | CHANGELOG.md | No version (authoritative version history) | 2026-06-04 |
 | SYNC-MANIFEST.md | No version (living document) | 2026-06-03 |
@@ -677,7 +677,8 @@ Do not "fix" these differences — they are correct.
 - 2.18.4: Patch — remove four-backtick fenced code block from Gem output template. The ````markdown fence caused Gemini UI save failures. Template content preserved as plain text; Output Format delivery instruction already instructs Gemini to wrap generated output in a fenced code block. SKILL.md unchanged (fence is not a problem for Claude Code)
 - 2.18.5: Patch — replace prohibitive execution-boundary language with affirmative identity framing to prevent Gemini safety-filter false-positives. "You have no ability to execute code..." → "You are a text-only planning tool." Q1 notice "Because I cannot connect to external environments" prefix removed. Execution Boundary principle reframed in both files as "prompt author / treat platform names as destination audience"
 - 2.18.6: Split Gem into router + knowledge files. vibe-prompt-architect-gem.md is now a minimal router (~1,150 chars). vibe-prompt-architect-knowledge.md (new) contains the full v2.18.5 operating procedures as an uploaded Gem knowledge file. vibe-prompt-architect-tc-ebc-primer.md (new) contains TC-EBC framework origin and rationale (synthesized from Greg Huntoon's Figma Blog article). Router updated to specify structured Markdown prompt output. SYNC-MANIFEST session protocol updated to reference vibe-prompt-architect-knowledge.md as primary sync partner
-- 2.19.0: Tech-stack intake + Figma MCP direction gate. New Q1d/Q1e/Q1f (framework / styling system / component library) for code-generation platforms; no-assumed-stack rule (framework-neutral output + developer call-out when unknown; Figma Make is the only sanctioned implicit default — React + Tailwind + shadcn/ui + Radix). New Q1-Direction gate disambiguates build-in-Figma (a, `use_figma`) vs build-code-from-a-Figma-reference (b, `get_design_context`/`get_screenshot`, Q1a-ref), with a new "Build from Figma Reference" output section. Asset-availability confirmation at Q7 (present vs planned; never invent a style asset). New Phase 2 Stack Flag; new principles "No assumed tech stack", "Confirm assets; never invent them", "Figma MCP is bidirectional". Applied to both SKILL.md and the knowledge file
+- 2.19.0: Tech-stack intake + Figma MCP direction gate. New Q1d/Q1e/Q1f (framework / styling system / component library) for code-generation platforms; no-assumed-stack rule (framework-neutral output + developer call-out when unknown; Figma Make is the only sanctioned implicit default — React + Tailwind + shadcn/ui + Radix). New Q1-Direction gate disambiguates build-in-Figma (a, `use_figma`) vs build-code-from-a-Figma-reference (b, `get_design_context`/`get_screenshot`, Q1a-ref), with a new "Build from Figma Reference" output section. Asset-availability confirmation at Q7 (present vs planned; never invent a style asset). New Phase 2 Stack Flag; new principles "No assumed tech stack", "Confirm assets; never invent them", "Figma MCP is bidirectional". Applied to both SKILL.md and the knowledge file. (Router follow-up: line 5 reduced to a single naming sentence to clear the Gem instruction-box save filter.)
+- 2.20.0: Plan-before-executing instruction added to every generated prompt — a standing blockquote after the header (before Task) telling the target AI to read the full prompt, outline an implementation plan, confirm coverage of every Element and Constraint, and not build until the plan is complete. New "Plan before executing" principle in both files. Output template + principles only; router unchanged
 
 ---
 

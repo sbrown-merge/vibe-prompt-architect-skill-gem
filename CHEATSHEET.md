@@ -25,6 +25,7 @@ Quick reference for getting the best results from **Vibe Prompt Architect**, ava
 ## What you get
 
 - A **TC-EBC prompt** (Task · Context · Elements · Behavior · Constraints) plus a pre-filled **Acceptance Criteria** checklist.
+- A **plan-first instruction** at the top telling your target tool to read the whole prompt and plan before it builds.
 - Delivered as **raw Markdown in the chat** — copy it verbatim; never a file, canvas, or doc.
 - **Built-in quality** applied automatically (see below) — you don't have to ask for it.
 

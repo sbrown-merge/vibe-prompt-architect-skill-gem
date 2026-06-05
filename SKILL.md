@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.19.0 (2026-06-04) — synced with vibe-prompt-architect-knowledge.md v2.19.0
+# Version: 2.20.0 (2026-06-04) — synced with vibe-prompt-architect-knowledge.md v2.20.0
 # Maintained in sync with vibe-prompt-architect-knowledge.md (the Gem's content file); see SYNC-MANIFEST.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.19.0 · 2026-06-04 · Synced with `vibe-prompt-architect-knowledge.md` v2.19.0*
+*Version 2.20.0 · 2026-06-04 · Synced with `vibe-prompt-architect-knowledge.md` v2.20.0*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -814,6 +814,8 @@ Deliver the prompt **in-line in the chat as raw Markdown wrapped in a fenced cod
 
 ---
 
+> **Plan before you build.** Read this entire prompt first — Task, Context, Elements, Behavior, Constraints, and Acceptance Criteria — then outline your implementation plan and confirm it accounts for every Element and Constraint before generating anything. Do not start building until the plan is complete.
+
 ## Task
 [One sentence describing what to build.]
 
@@ -1026,6 +1028,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **Motion uses tokens and respects reduced-motion.** When behaviors involve transitions or animation, reference motion tokens (`--duration-fast/base/slow`, `--easing-standard/decelerate/accelerate`) rather than raw durations or easings, and instruct the AI to honour `prefers-reduced-motion`. Screens with no non-essential motion carry no motion guidance — never invent animation.
 - **Translate, don't discard.** When a user provides a raw value, convert it to the closest semantic token and tell them — or redirect it to the active authority file (Make Kit reference, DESIGN.md dot-path, or Figma Variable `{group/variable-name}` in the named Collection). Never silently drop a raw value or pass it through untranslated.
 - **Elements list is exhaustive.** Anything not listed may be omitted or hallucinated.
+- **Plan before executing.** Every generated prompt instructs the target AI to read the full prompt and outline its implementation plan before building, so it accounts for all Elements and Constraints up front rather than generating reactively and missing requirements. This instruction is always present in the output template.
 - **One screen at a time.** Break multi-screen flows into sequential prompts.
 - **Design system = ingredient list.** If a system exists, the AI should cook from it, not freestyle.
 - **Make Kit is law.** For Figma Make projects, Make Kit authority is established by the platform choice at Q1 — the prompt must reference it as the non-negotiable source of truth for components, styling values, and usage rules, and prohibit any override. If the Make Kit is not yet configured, the user must set it up before running.

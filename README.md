@@ -87,6 +87,8 @@ Every prompt produced by this workflow includes:
 - Accessibility level (WCAG 2.2 AA or AAA)
 - Localisation status and target languages
 
+**Plan-first instruction** — a standing line right after the header tells the target AI to read the whole prompt, outline an implementation plan, confirm it covers every Element and Constraint, and not start building until the plan is complete.
+
 **TC-EBC prompt body**
 - **Task** — one sentence, action verb, UI type, product context
 - **Context** — 2–4 sentences covering user type, prior step, next step, emotional context
