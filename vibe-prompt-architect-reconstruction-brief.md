@@ -584,9 +584,10 @@ Do not "fix" these differences — they are correct.
 
 | File | Version | Last updated |
 |---|---|---|
-| SKILL.md | 2.20.0 (YAML comment + italic byline under H1) | 2026-06-04 |
-| vibe-prompt-architect-gem.md (router) | No internal marker (tracked by git/CHANGELOG; project version 2.20.0) | 2026-06-04 |
-| vibe-prompt-architect-knowledge.md | 2.20.0 | 2026-06-04 |
+| SKILL.md | 2.21.0 (YAML comment + italic byline under H1) | 2026-06-04 |
+| vibe-prompt-architect-gem.md (router) | No internal marker (tracked by git/CHANGELOG; project version 2.21.0) | 2026-06-04 |
+| vibe-prompt-architect-knowledge.md | 2.21.0 | 2026-06-04 |
+| Figma Design to Figma Make Best Practices (Mid-2026 Update).md | 2.0.0 (doc's own version; FILE-SPECIFIC reference) | 2026-06-04 |
 | vibe-prompt-architect-tc-ebc-primer.md | No version | 2026-06-04 |
 | CHANGELOG.md | No version (authoritative version history) | 2026-06-04 |
 | SYNC-MANIFEST.md | No version (living document) | 2026-06-03 |
@@ -679,6 +680,7 @@ Do not "fix" these differences — they are correct.
 - 2.18.6: Split Gem into router + knowledge files. vibe-prompt-architect-gem.md is now a minimal router (~1,150 chars). vibe-prompt-architect-knowledge.md (new) contains the full v2.18.5 operating procedures as an uploaded Gem knowledge file. vibe-prompt-architect-tc-ebc-primer.md (new) contains TC-EBC framework origin and rationale (synthesized from Greg Huntoon's Figma Blog article). Router updated to specify structured Markdown prompt output. SYNC-MANIFEST session protocol updated to reference vibe-prompt-architect-knowledge.md as primary sync partner
 - 2.19.0: Tech-stack intake + Figma MCP direction gate. New Q1d/Q1e/Q1f (framework / styling system / component library) for code-generation platforms; no-assumed-stack rule (framework-neutral output + developer call-out when unknown; Figma Make is the only sanctioned implicit default — React + Tailwind + shadcn/ui + Radix). New Q1-Direction gate disambiguates build-in-Figma (a, `use_figma`) vs build-code-from-a-Figma-reference (b, `get_design_context`/`get_screenshot`, Q1a-ref), with a new "Build from Figma Reference" output section. Asset-availability confirmation at Q7 (present vs planned; never invent a style asset). New Phase 2 Stack Flag; new principles "No assumed tech stack", "Confirm assets; never invent them", "Figma MCP is bidirectional". Applied to both SKILL.md and the knowledge file. (Router follow-up: line 5 reduced to a single naming sentence to clear the Gem instruction-box save filter.)
 - 2.20.0: Plan-before-executing instruction added to every generated prompt — a standing blockquote after the header (before Task) telling the target AI to read the full prompt, outline an implementation plan, confirm coverage of every Element and Constraint, and not build until the plan is complete. New "Plan before executing" principle in both files. Output template + principles only; router unchanged
+- 2.21.0: Make-ready Figma construction rules for the Claude Code + Figma MCP build-in-Figma branch (direction (a)). The (a)-branch output section gains a "Make-ready construction" sub-block (nested auto-layout/no-Groups, Fill-Hug-Min/Max, higher-order library instances/no-detach, semantic codebase-synced BEM-like naming, Variable-based spacing, layer hygiene, native Slots when applicable, Make-ready test) so screens created on the Figma canvas can be reused as input for Figma Make or other vibe-coded targets. Phase 2 Figma MCP Flag + (a)-branch AC items (expanded 3→5) verify it; new "Figma Design output must be Make-ready" principle. Source: the tracked reference doc "Using Figma Design with Figma Make Best Practices" (v2.0.0). Workflow/runtime practices from the doc intentionally omitted. Output template + flags + principle only; router unchanged
 
 ---
 

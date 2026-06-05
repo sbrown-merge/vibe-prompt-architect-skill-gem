@@ -70,7 +70,7 @@ specific support for:
 |---|---|
 | **Figma Make** | Detects and enforces Make Kit as the sole source of truth for components and styling when one is attached |
 | **Google Stitch** | Detects and enforces DESIGN.md as the authoritative token source; uses dot-path token references (`{colors.primary}`, `{spacing.lg}`, `{rounded.md}`) |
-| **Claude Code + Figma MCP** | First asks the **build direction**: (a) create the screen directly in Figma Design via `use_figma`, or (b) build code in your project using a Figma frame as a read-only reference (`get_design_context` / `get_screenshot`). Branch (a) captures the target Figma file/page URL, an optional Component Library URL, and any Variable Collections/Groups (with modes, default mode for the screen, tier preference, and exclusions), and includes the mandatory `figma-use` skill prerequisite plus an explicit `use_figma` instruction block; Variable references use literal Figma form `{group/variable-name}`. Branch (b) captures the source Figma URL plus your tech stack and produces read-from-Figma/write-to-code instructions with no `use_figma` |
+| **Claude Code + Figma MCP** | First asks the **build direction**: (a) create the screen directly in Figma Design via `use_figma`, or (b) build code in your project using a Figma frame as a read-only reference (`get_design_context` / `get_screenshot`). Branch (a) captures the target Figma file/page URL, an optional Component Library URL, and any Variable Collections/Groups (with modes, default mode for the screen, tier preference, and exclusions), and includes the mandatory `figma-use` skill prerequisite plus an explicit `use_figma` instruction block; Variable references use literal Figma form `{group/variable-name}`. Branch (a) also enforces **Make-ready construction** — nested auto-layout (no Groups), Fill/Hug + Min/Max sizing, higher-order library instances (never detached), semantic codebase-synced layer names, clean layers, and native Slots where useful — so the screen it creates on the Figma canvas can be reused as input for Figma Make or other vibe-coded projects. Branch (b) captures the source Figma URL plus your tech stack and produces read-from-Figma/write-to-code instructions with no `use_figma` |
 | **Cursor, Claude Code (generic), WordPress, and other code targets** | Asks your tech stack (framework, styling system, component library) and writes the prompt to match it — no assumed framework or library; references platform guidelines files (`.cursorrules`, `CLAUDE.md`) using the "read before generating" pattern when present |
 | **All other tools** | Platform-neutral token and constraint format using CSS variable convention (`--color-primary`, `--space-lg`); no framework or component library assumed unless you name one |
 
@@ -272,11 +272,15 @@ All four value categories have translation tables:
 
 | File | Purpose |
 |---|---|
-| `SKILL.md` | Claude Skill — drop into your Skills directory. Carries a version marker (YAML comment + italic byline under H1) matching the Gem |
-| `vibe-prompt-architect-gem.md` | Gemini Gem instructions — paste into a new Gem |
+| `SKILL.md` | Claude Skill — drop into your Skills directory. Carries a version marker (YAML comment + italic byline under H1) matching the knowledge file |
+| `vibe-prompt-architect-gem.md` | Gemini Gem **router** — the minimal instruction text pasted into a new Gem's instruction box; points at the knowledge files |
+| `vibe-prompt-architect-knowledge.md` | Gemini Gem **knowledge file** — the full operating procedures, uploaded as a Gem attachment. This is the content sync partner with `SKILL.md` |
+| `vibe-prompt-architect-tc-ebc-primer.md` | Gemini Gem **knowledge file** — the TC-EBC framework origin and rationale, uploaded as a second Gem attachment |
+| `Figma Design to Figma Make Best Practices (Mid-2026 Update).md` | Reference doc — source of record for the Make-ready Figma construction rules used by the Claude Code + Figma MCP build-in-Figma branch. Not attached to the Gem |
+| `CHANGELOG.md` | Authoritative version history for both the Skill and the Gem |
 | `CHEATSHEET.md` | User cheat sheet — a ~5-minute reference covering what the Skill/Gem does, what to prepare, the intake at a glance, built-in quality, and tips for a better session |
 | `SYNC-MANIFEST.md` | Maintenance document — section map, feature touch map, pre-commit checklist, and intentional differences list for keeping the two implementation files in sync |
-| `vibe-prompt-architect-reconstruction-brief.md` | Reconstruction brief — design authority for rebuilding the file set from scratch in a new Claude session, or for onboarding a collaborator. Explains the *why* alongside the four content files' *what* |
+| `vibe-prompt-architect-reconstruction-brief.md` | Reconstruction brief — design authority for rebuilding the file set from scratch in a new Claude session, or for onboarding a collaborator. Explains the *why* alongside the content files' *what* |
 | `README.md` | This file |
 
 ---

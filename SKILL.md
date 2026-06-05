@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.20.0 (2026-06-04) — synced with vibe-prompt-architect-knowledge.md v2.20.0
+# Version: 2.21.0 (2026-06-04) — synced with vibe-prompt-architect-knowledge.md v2.21.0
 # Maintained in sync with vibe-prompt-architect-knowledge.md (the Gem's content file); see SYNC-MANIFEST.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.20.0 · 2026-06-04 · Synced with `vibe-prompt-architect-knowledge.md` v2.20.0*
+*Version 2.21.0 · 2026-06-04 · Synced with `vibe-prompt-architect-knowledge.md` v2.21.0*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -633,6 +633,7 @@ Audit all spacing and radius values across every gathered input field — includ
 - Verify the **Variable details** captured at Q1c are all carried into the output template's Figma MCP block: modes per Collection + default mode (Q1c.3), tier preference with semantic as default (Q1c.4), and exclusions (Q1c.2). Each gets its own line in the block plus a matching instruction bullet.
 - Verify the **library Variable subscription** readiness item is present in the output's Figma MCP block when Q1b includes Variables (or the user indicated library Variables are in scope). Library-published Variables must be enabled in the target file or `use_figma` cannot bind them.
 - Verify the prompt instructs the AI to assemble the screen **incrementally section-by-section** rather than as a single monolithic `use_figma` call — this matches the figma-generate-design skill's guidance and produces better outcomes.
+- *(Direction (a) only)* Verify the prompt includes the **Make-ready construction rules** so the resulting Figma file can be reused downstream as input for Figma Make or another vibe-coded target: nested auto-layout with no Groups; Fill/Hug + Min/Max sizing; higher-order library instances that are never detached; semantic, BEM-like layer names matched to codebase component names where known; Variable-based spacing; clean layers (no ghost or 0%-opacity layers, no frame-wrapped single text layers); and native Slots where the library uses them or the screen benefits. A canvas design a downstream tool can't ingest is a generation gap — add the rules before delivering.
 - If the user has indicated their MCP server isn't yet connected, the `figma-use` skill isn't loaded, they lack edit access to the target file, or library Variables aren't subscribed in the target file: proceed with the generated prompt as written and include the readiness warning — the user is responsible for resolving these before running.
 - Do not silently substitute CSS variable convention or DESIGN.md dot-path syntax for `{group/variable-name}` Variable references. Figma Variables are the native token authority for this scenario and must be referenced as Figma resolves them.
 - Do not silently override the user's mode, tier, or exclusion preferences. If the user specified primitive-tier or named a default mode different from the system default, surface that in the output and bind accordingly.
@@ -695,10 +696,12 @@ Include the L10n status and target locales in the prompt header and the Localisa
   - `- [ ] RTL layout is fully mirrored for Arabic/Hebrew/Persian locales (if in scope)`
   - `- [ ] Font fallback stack covers all script systems in scope`
   - `- [ ] Count-dependent strings use pluralisation tokens`
-- **If Claude Code + Figma MCP is the platform, always include:**
+- **If Claude Code + Figma MCP with Q1-Direction = (a) build in Figma Design, always include:**
   - `- [ ] Screen is created in the target Figma Design file/page specified at Q1a`
-  - `- [ ] Frames, sections, and component instances are descriptively named`
-  - `- [ ] Auto-layout is used for all container nodes with a directional flow`
+  - `- [ ] Every container uses auto-layout (no Groups); sizing uses Fill/Hug with Min/Max safety rails where needed`
+  - `- [ ] Frames, sections, and component instances are named semantically (BEM-like) and matched to codebase component names where known`
+  - `- [ ] Components are library instances (not detached); no ghost or 0%-opacity layers remain`
+  - `- [ ] The frame is Make-ready — reusable as input for Figma Make or another vibe-coded target`
 - **If a Figma Component Library was provided (Q1b), additionally include:**
   - `- [ ] All components that have a Component Library equivalent are instantiated from the library, not built from primitives`
   - `- [ ] Any element with no Component Library equivalent is flagged in the file rather than substituted silently`
@@ -912,8 +915,15 @@ Create this screen in the target Figma Design file specified above by invoking t
 - **Tier preference:** Prefer **semantic-tier Variables** (e.g., `{color/text/primary}`, `{color/surface/raised}`) over primitive Variables (e.g., `{color/gray/900}`, `{color/blue/500}`) wherever both exist for the same role. Semantic Variables preserve design intent, adapt correctly across modes, and survive primitive re-mapping. Bind to primitives only when no semantic equivalent exists or the user explicitly requested primitive-tier binding.
 - **Modes:** If Variable Collections include modes (e.g., Light/Dark, Density, Brand), bindings **must be mode-aware** — reference the Collection so Figma resolves the active mode at render time. Never hardcode a specific mode's value; doing so defeats the Variable system and breaks mode switching. Honor the default mode named for this screen.
 - **Exclusions:** Do not bind to any Collection or Group listed in the Variable exclusions field above, even if a matching Variable exists. Treat exclusions as hard prohibitions.
-- **Auto-layout:** Use Figma auto-layout for all container nodes that have a sensible directional flow. Avoid absolute positioning except for genuinely free-form content.
-- **Naming:** Name frames, sections, and components descriptively (e.g., `Header`, `Card / Product`, `CTA / Primary`) so the resulting file is navigable.
+**Make-ready construction (build the file so it can later feed Figma Make or another vibe-coded target):**
+- **Auto-layout (required):** Build every container with nested Figma auto-layout — stacks that express clear vertical/horizontal relationships. Never use Groups; they carry no layout logic. Use absolute positioning only for small flourishes (e.g., a notification badge), never for core layout, or downstream tools can't flow content into the frame.
+- **Sizing:** Use Fill Container and Hug Contents to declare which elements are flexible vs. content-driven, and set Min/Max dimensions as safety rails so generated elements can't collapse or balloon.
+- **Higher-order instances:** Assemble the screen from complete, higher-order compositions (full cards, headers, rows) as instances of library components — not loose atomic primitives. Never detach instances; detaching severs the link to the design system's rules and properties.
+- **Naming:** Name every frame, section, and layer semantically and BEM-like (e.g., `Card / Header / Title`). Where the engineering component is known, match its name exactly (e.g., `FormItem / Input / Select`) so MCP can map the design to code components. The layer tree should read like clean code.
+- **Variable-based spacing:** Apply spacing and padding from Variables (not raw values) so the generated frames keep the design system's rhythm, in addition to the semantic, mode-aware Variable bindings described above.
+- **Hygiene:** Leave no ghost layers — delete hidden layers and anything at 0% opacity (downstream tools still "see" them, producing phantom spacing and hallucinated elements). Do not wrap individual text layers in frames (it emits unnecessary wrapper `<div>`s downstream and hinders text editing); use a wrapping frame only for genuine padding/spacing.
+- **Slots:** When the referenced Component Library uses native Slot properties, instantiate and fill those slots rather than rebuilding the content; and when the screen has reusable templated regions that would benefit from slots, define native Slot properties with curated Preferred Instances and quality default content, keeping slot nesting to 2–3 levels at most.
+- **Make-ready test:** The finished frame must be reusable as input for Figma Make or another vibe-coded target. Sanity check: if a junior developer who couldn't read the labels could rebuild it from the layer panel alone, the auto-layout and naming are right.
 - If a required element has no Component Library equivalent and no matching Variable, build it from primitives using the closest semantic token names from the Constraints block — and flag the gap rather than substituting silently.
 
 *[Include this section only when target is Claude Code + Figma MCP AND Q1-Direction = (b) build code from a Figma reference. Never include this together with the "Build in Figma Design" section above.]*
@@ -962,8 +972,10 @@ Use the Make Kit attached to this project as the single source of truth for all 
 - [ ] Count-dependent strings use pluralisation tokens
 *[Include the following items only when target is Claude Code + Figma MCP AND Q1-Direction = (a) build in Figma Design:]*
 - [ ] Screen is created in the target Figma Design file/page specified at Q1a
-- [ ] Frames, sections, and component instances are descriptively named
-- [ ] Auto-layout is used for all container nodes with a directional flow
+- [ ] Every container uses auto-layout (no Groups); sizing uses Fill/Hug with Min/Max safety rails where needed
+- [ ] Frames, sections, and component instances are named semantically (BEM-like) and matched to codebase component names where known
+- [ ] Components are library instances (not detached); no ghost or 0%-opacity layers remain
+- [ ] The frame is Make-ready — reusable as input for Figma Make or another vibe-coded target
 *[Include the following items only when target is Claude Code + Figma MCP AND Q1-Direction = (b) build code from a Figma reference:]*
 - [ ] Code is generated in the tech stack named in Constraints; nothing is written back to Figma
 - [ ] The source Figma frame (Q1a-ref) is read via `get_design_context`/`get_screenshot`, not modified
@@ -1022,6 +1034,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **No assumed tech stack.** For any platform that produces code, the framework, styling system, and component library come from the user (Q1d/Q1e/Q1f) — never from a default. The only sanctioned implicit stack is Figma Make's React + Tailwind + shadcn/ui + Radix (its real generation stack, governed by the Make Kit and overridable). When any part is unspecified, the prompt stays framework-neutral, uses generic CSS-variable tokens, emits no Tailwind classes or library-specific component names, and carries a "Tech stack — to be confirmed by developer" call-out. Do not infer React/Tailwind/shadcn from silence.
 - **Confirm assets; never invent them.** Any token file, guidelines file, or Figma Variable/Library referenced in a prompt must be one the user actually named, and its availability must be confirmed (present-and-ready vs. planned). A planned-but-absent asset becomes a readiness call-out, not a hard reference. The skill must never reference a `DESIGN.md`, `tokens.json`, or other style asset the user did not name.
 - **Figma MCP is bidirectional; the direction gate decides routing.** Claude Code + Figma MCP can either build a screen *in* Figma Design (direction (a) — `use_figma`) or build code *from* a Figma reference (direction (b) — `get_design_context`/`get_screenshot`). The Q1-Direction follow-up resolves which before any other Figma follow-up. On (a), the generated prompt must include the `figma-use` skill prerequisite, an explicit `use_figma` tool-call instruction, the target Figma Design file or page URL (Q1a), and any Component Library URL (Q1b) and Variable Collection(s)/Group(s) (Q1c) the user provided. The target file URL is required — without it, the AI has no destination. Component Library and Variables are optional; each, when present, narrows Q9 (Constraints) by suppressing the corresponding category of intake. Variable references in Constraints and Elements must use `{group/variable-name}` form, not CSS variable convention or DESIGN.md dot-path syntax. **Two best-practice defaults are enforced for Variable bindings:** (1) **semantic-tier Variables are preferred over primitive-tier** because semantic Variables preserve design intent and adapt across modes — bind to primitives only when no semantic equivalent exists or the user explicitly requested primitive-tier; (2) **bindings are mode-aware** when Collections include modes (Light/Dark, Density, Brand) — reference the Collection so Figma resolves the active mode at render time, never hardcode a specific mode's value. Both defaults apply unless the user explicitly overrides them at Q1c.
+- **Figma Design output must be Make-ready.** On the build-in-Figma branch (direction (a)), the generated prompt must instruct the AI to construct the screen so it can be reused downstream as input for Figma Make or another vibe-coded target — never a one-off canvas drawing. That means: nested auto-layout everywhere (never Groups); Fill/Hug + Min/Max sizing; higher-order compositions as library instances that are never detached; semantic, BEM-like layer names matched to codebase component names where known so MCP can map design to code; Variable-based spacing and semantic, mode-aware Variable bindings; clean layers (no ghost or 0%-opacity layers, no frame-wrapped single text layers); and native Slots where the referenced library uses them or the screen benefits. A design a downstream tool can't ingest is a failed output, not a finished one.
 - **8px grid is the default.** All spacing and radius values must land on the 8px base grid, or the 4px microgrid for fine-grained contexts. Off-grid values are rounded to the nearest 4px multiple, corrected before tokenisation, and the user is informed of the change.
 - **Sentence case by default.** All UI text uses sentence case ("Create account", "Account settings") unless the user sets another convention at Q16, which is recalled across sessions. ALL CAPS is reserved for short overline/eyebrow labels and applied via `text-transform: uppercase`, never hardcoded — hardcoded capitals break accessible names and localisation source strings. all-lowercase and Title Case are deliberate brand choices, not defaults.
 - **Token names beat raw values.** Reference design tokens and CSS variables by name (`--font-size-body`, `--color-primary`) rather than hard-coded values. Raw values like `#0057FF` or `16px` belong in the token file, not the prompt.
