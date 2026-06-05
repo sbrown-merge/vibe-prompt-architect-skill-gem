@@ -30,6 +30,9 @@ The workflow has three phases:
    prompt stays framework-neutral and leaves a developer call-out rather than guessing. For
    Claude Code + Figma MCP it first asks **which direction** you want: build the screen
    directly in Figma Design, or build code in your project using a Figma frame as reference.
+   To keep the intake short you can take an **express lane** (paste everything you know in one
+   message and it fills the gaps), and low-stakes inputs — scope, prototype type, casing — are
+   inferred from context and shown in the confirmation summary rather than asked cold.
 2. **Clarify** — An automated audit of your inputs that catches ambiguity, off-grid spacing
    values, raw color/type values that need tokenising, missing CTA hierarchy, accessibility
    risks, and localisation gaps — before the prompt is generated.

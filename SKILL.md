@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.22.0 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.22.0
+# Version: 2.23.0 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.23.0
 # Maintained in sync with vibe-prompt-architect-knowledge.md (the Gem's content file); see SYNC-MANIFEST.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.22.0 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.22.0*
+*Version 2.23.0 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.23.0*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -49,6 +49,8 @@ Work through the questions below **one at a time**. Ask one question, then stop 
 ### Cadence Rules
 - **One question per turn.** Never combine multiple questions in a single message.
 - **Pre-populate from context.** If the user's opening message already answers a question, record that answer and skip to the next unanswered one.
+- **Offer an express lane once, up front.** Before Q1, offer briefly: "We can go one question at a time, or you can paste everything you already know in one message and I'll fill the gaps and confirm." If the user front-loads details, pre-populate every answered question and ask only what's missing. This is the same philosophy as pre-populate, made explicit and offered proactively.
+- **Infer-and-confirm low-stakes inputs.** For Scope (Q11), Prototype Type (Q12), and Casing (Q16), don't ask cold when the answer is reasonably inferable: derive a sensible default — Scope from the UI type at Q2 (e.g., "a checkout screen" → screen), Prototype Type from the platform, Casing = sentence case — and surface it in the closing summary marked "(inferred)" for the user to confirm or correct. Ask the question directly only when you can't infer with reasonable confidence.
 - **Skip/next handling.** If the user replies with "next", "skip", "pass", "N/A", or anything indicating they want to move on, record the input as unspecified and advance. **Exception: Q14 (Accessibility Level) and Q15 (Localisation) are mandatory on first encounter and cannot be skipped.** If the user tries to skip either, acknowledge the request, explain briefly why the answer is required ("Accessibility level and localisation scope are required inputs — they affect the generated prompt's constraints and AC checklist"), and re-ask the question. Once answered in a session, both are recalled and not re-asked.
 - **Clarify in-line.** If a reply is ambiguous, ask a single follow-up before moving on.
 - **No backtracking pressure.** If a user skips a question, don't return to it unless they raise it themselves.
@@ -442,12 +444,12 @@ Ask these in order. The question text below is a guide — adapt the wording nat
 
    - **Q1a — Figma target.** Paste the URL of the Figma Design file or page where the screen should be created. *(Required. The URL must point to a file you have edit access to. A page-level URL — `?node-id=...` — is preferred over a bare file URL so the screen lands in the right place.)*
    - **Q1b — Component Library.** Are you using a Figma Component Library? If yes, paste the URL of the library file. *(If yes, the generated prompt will instruct the AI to import components from this library rather than building from primitives. Component Libraries can also define their own Variables — the prompt will include an instruction to inspect the library for Variable Collections and use them where applicable.)*
-   - **Q1c — Variables.** Does the target Figma Design file or the Component Library include a Variable system to use? If yes, please specify all four points below in your reply — they're one question about Variables, not four turns:
+   - **Q1c — Variables.** Does the target Figma Design file or the Component Library include a Variable system to use? If yes, the **only thing I need is point 1** — name the Collection(s)/Group(s). Points 2–4 are optional: reply with just the Collection name if that's all you need and I'll apply the defaults (semantic tier, no exclusions, modes only if your design switches themes). Answer in one reply, not four turns:
 
-       1. **Collection(s) and Group(s) to use** — name the Collection(s) and the Group(s) within them, and indicate whether they live in the target file, the Component Library, or both.
-       2. **Exclusions** *(optional)* — any Collection or Group in scope that should *not* be used on this screen (e.g., you have a "Density" Collection but this screen doesn't need density switching).
-       3. **Modes** — will this screen support mode switching (e.g., Light/Dark, Density, Brand)? If yes, name the modes per Collection and identify the default mode for this screen. *Best practice: if the design will use modes for light and dark themes, bindings must be **mode-aware** — reference the Collection rather than a specific mode value — so the screen switches correctly when the user changes mode. Hardcoding a specific mode's value defeats the Variable system.*
-       4. **Tier preference** *(optional)* — primitive, semantic, or component-tier Variables? *Best practice is to bind to **semantic-tier Variables** (e.g., `color/text/primary`, `color/surface/raised`) rather than primitive Variables (e.g., `color/gray/900`, `color/blue/500`). Semantic Variables preserve design intent, adapt correctly across modes, and survive primitive re-mapping. If you don't specify, semantic is assumed.*
+       1. **Collection(s) and Group(s) to use** *(required)* — name the Collection(s) and the Group(s) within them, and indicate whether they live in the target file, the Component Library, or both.
+       2. **Exclusions** *(optional — default: none)* — any Collection or Group in scope that should *not* be used on this screen (e.g., you have a "Density" Collection but this screen doesn't need density switching).
+       3. **Modes** *(optional — only if this screen switches themes)* — will this screen support mode switching (e.g., Light/Dark, Density, Brand)? If yes, name the modes per Collection and identify the default mode for this screen. *Best practice: when the design uses light/dark (or other) modes, bindings must be **mode-aware** — reference the Collection rather than a specific mode value — so the screen switches correctly. Hardcoding a specific mode's value defeats the Variable system.*
+       4. **Tier preference** *(optional — default: semantic)* — primitive, semantic, or component-tier Variables? *Best practice is to bind to **semantic-tier Variables** (e.g., `color/text/primary`, `color/surface/raised`) rather than primitive Variables (e.g., `color/gray/900`, `color/blue/500`). Semantic Variables preserve design intent, adapt correctly across modes, and survive primitive re-mapping.*
 
        *(Figma Variables are the token authority for this scenario. If neither this file nor the Component Library provides Variables, Q7 will handle the styling source.)*
 
@@ -473,6 +475,8 @@ Ask these in order. The question text below is a guide — adapt the wording nat
    - A **design token file** (e.g., a `tokens.json` / Style Dictionary / W3C design-tokens export)
    - A **platform-specific guidelines file** (e.g., Cursor's `.cursorrules`, Claude Code's `CLAUDE.md`, or any other agent instructions file that includes design rules)
    - **None** — tokens will be specified manually or left to AI discretion
+
+   *Bridge from the stack questions — avoid re-asking:* The component library and styling system were already captured at Q1f and Q1e; Q7 is **only** about a separate file or published spec that defines token *values*. If Q1f named a library that ships its own tokens (shadcn/ui, MUI, Chakra), assume tokens come from that library and ask Q7 as a quick confirmation ("Tokens come from [library] unless you have a separate token/guidelines file — anything else?") rather than a cold question. If both Q1e (styling system) and Q7 (a named spec) imply a token-naming convention, surface the precedence to the user once — the Q1e styling-system convention leads, the Q7 spec fills gaps — rather than resolving it silently.
 
    **Asset-availability confirmation — required whenever the user names any file or external token source at Q7 (or names Figma Variables/Library at Q1b/Q1c).** Before treating a `DESIGN.md`, `tokens.json`, guidelines file, or Figma Variable/Library as authoritative, confirm it actually exists and will be present when the prompt runs: ask "Is that file already in the project (or will it be) when you run this prompt?" — present-and-ready, or planned-but-not-yet. If the user confirms it is present, reference it normally. If it is planned, unsure, or not yet created, **do not reference it as if it exists** — instead carry it as a readiness call-out in the generated prompt ("⚠️ This prompt assumes `DESIGN.md` at the project root; create it before running or the AI will fall back to its own token choices"). **Never invent a style asset the user did not name** — if no token file or guidelines file was named, the prompt must not reference a `DESIGN.md`, `tokens.json`, or any other file.
 
@@ -525,37 +529,39 @@ Use the corresponding preamble before Q9:
    - **Named system active:** Platform (iOS / Android / Web) and token-convention overrides using that system's naming. Do not specify raw values.
    - **None:** Any rules to lock in — platform (iOS / Android / Web), grid, spacing, accessibility needs, brand rules, color, typography, radius.
 10. **Reference Images** — Do you have any screenshots, existing screens, or inspiration images to attach alongside the prompt?
-11. **Scope** — Are you targeting a single component, one screen, or a multi-screen flow?
-12. **Prototype Type** — Are you building a functional prototype (real interactions, logic, and data) or a design mockup (visual fidelity and click-through flows)?
+11. **Scope** *(inferred-and-confirmed — don't ask cold when derivable from the UI type at Q2)* — single component, one screen, or a multi-screen flow? Infer from Q2 (e.g., "a checkout screen" → screen) and surface it in the closing summary for confirmation; ask directly only if the UI type left scope genuinely ambiguous.
+12. **Prototype Type** *(inferred-and-confirmed — often implied by the platform)* — functional prototype (real interactions, logic, and data) or design mockup (visual fidelity and click-through flows)? Infer a default from the platform and surface it in the closing summary for confirmation; ask directly only when the platform doesn't imply one.
 13. **Acceptance Criteria** — How will you know the output succeeded? Are there specific layout, behavior, or functional requirements you'd use as a pass/fail checklist? *(If they're unsure, offer to derive AC from the Elements, Behavior, and Constraints they've already described.)*
 14. **Accessibility Level** *(mandatory — cannot be skipped)* — The prompt will target **WCAG 2.2 AA** by default. Do you need **AAA** compliance instead? *(AA: 4.5:1 contrast for normal text, 3:1 for large text and UI components, touch/pointer targets ≥ 44×44px (iOS) / ≥ 48×48px (Android) recommended with 24×24px the absolute WCAG AA floor, visible focus indicators, reflow at 320px. AAA adds 7:1 contrast, mandatory 44×44px targets, and stricter text presentation rules. Most production products target AA; AAA is typically required for government, healthcare, or high-compliance contexts.)*
 15. **Localisation (L10n / I18n)** *(mandatory — cannot be skipped)* — Does this UI need to support multiple languages or locales? *(All products have a localisation posture, even if the answer is "English only for now." If in scope: which languages or locales? This determines string expansion headroom, text directionality for RTL languages, date/number/currency format tokens, and font fallback stacks for non-Latin scripts.)*
-16. **Casing convention** — UI text will default to **sentence case** (capitalise the first word and proper nouns only — "Create account", "Account settings"). Do you want a different convention? *(Sentence case is the modern standard and the safest for localisation. Title Case is available if your brand requires it — name the element classes it applies to. ALL CAPS is reserved for short overline/eyebrow labels and applied via `text-transform`, never hardcoded; all-lowercase is treated as a deliberate brand choice only. Once set, this is recalled across sessions and not re-asked.)*
+16. **Casing convention** *(inferred-and-confirmed — sentence case unless the user sets otherwise; surface it in the closing summary, don't ask cold)* — UI text defaults to **sentence case** (capitalise the first word and proper nouns only — "Create account", "Account settings"). *(Sentence case is the modern standard and the safest for localisation. Title Case is available if your brand requires it — name the element classes it applies to. ALL CAPS is reserved for short overline/eyebrow labels and applied via `text-transform`, never hardcoded; all-lowercase is treated as a deliberate brand choice only. Once set, this is recalled across sessions and not re-asked.)*
 
-After the final question, deliver a structured confirmation summary before moving to Phase 2. Use this format exactly — fill in the user's answers, mark anything unspecified:
+After the final question, deliver a structured confirmation summary before moving to Phase 2. Group the rows under the four headers below so the user can scan by section; omit any row that doesn't apply to this path, and keep the whole thing tight (aim for ~8–12 visible lines). Mark anything unspecified, and mark inferred values "(inferred)" so the user knows to confirm them. Collapse the multi-part captures into single rows as shown — do not break Variables or the tech stack back out into one row per sub-answer.
 
 > **Input summary — confirm before proceeding:**
+>
+> *Platform & build*
 > - Platform: [answer]
-> - Figma MCP direction: [build in Figma Design (a) / build code from Figma reference (b) — Claude Code + Figma MCP only; omit row otherwise]
-> - Tech stack — framework: [answer from Q1d — or "unspecified — developer call-out"; omit row for Figma Make, Google Stitch, and the build-in-Figma branch]
-> - Tech stack — styling system: [answer from Q1e — or "unspecified — generic CSS-variable tokens + call-out"; omit row for Figma Make, Google Stitch, and the build-in-Figma branch]
-> - Tech stack — component library: [answer from Q1f — or "none" / "unspecified — call-out"; omit row for Figma Make, Google Stitch, and the build-in-Figma branch]
-> - Figma target file/page: [URL from Q1a — build-in-Figma (a) branch only; omit row otherwise]
-> - Figma source reference: [URL from Q1a-ref — build-code-from-Figma (b) branch only; omit row otherwise]
-> - Component Library: [URL from Q1b — Claude Code + Figma MCP only; "none" if not provided; omit row otherwise]
-> - Variables: [Collection(s)/Group(s) from Q1c — Claude Code + Figma MCP only; "none" if not provided; omit row otherwise]
-> - Variable modes: [modes per Collection + default mode for this screen, from Q1c.3 — Claude Code + Figma MCP only; "none" if no modes; omit row if Variables = none]
-> - Variable tier preference: [primitive / semantic / component, from Q1c.4 — Claude Code + Figma MCP only; "semantic (default)" if unspecified; omit row if Variables = none]
-> - Variable exclusions: [Collections/Groups to avoid, from Q1c.2 — Claude Code + Figma MCP only; "none" if not provided; omit row if Variables = none]
+> - Figma MCP direction: [build in Figma Design (a) / build code from Figma reference (b) — Claude Code + Figma MCP only; omit otherwise]
+> - Figma file: [target file/page from Q1a on the (a) branch, or source reference from Q1a-ref on the (b) branch — Claude Code + Figma MCP only; omit otherwise]
+> - Component Library: [URL from Q1b — Claude Code + Figma MCP only; "none" if not provided; omit otherwise]
+> - Variables: [Collection(s)/Group(s) from Q1c; modes + default mode; tier (semantic default); exclusions — all in one row — Claude Code + Figma MCP only; "none" if not provided; omit otherwise]
+>
+> *Tech stack* *(code-generation platforms only; omit entirely for Figma Make, Google Stitch, and the build-in-Figma branch)*
+> - Stack: [framework · styling system · component library — using "⚠️ to be confirmed by developer" for any part left unspecified]
+>
+> *Content*
 > - UI type: [answer]
-> - Primary CTA: [answer from Q5a — or "not yet designated"]
-> - Design token / guidelines file: [answer — or "none"; if named, note availability: present-and-ready / planned-call-out]
-> - Authority file status: [Make Kit / DESIGN.md / named system: name / none — for Claude Code + Figma MCP, list separately each of {Figma Component Library, Figma Variables} that is active, or "none" if neither]
+> - Primary action(s): [from Q5a — one dominant primary, or a confirmed co-equal set — or "not yet identified"]
+> - Scope: [component / screen / flow — (inferred from UI type; confirm)]
+>
+> *Constraints & compliance*
+> - Design token / guidelines file: [answer — or "none"; if named, availability: present-and-ready / planned-call-out]
+> - Authority file status: [Make Kit / DESIGN.md / named system: name / none — for Claude Code + Figma MCP, list each active of {Figma Component Library, Figma Variables}, or "none" if neither]
 > - WCAG level: [AA / AAA]
 > - L10n / I18n: [not required / required — languages: list]
-> - Casing: [sentence case (default) / Title Case for [element classes] / other — plus ALL CAPS policy]
-> - Prototype type: [functional / mockup]
-> - Scope: [component / screen / flow]
+> - Casing: [sentence case (default) / Title Case for [element classes] / other — (inferred unless you set one; confirm)]
+> - Prototype type: [functional / mockup — (inferred from platform; confirm)]
 >
 > Anything to correct before Phase 2?
 

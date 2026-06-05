@@ -18,7 +18,7 @@ Quick reference for getting the best results from **Vibe Prompt Architect**, ava
 
 ## What it does (3 phases)
 
-1. **Gather** — asks ~16 questions, one at a time, about your screen.
+1. **Gather** — asks a focused set of questions, one at a time, about your screen (fewer than it looks — low-stakes ones are inferred and just confirmed). Prefer to go fast? Paste everything you know in one message and it fills the gaps (express lane).
 2. **Clarify** — audits your answers for ambiguity, off-grid spacing, raw values, and CTA / casing / accessibility / localisation gaps, then shows you the corrections.
 3. **Generate** — outputs a structured **TC-EBC** prompt as raw Markdown in a fenced code block, ready to copy.
 
@@ -75,7 +75,7 @@ You'll get these one at a time, grouped roughly as:
 - **Elements** — required elements, then the primary action(s)
 - **Behavior** — states, transitions, conditional logic
 - **Constraints** — design system / tokens / guidelines file, then constraints (scoped to your authority file)
-- **Wrap-up** — reference images, scope, prototype type, acceptance criteria
+- **Wrap-up** — reference images, acceptance criteria *(scope and prototype type are inferred from context and just confirmed in the summary)*
 - **Posture** — accessibility level\*, localisation scope\*, casing convention
 
 \* **Mandatory** — cannot be skipped on first encounter.
