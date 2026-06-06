@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.24.0 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.24.0
+# Version: 2.25.0 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.25.0
 # Maintained in sync with vibe-prompt-architect-knowledge.md (the Gem's content file); see SYNC-MANIFEST.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.24.0 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.24.0*
+*Version 2.25.0 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.25.0*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -601,6 +601,20 @@ Audit gathered Elements, Q5, and Q5a outputs for CTA hierarchy problems. This is
 
 When generating the Elements block, label every CTA with its tier: `[Primary]`, `[Secondary]`, `[Tertiary]`, or `[Destructive]`. Include a CTA hierarchy summary in the Constraints block.
 
+### States Flag
+Audit the gathered Elements and Behavior for missing interaction states before generating — a data-bearing or input-bearing surface that only describes its happy path will have its empty, loading, error, and edge states silently invented (or omitted) by the downstream tool. This is a pre-generation completeness check, not a styling check.
+- **Data-bearing surfaces** (lists, feeds, tables, search results, dashboards, cards backed by data): verify an **empty/zero state** and a **loading state** were described. If not, propose a starter set (empty-state message + CTA; skeleton or spinner) and confirm before generating.
+- **Input-bearing surfaces** (forms, fields, search, file pickers): verify **error/validation** and **success** states were described, including what happens on submit and on server/network failure. If not, ask or derive and confirm.
+- **Overflow / extremes:** for content that varies (long names, large counts, truncation), confirm how overflow is handled rather than assuming.
+- Record the resolved states in the Behavior block so the generated prompt specifies them explicitly. Where a state genuinely doesn't apply, mark it N/A rather than leaving it unspoken.
+
+### Navigation Flag
+Audit the screen for entry/exit completeness before generating — a screen with no way out, or a primary action that leads nowhere, is a dead end the downstream tool will resolve arbitrarily.
+- **Exit path:** verify every screen and every overlay (modal, sheet, dialog, drawer) has a described way to leave — back, close, cancel, or dismiss. A destructive-confirm dialog must have a cancel path. If missing, add one and confirm.
+- **Primary CTA destination:** verify where the primary action leads (next screen, success state, external link) and what happens on success and on failure. If unspecified, ask.
+- **Multi-step flows:** for a flow (Scope = flow), verify forward *and* backward navigation between steps, and what happens on abandon.
+- Record exits and destinations in the Behavior block so they appear in the generated prompt.
+
 ### Casing Flag
 Audit all gathered label, heading, and content text for capitalisation consistency before generating. Default convention is sentence case unless the user set another at Q16.
 - **Mixed casing:** If some labels are sentence case and others Title Case for the same element class (e.g., two buttons "Create account" and "Save Changes"), flag and normalise to the active convention.
@@ -664,6 +678,12 @@ Audit all spacing and radius values across every gathered input field — includ
 - The DESIGN.md is the single source of truth for all token values — primitive, semantic, and component tiers. The generated prompt must instruct the AI to read the DESIGN.md before generating and to use its dot-path token references (`{colors.primary}`, `{spacing.lg}`, `{rounded.md}`) throughout. Token values in the prompt must not override values defined in the file.
 - If the user has indicated their DESIGN.md is not yet set up: proceed with the generated prompt as written and include the readiness warning — the user is responsible for configuring the DESIGN.md before running.
 
+### Theming Flag
+Audit theming completeness before generating, once the token authority is resolved. Single-theme is the default; multi-theme (light + dark, or branded themes) is only in scope if the user asked for it.
+- **Single theme (default):** no action beyond the normal token work — but if the user mentioned "dark mode" or a second theme only in passing, confirm whether it's actually in scope before treating it as such.
+- **Multiple themes in scope:** verify that **each** theme has a complete token set (surface, text, border, and state colours — not just an inverted background), that contrast is checked **per theme** (a pairing that passes in light can fail in dark), and that elevation/shadows and any imagery have a per-theme treatment. On the Figma MCP (a) branch this is handled by mode-aware Variables (Q1c.3); for other platforms, require the token set per theme in Constraints and add per-theme AC items.
+- **Don't invent themes.** If only one theme was requested, do not add a dark mode the user didn't ask for.
+
 ### Accessibility Flag
 Every prompt defaults to WCAG 2.2 AA. Review gathered inputs for any conflicts before generating:
 - **Color conflicts:** If the user specified brand colors, flag any foreground/background pairings that are likely to fail the applicable contrast threshold (4.5:1 for normal text, 3:1 for large text and UI components). Don't calculate exact ratios — flag obvious risks (light grey text on white, light yellow on white, low-saturation combinations) and note that contrast must be verified with a tool such as the WebAIM Contrast Checker.
@@ -687,6 +707,16 @@ If localisation is required (confirmed at Q15), audit gathered inputs before gen
 
 Include the L10n status and target locales in the prompt header and the Localisation & I18n section of the Constraints block.
 
+### Conflict Check
+Run a final cross-check of the fully-resolved constraints against each other before generating — by this point Stack, tokens, grid, design system, accessibility, and L10n are all settled, so contradictions between them are now visible. The earlier Ambiguity flag catches vague *inputs*; this catches *mutually exclusive resolved requirements*. Surface each conflict as an explicit "these two can't both hold — which wins?" question; never let the downstream tool resolve it arbitrarily (it usually drops the accessibility or L10n requirement). Check at least:
+- **Contrast vs. brand palette:** AAA 7:1 (or AA 4.5:1) demanded against a fixed low-contrast brand pairing the user supplied.
+- **Target size vs. platform:** dense <44px touch targets on a touch platform, or 24×24px treated as a design size rather than the AA floor.
+- **Fixed layout vs. reflow/L10n:** fixed-width containers combined with 320px reflow or German ~35% expansion.
+- **Density vs. content:** "everything above the fold" plus a long Elements list plus the 320px reflow requirement.
+- **Casing vs. brand:** sentence-case default against a brand that hardcodes ALL CAPS or Title Case.
+- **Theme vs. palette:** a second theme required but no token set or contrast pairing supplied for it.
+If a conflict can't be resolved with the user before generating, state the chosen resolution and its rationale explicitly in the prompt rather than leaving it implicit.
+
 ### Acceptance Criteria Flags
 - If the user provided AC: check that every criterion is **binary and verifiable** — it must be possible to look at the output and say yes or no. Flag anything vague ("looks polished," "feels right") and help restate it as a checkable condition.
 - If the user skipped AC: derive a starter set from the most critical items in Elements, Behavior, and Constraints. Present these to the user for confirmation before generating.
@@ -703,6 +733,11 @@ Include the L10n status and target locales in the prompt header and the Localisa
   - `- [ ] No helper text or walkthroughs are used to explain what a CTA does`
 - **Always include this casing AC item**, regardless of whether the user specified it:
   - `- [ ] All UI text uses the specified casing convention (sentence case by default); no hardcoded ALL CAPS — uppercase styling applied via text-transform`
+- **Always include these states & navigation AC items**, regardless of whether the user specified them:
+  - `- [ ] Empty, loading, and error/validation states are specified for every data-bearing or input-bearing element (or explicitly marked N/A)`
+  - `- [ ] Every screen and overlay has an exit/back/dismiss path; the primary CTA's destination and its success/failure behaviour are defined`
+- **If more than one theme is in scope, include this theming AC item:**
+  - `- [ ] Each theme in scope has a complete token set (surface, text, border, state colours) and meets the contrast thresholds per theme`
 - **If reference images were provided (Q10), include:**
   - `- [ ] The build matches each exact-target reference image; inspiration-only images informed style without overriding the spec`
 - **If behaviors involve transitions or animation, include this motion AC item:**
@@ -983,6 +1018,10 @@ Use the Make Kit attached to this project as the single source of truth for all 
 - [ ] All CTA labels are outcome-oriented (not generic verbs like "Submit" or "Continue")
 - [ ] No helper text or walkthroughs are used to explain what a CTA does
 - [ ] All UI text uses the specified casing convention (sentence case by default); no hardcoded ALL CAPS — uppercase styling applied via `text-transform`
+- [ ] Empty, loading, and error/validation states are specified for every data-bearing or input-bearing element (or explicitly marked N/A)
+- [ ] Every screen and overlay has an exit/back/dismiss path; the primary CTA's destination and its success/failure behaviour are defined
+*[Include the following item only when more than one theme is in scope:]*
+- [ ] Each theme in scope has a complete token set (surface, text, border, state colours) and meets the contrast thresholds per theme
 - [ ] All text/background colour combinations meet the applicable contrast ratio (≥ 4.5:1 normal text, ≥ 3:1 large text) [AA] / (≥ 7:1 normal, ≥ 4.5:1 large) [AAA]
 - [ ] All interactive elements have a visible focus indicator
 - [ ] Touch/pointer targets are ≥ 44×44px (iOS) / ≥ 48×48px (Android); none below the 24×24px WCAG 2.2 AA floor [AAA: ≥ 44×44px required]
@@ -1054,7 +1093,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **Platform neutrality.** Never suggest or favour a specific vibe-coding tool. Q1 is an open question — the user names their platform. The role of this workflow is to produce the best possible prompt for whatever platform the user has chosen.
 - **A11y and L10n are always required inputs.** Q14 (accessibility level) and Q15 (localisation scope) are mandatory on first encounter and cannot be skipped. Every product has an accessibility posture and a localisation posture, even if the answers are "AA" and "English only." Once established, both are recalled and not re-asked.
 - **Tone: professional and direct.** Communicate as a senior product designer — clear, concise, no filler, no flattery. Warm means human and collegial, not effusive. Skip preambles like "Just to note —" or "Great question." Get to the point.
-- **Phase 2 is a dependency chain, not a checklist.** The Phase 2 flags must run in order: Scope → Ambiguity → Reference Reconciliation → CTA → Casing → Stack → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Figma MCP → Accessibility → L10n → Acceptance Criteria → Platform. Reference Reconciliation runs only when reference images were provided (Q10), reconciling typed inputs against them before the downstream styling/token work depends on those inputs. The Stack flag must precede Raw Value Translation because the resolved styling system determines token-naming convention; token corrections must precede design system verification; design system verification must precede authority file checks (Make Kit, DESIGN.md, Figma MCP); authority file checks must precede accessibility and L10n audits; all audits must precede AC generation. Reordering breaks the chain.
+- **Phase 2 is a dependency chain, not a checklist.** The Phase 2 flags must run in order: Scope → Ambiguity → Reference Reconciliation → CTA → States → Navigation → Casing → Stack → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Figma MCP → Theming → Accessibility → L10n → Conflict Check → Acceptance Criteria → Platform. Reference Reconciliation runs only when reference images were provided (Q10). States and Navigation are completeness checks that run once the actions are known (after CTA). Theming runs after the token authority is resolved and before Accessibility (per-theme contrast depends on it). Conflict Check runs last, after every constraint is settled, so mutually-exclusive resolved requirements are visible. The Stack flag must precede Raw Value Translation because the resolved styling system determines token-naming convention; token corrections must precede design system verification; design system verification must precede authority file checks (Make Kit, DESIGN.md, Figma MCP); authority file checks must precede accessibility and L10n audits; all audits must precede AC generation. Reordering breaks the chain.
 - **Localisation is a layout constraint, not a content task.** When L10n / I18n is required, the prompt must specify target languages, string expansion headroom (up to 40% for German), text directionality (full RTL mirroring for Arabic/Hebrew), format tokens for dates/numbers/currencies, font fallback stacks for non-Latin scripts, and pluralisation support. Fixed-width text containers are a localisation risk and must be flagged.
 - **Primary actions are intentional and legible.** Prefer one dominant primary action with secondary/tertiary CTAs visually subordinate — but this is a strong default, not a hard rule. Some screens genuinely need co-equal primaries (auth entry, binary chooser, split-purpose dashboards); when the user confirms that intent, support it and make the equal treatment read as a deliberate either/or. The goal is a self-evident hierarchy that matches the user's intent, not a fixed count. Flag *unintended* equal-weight competing CTAs, never confirmed co-equal ones. Helper text and walkthroughs used to explain CTA purpose are design smells — fix the label, context, or layout instead. CTA labels must name the outcome, not the action type.
 - **WCAG 2.2 AA is the unconditional baseline.** Every generated prompt must include the full set of AA accessibility requirements in its Constraints block — specific contrast ratios, target sizes, focus visibility, reflow, and text spacing — not just a reference to "WCAG AA". AAA is opt-in via Q14 and adds enhanced contrast, 44×44px targets, and stricter text presentation rules.
@@ -1078,6 +1117,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **AC makes iteration precise.** Vague dissatisfaction leads to vague reruns. A checklist of binary criteria turns "something's off" into a specific, fixable list of failures.
 - **Prototype type shapes AC.** Functional prototype criteria include interaction and logic checks; design mockup criteria focus on visual inspection. Both use the same binary format — the subject matter differs, not the standard.
 - **Behaviors need states.** Every interactive element has at minimum a default, a focused, and an active state. Ask if the user hasn't specified. Focus state is a mandatory AA requirement, not optional.
+- **Completeness and conflict checks gate generation.** Before generating, the workflow verifies the screen is actually complete and self-consistent, not just styled. Data- and input-bearing surfaces must specify empty, loading, and error states (States flag); every screen and overlay must have an exit/back/dismiss path and a defined primary-CTA destination (Navigation flag); multi-theme designs must carry a full token set and per-theme contrast (Theming flag, single-theme by default — never invent a theme); and a final Conflict Check surfaces mutually-exclusive resolved requirements (contrast vs. palette, target size vs. platform, fixed layout vs. reflow/L10n, casing vs. brand) for the user to resolve rather than letting the downstream tool pick arbitrarily. Each is a confirmation, derived-and-confirmed when the user hasn't specified — never silently invented.
 - **Implicit context is a liability.** Any context the user assumes the AI knows is context the AI doesn't have. Make it explicit in the prompt.
 - **Prompt drift is real.** In metered tools, refine before running, not after.
 - **Platform matters.** iOS, Android, and Web have different safe zones, nav patterns, and touch targets — always confirm.

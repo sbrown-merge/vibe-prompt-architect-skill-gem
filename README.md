@@ -157,6 +157,12 @@ AAA compliance (7:1 contrast, 44×44px mandatory targets, enhanced focus, strict
 - Non-essential motion respects `prefers-reduced-motion` (WCAG 2.3.3) — reduced or removed for users who request it
 - Screens with no motion carry no motion guidance — the workflow never invents animation
 
+### Completeness & conflict checks
+- **States** — data and input surfaces must specify empty, loading, and error/validation states (derived and confirmed if you didn't, never silently invented)
+- **Navigation** — every screen and overlay needs an exit/back/dismiss path, and the primary CTA's destination + success/failure behaviour is defined
+- **Theming** — single theme by default (never invents a dark mode you didn't ask for); multi-theme designs must carry a full token set and contrast per theme
+- **Conflict check** — a final pass surfaces requirements that can't all hold (e.g., AAA contrast against a low-contrast brand palette, fixed widths against 320px reflow or German expansion) for you to resolve before running
+
 ---
 
 ## Localisation support
