@@ -99,6 +99,7 @@ Applied to every prompt by default — no need to ask:
 | **Motion** | `--duration-*` / `--easing-*` tokens; respects `prefers-reduced-motion` when motion is present |
 | **Localisation** | Expansion headroom, RTL mirroring, format tokens, font fallbacks, pluralisation (when in scope) |
 | **Completeness** | Empty / loading / error states for data & input surfaces; an exit/back/dismiss path on every screen & overlay; single-theme default (no invented dark mode); data source/volume + pagination for functional prototypes; breakpoint behaviour for Web/Responsive; named assets confirmed (not fabricated); a final conflict check for requirements that can't all hold |
+| **Overridable defaults** | Defaults (grid, tokens, AA, casing, motion) are shown, not silent — if one would change something you specified (an exact value, a brand name like "Smart Reply", a chosen duration, a brand colour), you're asked rather than overridden; borders aren't grid-rounded; AA is never silently dropped |
 
 ---
 

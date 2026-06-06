@@ -115,7 +115,7 @@ Every prompt produced by this workflow includes:
 
 ## Built-in quality requirements
 
-These requirements are applied to every prompt by default — you don't need to ask for them:
+These requirements are applied to every prompt by default — you don't need to ask for them. They're also **visible and overridable**: where a default would change something you actually specified (round an exact spacing value, collapse two sizes into one token, downcase a brand name like "Smart Reply", snap a chosen animation duration, adjust a brand colour for contrast), the workflow shows you and lets you keep your value rather than changing it silently; where it just fills a gap you left, it states the default plainly and you can override on request. Specific carve-outs: border/stroke widths are never grid-rounded, and WCAG AA is never silently dropped — a deliberate deviation is recorded as an explicit, documented exception.
 
 ### Accessibility — WCAG 2.2 AA
 - Text contrast ≥ 4.5:1 (normal), ≥ 3:1 (large text and UI components)
