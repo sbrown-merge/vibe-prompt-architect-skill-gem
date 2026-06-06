@@ -334,7 +334,7 @@ A maintenance document. Opened at the start of every editing session.
 
 ### CHANGELOG.md
 
-Authoritative version history for both SKILL.md and vibe-prompt-architect-gem.md. Introduced in v2.18.3 to reduce the Gem's character count below Gemini UI limits; prior to v2.18.3, this history was maintained inline inside the Gem file itself.
+Authoritative version history for both SKILL.md and vibe-prompt-architect-knowledge.md (the Gem's content file); the router (vibe-prompt-architect-gem.md) is FILE-SPECIFIC and not versioned here. Introduced in v2.18.3 to reduce the Gem's character count below Gemini UI limits; prior to v2.18.3, this history was maintained inline inside the Gem file itself.
 
 **Three sections (in order):**
 1. Intro paragraph describing the file's purpose + a **Current version** line (e.g., `Current version: 2.18.3`)

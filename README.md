@@ -20,7 +20,7 @@ The workflow has three phases:
 
 1. **Gather** — A sequential question-by-question intake covering the 15+ inputs that
    determine prompt quality: platform, UI type, product context, required elements, primary
-   CTA, behaviors, constraints, design system, accessibility level, localisation scope, and
+   action, behaviors, constraints, design system, accessibility level, localisation scope, and
    casing convention.
    Platform-specific follow-ups fire for Figma Make, Google Stitch, and Claude Code +
    Figma MCP — including the target Figma file, any Component Library, and any Variable
@@ -88,6 +88,7 @@ Every prompt produced by this workflow includes:
 
 **Header metadata**
 - Target platform
+- Tech stack (framework · styling system · component library) — for code-generation platforms; a "to be confirmed by developer" call-out when unspecified
 - Scope (component / screen / flow)
 - Prototype type (functional prototype / design mockup)
 - Accessibility level (WCAG 2.2 AA or AAA)
@@ -106,10 +107,11 @@ Every prompt produced by this workflow includes:
 - `## Reference Images` — names each attached image and its authority (exact target vs inspiration only), so the receiving tool knows how literally to follow it
 - `## Localisation & I18n` — target locales, directionality, string expansion headroom, format tokens, font fallback stacks, pluralisation requirements, pseudo-localisation guidance
 - `## Design Guidelines` — instruction for the AI to read DESIGN.md or another guidelines file before generating
-- `## Make Kit (Figma Make only)` — instruction for Figma Make to use the attached Make Kit as its sole source of truth
-- `## Figma MCP (Claude Code + Figma MCP only)` — readiness warning (MCP server, `figma-use` skill, edit access, library Variable subscription), target Figma file/page URL, Component Library URL, Variables (Collections/Groups), Variable modes + default mode, Variable tier preference, Variable exclusions, plus an explicit `use_figma` instruction block covering components, Variables, tier preference, modes, exclusions, auto-layout, and naming
+- `## Make Kit (Figma Make only)` — a visible note that Figma Make's default stack is React + Tailwind + shadcn/ui + Radix (overridable), plus instruction to use the attached Make Kit as its sole source of truth
+- `## Figma MCP — Build in Figma Design` *(Claude Code + Figma MCP, direction (a) only)* — readiness warning (MCP server, `figma-use` skill, edit access, library Variable subscription), target Figma file/page URL, Component Library URL, Variables (Collections/Groups, modes + default mode, tier preference, exclusions), an explicit `use_figma` instruction block, and the **Make-ready construction** rules
+- `## Build from Figma Reference` *(Claude Code + Figma MCP, direction (b) only)* — source Figma URL, read-from-Figma (`get_design_context` / `get_screenshot`) instructions, and a frame-as-source-of-truth precedence rule; no `use_figma`
 
-**Acceptance Criteria** — a pre-populated checklist of binary pass/fail items covering CTA hierarchy (4 items), casing (1 item), WCAG 2.2 AA (5 items), a conditional reduced-motion item (when motion is in scope), conditional L10n items (6 items), and Claude Code + Figma MCP items (3 baseline + 2 when a Component Library is provided + 5 when Variables are provided — all commented out and uncommented as applicable), plus project-specific slots
+**Acceptance Criteria** — a pre-populated checklist of binary pass/fail items. Always-on items cover CTA hierarchy, casing, WCAG 2.2 AA, and states & navigation. Conditional items are added when relevant: reduced-motion (when motion is in scope), per-theme (multi-theme), reference-image fidelity (when images are attached), data/content (functional prototypes), per-breakpoint (Web/Responsive), localisation (when L10n is required), a tech-stack call-out (when the stack is unspecified), and Claude Code + Figma MCP items scoped to the build direction — (a) build-in-Figma adds Make-ready/library/Variable items, (b) build-code adds read-from-Figma items. Project-specific slots round it out.
 
 ---
 
@@ -307,12 +309,12 @@ The Skill and Gem implement the same workflow in two different AI platforms. The
 in sync using `SYNC-MANIFEST.md`. If you extend or modify the workflow:
 
 1. Open `SYNC-MANIFEST.md` first and identify which Feature Touch Map entries are affected
-2. Upload all three files (`SKILL.md`, `vibe-prompt-architect-gem.md`, `SYNC-MANIFEST.md`) to Claude
+2. Upload `SKILL.md`, `vibe-prompt-architect-knowledge.md` (the Gem's content file — the sync partner with SKILL.md), and `SYNC-MANIFEST.md` to Claude. The router (`vibe-prompt-architect-gem.md`) only needs uploading if you're changing the router text itself
 3. Describe your change — Claude will apply it consistently to both files
-4. Bump the Gem version number and add a changelog entry — and update SKILL.md's matching version marker (YAML comment + italic byline under H1) in lockstep
+4. Add a `CHANGELOG.md` entry and bump the version in lockstep across all locations: the CHANGELOG "Current version" line, the `vibe-prompt-architect-knowledge.md` marker under its H1, and SKILL.md's YAML comment + italic byline under H1
 5. Update `SYNC-MANIFEST.md` if the change introduces a new feature or section
 
-The Gem uses semantic versioning. The current version is **2.18.1**. Major versions (X.0.0)
+The project uses semantic versioning, tracked authoritatively in `CHANGELOG.md`. The current version is **2.27.0**. Major versions (X.0.0)
 indicate breaking changes to the output format or workflow structure. Minor versions (X.Y.0)
 indicate new capabilities. Patch versions (X.Y.Z) indicate fixes and clarifications.
 
