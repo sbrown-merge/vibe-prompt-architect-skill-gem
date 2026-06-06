@@ -1,9 +1,14 @@
+---
+product:
+feature:
+version:
+---
+
 # TC-EBC Requirements
 
 <!--
 HOW TO USE THIS TEMPLATE
-Fill in the sections below, then paste the whole file into the Vibe Prompt Architect Skill or Gem — or attach it as a source file. The workflow reads what you've already written, skips questions you've answered, and asks only for what's missing. Leaving a section blank is fine — the workflow will ask. These `<!-- -->` comment blocks are just reminders for you; the tool ignores them, so keep or delete them as you like.
-TC-EBC = Task · Context · Elements · Behavior · Constraints.
+Fill in the sections below, then paste the whole file into the Vibe Prompt Architect Skill or Gem — or attach it as a source file. The workflow reads what you've already written, skips questions you've answered, and asks only for what's missing. Leaving a section blank is fine — the workflow will ask. TC-EBC = Task · Context · Elements · Behavior · Constraints.
 -->
 
 ## Setup
@@ -15,7 +20,7 @@ SETUP — quick context the workflow needs before the TC-EBC body. Fill in what 
 - Scope: a single component, one screen, or a multi-screen flow.
 - Prototype type: functional prototype (real logic/data) or design mockup (visual fidelity).
 - Accessibility: WCAG 2.2 AA (default) or AAA.
-- Localisation: "English only", or the languages/locales in scope.
+- Localization: "English only", or the languages/locales in scope.
 -->
 
 - **Platform:**
@@ -23,7 +28,7 @@ SETUP — quick context the workflow needs before the TC-EBC body. Fill in what 
 - **Scope:**
 - **Prototype type:**
 - **Accessibility:** AA
-- **Localisation:** English only
+- **Localization:** English only
 
 ---
 
@@ -35,7 +40,7 @@ TASK — what to build, in ONE sentence. Action verb + UI type + product context
 - ❌ "Make something clean and modern for onboarding."
 -->
 
-
+Task description…
 
 ## Context
 
@@ -43,7 +48,7 @@ TASK — what to build, in ONE sentence. Action verb + UI type + product context
 CONTEXT — where this screen lives and who it's for. 2–4 sentences. Who is the user? What just happened before this screen, and what do they do next? Include emotional context if it shapes the design (reassuring for medical, confident for fintech).
 -->
 
-
+Context description…
 
 ## Elements
 
@@ -52,12 +57,13 @@ ELEMENTS — an EXHAUSTIVE list of what must appear. Anything not listed may be 
 - Name specific components (button, tab bar, search field, card, bottom sheet, …).
 - Include real content: labels, placeholder copy, icon/image subjects.
 - Label every call-to-action with its tier: [Primary] [Secondary] [Tertiary] [Destructive]. Prefer one dominant [Primary]; co-equal primaries are fine if the screen genuinely needs them (e.g., "Sign in" / "Create account").
-- Add alt text for images and icon controls. Flag count-dependent strings ("3 items") for pluralisation.
-- Don't describe appearance here — colour, size, and style go in Constraints.
+- Add alt text for images and icon controls. Flag count-dependent strings ("3 items") for pluralization.
+- Don't describe appearance here — color, size, and style go in Constraints.
 -->
 
--
-
+* First component…
+* Second component…
+* Etc.
 
 ## Behavior
 
@@ -70,21 +76,20 @@ BEHAVIOR — how the UI responds to interaction.
 - Transitions / animation: describe the intent — motion tokens are applied for you.
 -->
 
--
-
+* Behavior description…
 
 ## Constraints
 
 <!--
 CONSTRAINTS — the rules. Style, limits, and prohibitions live here.
 - Platform specifics (iOS / Android / Web / Responsive), grid, spacing.
-- Design system / tokens / guidelines file (a named system, DESIGN.md, tokens.json), or brand colours and type — you can write raw values (#0057FF, 16px) and they're translated to tokens for you.
-- Casing, motion rules, localisation needs, and any explicit prohibitions ("no modals", "no carousels").
+- Design system / tokens / guidelines file (a named system, DESIGN.md, tokens.json), or brand colors and type — you can write raw values (#0057FF, 16px) and they're translated to tokens for you.
+- Casing, motion rules, localization needs, and any explicit prohibitions ("no modals", "no carousels").
 You don't need to be exhaustive: the workflow adds 8px-grid, token, WCAG AA, CTA-hierarchy, and casing defaults automatically — and shows you anything it changes so you can keep your own value.
 -->
 
--
-
+* Constraint description…
+* Additional constraint…
 
 ## Acceptance Criteria
 
@@ -92,8 +97,8 @@ You don't need to be exhaustive: the workflow adds 8px-grid, token, WCAG AA, CTA
 ACCEPTANCE CRITERIA (optional) — how you'll know the output succeeded. Binary, checkable pass/fail items. Leave this blank to have the workflow derive a starter set from your Elements, Behavior, and Constraints.
 -->
 
-- [ ]
-
+- [ ] Criteria one…
+- [ ] Criteria two…
 
 ## Reference Images
 
@@ -104,4 +109,5 @@ REFERENCE IMAGES (optional) — list any screenshots or inspiration you'll attac
 The workflow reads each image and flags anything that disagrees with what you wrote above.
 -->
 
--
+* Attachment one…
+* 
