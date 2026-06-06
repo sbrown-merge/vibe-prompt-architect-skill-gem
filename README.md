@@ -161,6 +161,9 @@ AAA compliance (7:1 contrast, 44×44px mandatory targets, enhanced focus, strict
 - **States** — data and input surfaces must specify empty, loading, and error/validation states (derived and confirmed if you didn't, never silently invented)
 - **Navigation** — every screen and overlay needs an exit/back/dismiss path, and the primary CTA's destination + success/failure behaviour is defined
 - **Theming** — single theme by default (never invents a dark mode you didn't ask for); multi-theme designs must carry a full token set and contrast per theme
+- **Data & content** *(functional prototypes)* — dynamic lists confirm data source, volume, and pagination/virtualization; long dynamic text gets truncation rules
+- **Breakpoints** *(Web/Responsive)* — layout behaviour is defined across named breakpoints (mobile/tablet/desktop), not just the 320px floor
+- **Content assets** — named images, icons, custom fonts, and final copy are confirmed available or flagged for the developer to supply, never fabricated
 - **Conflict check** — a final pass surfaces requirements that can't all hold (e.g., AAA contrast against a low-contrast brand palette, fixed widths against 320px reflow or German expansion) for you to resolve before running
 
 ---

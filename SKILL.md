@@ -1,6 +1,6 @@
 ---
 name: vibe-prompt-architect
-# Version: 2.25.0 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.25.0
+# Version: 2.26.0 (2026-06-05) — synced with vibe-prompt-architect-knowledge.md v2.26.0
 # Maintained in sync with vibe-prompt-architect-knowledge.md (the Gem's content file); see SYNC-MANIFEST.md
 # See SYNC-MANIFEST.md for the feature touch map and pre-commit checklist
 description: >
@@ -16,7 +16,7 @@ description: >
 
 # Vibe Prompt Architect
 
-*Version 2.25.0 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.25.0*
+*Version 2.26.0 · 2026-06-05 · Synced with `vibe-prompt-architect-knowledge.md` v2.26.0*
 
 A structured, three-phase workflow for turning a rough UI idea into a refined, copy-ready prompt for any AI-powered UI prototyping or code-generation platform.
 
@@ -480,6 +480,8 @@ Ask these in order. The question text below is a guide — adapt the wording nat
 
    **Asset-availability confirmation — required whenever the user names any file or external token source at Q7 (or names Figma Variables/Library at Q1b/Q1c).** Before treating a `DESIGN.md`, `tokens.json`, guidelines file, or Figma Variable/Library as authoritative, confirm it actually exists and will be present when the prompt runs: ask "Is that file already in the project (or will it be) when you run this prompt?" — present-and-ready, or planned-but-not-yet. If the user confirms it is present, reference it normally. If it is planned, unsure, or not yet created, **do not reference it as if it exists** — instead carry it as a readiness call-out in the generated prompt ("⚠️ This prompt assumes `DESIGN.md` at the project root; create it before running or the AI will fall back to its own token choices"). **Never invent a style asset the user did not name** — if no token file or guidelines file was named, the prompt must not reference a `DESIGN.md`, `tokens.json`, or any other file.
 
+   The same present-and-ready vs. planned check applies to **content assets** named anywhere in the inputs — logo or illustration files, a specific icon set, custom/licensed fonts (and their web-loading), product/avatar imagery, and finalised copy vs. placeholder. For each named asset, confirm it exists (or will at run time); if not, carry it as a readiness call-out ("⚠️ Hero illustration not yet supplied — the tool will use a placeholder") rather than letting the downstream tool fabricate art, substitute a generic icon set, or silently fall back to a system font. Do not invent a brand asset the user didn't name.
+
    *Claude Code + Figma MCP scope rule:* If Q1 = Claude Code + Figma MCP and Q1b/Q1c established a Component Library and/or Variables, narrow Q7 to anything not covered by them. If both Component Library and Variables are confirmed, Q7 may be skipped unless the user wants to add a supplemental named system or guidelines file. If only one was confirmed, ask Q7 only about the gap (e.g., Variables present but no library → ask about component sources; library present but no Variables → ask about a token authority such as a DESIGN.md, design token file, or named system). If neither was confirmed, ask Q7 in its standard form — the user may name a design token file, DESIGN.md, named system, or "None" to fall through to full manual styling intake at Q9.
 
 ### Authority File Gate
@@ -615,6 +617,14 @@ Audit the screen for entry/exit completeness before generating — a screen with
 - **Multi-step flows:** for a flow (Scope = flow), verify forward *and* backward navigation between steps, and what happens on abandon.
 - Record exits and destinations in the Behavior block so they appear in the generated prompt.
 
+### Data & Content Flag *(functional prototypes — see Q12)*
+For functional prototypes (real interactions, logic, and data), audit the data and content shape before generating — a mockup is exempt. A prototype that doesn't say where data comes from or how much there is will be built with an un-paginated list, no loading strategy, and no overflow handling.
+- **Data source & volume:** for any dynamic list, feed, table, or search result, confirm where the data comes from (real API, mock/fixture, static) and the realistic volume. If large or unbounded, require pagination, infinite scroll, or virtualization rather than rendering everything.
+- **Real-time / freshness:** if content updates live (notifications, prices, presence), confirm polling/subscription behaviour and the loading/stale treatment.
+- **Truncation & overflow:** for dynamic text that can run long (names, titles, descriptions), confirm truncation/wrap rules and container behaviour — even when L10n is English-only.
+- **Offline / failure:** confirm what the prototype shows when data can't load (covered partly by the States flag's error state; here, confirm the data-layer cause is addressed).
+- Record these in the Behavior/Constraints blocks. For a design mockup, skip this flag.
+
 ### Casing Flag
 Audit all gathered label, heading, and content text for capitalisation consistency before generating. Default convention is sentence case unless the user set another at Q16.
 - **Mixed casing:** If some labels are sentence case and others Title Case for the same element class (e.g., two buttons "Create account" and "Save Changes"), flag and normalise to the active convention.
@@ -738,6 +748,10 @@ If a conflict can't be resolved with the user before generating, state the chose
   - `- [ ] Every screen and overlay has an exit/back/dismiss path; the primary CTA's destination and its success/failure behaviour are defined`
 - **If more than one theme is in scope, include this theming AC item:**
   - `- [ ] Each theme in scope has a complete token set (surface, text, border, state colours) and meets the contrast thresholds per theme`
+- **If the prototype type is functional, include this data & content AC item:**
+  - `- [ ] Dynamic lists/feeds specify data source and volume with pagination/virtualization for large sets; dynamic text has truncation/overflow rules`
+- **If the platform is Web or Responsive, include this breakpoint AC item:**
+  - `- [ ] Layout behaviour is defined at each named breakpoint (e.g., mobile/tablet/desktop), not just the 320px reflow floor`
 - **If reference images were provided (Q10), include:**
   - `- [ ] The build matches each exact-target reference image; inspiration-only images informed style without overriding the spec`
 - **If behaviors involve transitions or animation, include this motion AC item:**
@@ -770,6 +784,7 @@ If a conflict can't be resolved with the user before generating, state the chose
 
 ### Platform Flags
 - iOS vs. Android vs. Web have different safe areas, navigation patterns, and interaction conventions — confirm which is intended if ambiguous
+- **Breakpoint completeness (Web / Responsive):** if the platform is Web or Responsive, confirm behaviour at more than the 320px reflow floor — verify the named breakpoints (e.g., mobile / tablet / desktop) and how the layout transforms across them (e.g., sidebar → drawer, multi-column → stacked). If the user hasn't specified, propose a standard set and confirm rather than letting the tool pick arbitrary breakpoints; record them in Constraints and add a per-breakpoint AC item.
 - If targeting Figma Make: Make Kit authority is established by platform choice — verify the generated prompt references the Make Kit correctly and includes the readiness warning
 - If targeting Google Stitch: DESIGN.md authority is established by platform choice — verify the generated prompt references DESIGN.md correctly and includes the readiness warning
 - If targeting Claude Code + Figma MCP: verify the generated prompt includes the `figma-use` skill prerequisite, an explicit `use_figma` instruction, the target file/page URL (Q1a), and any Component Library URL (Q1b) or Variable Collection/Group references (Q1c). Include the readiness warning for MCP server connection, skill loading, and file edit access.
@@ -1022,6 +1037,10 @@ Use the Make Kit attached to this project as the single source of truth for all 
 - [ ] Every screen and overlay has an exit/back/dismiss path; the primary CTA's destination and its success/failure behaviour are defined
 *[Include the following item only when more than one theme is in scope:]*
 - [ ] Each theme in scope has a complete token set (surface, text, border, state colours) and meets the contrast thresholds per theme
+*[Include the following item only when the prototype type is functional:]*
+- [ ] Dynamic lists/feeds specify data source and volume with pagination/virtualization for large sets; dynamic text has truncation/overflow rules
+*[Include the following item only when the platform is Web or Responsive:]*
+- [ ] Layout behaviour is defined at each named breakpoint (e.g., mobile/tablet/desktop), not just the 320px reflow floor
 - [ ] All text/background colour combinations meet the applicable contrast ratio (≥ 4.5:1 normal text, ≥ 3:1 large text) [AA] / (≥ 7:1 normal, ≥ 4.5:1 large) [AAA]
 - [ ] All interactive elements have a visible focus indicator
 - [ ] Touch/pointer targets are ≥ 44×44px (iOS) / ≥ 48×48px (Android); none below the 24×24px WCAG 2.2 AA floor [AAA: ≥ 44×44px required]
@@ -1093,7 +1112,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **Platform neutrality.** Never suggest or favour a specific vibe-coding tool. Q1 is an open question — the user names their platform. The role of this workflow is to produce the best possible prompt for whatever platform the user has chosen.
 - **A11y and L10n are always required inputs.** Q14 (accessibility level) and Q15 (localisation scope) are mandatory on first encounter and cannot be skipped. Every product has an accessibility posture and a localisation posture, even if the answers are "AA" and "English only." Once established, both are recalled and not re-asked.
 - **Tone: professional and direct.** Communicate as a senior product designer — clear, concise, no filler, no flattery. Warm means human and collegial, not effusive. Skip preambles like "Just to note —" or "Great question." Get to the point.
-- **Phase 2 is a dependency chain, not a checklist.** The Phase 2 flags must run in order: Scope → Ambiguity → Reference Reconciliation → CTA → States → Navigation → Casing → Stack → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Figma MCP → Theming → Accessibility → L10n → Conflict Check → Acceptance Criteria → Platform. Reference Reconciliation runs only when reference images were provided (Q10). States and Navigation are completeness checks that run once the actions are known (after CTA). Theming runs after the token authority is resolved and before Accessibility (per-theme contrast depends on it). Conflict Check runs last, after every constraint is settled, so mutually-exclusive resolved requirements are visible. The Stack flag must precede Raw Value Translation because the resolved styling system determines token-naming convention; token corrections must precede design system verification; design system verification must precede authority file checks (Make Kit, DESIGN.md, Figma MCP); authority file checks must precede accessibility and L10n audits; all audits must precede AC generation. Reordering breaks the chain.
+- **Phase 2 is a dependency chain, not a checklist.** The Phase 2 flags must run in order: Scope → Ambiguity → Reference Reconciliation → CTA → States → Navigation → Data & Content → Casing → Stack → Raw Value Translation → Grid → Design System → Make Kit → DESIGN.md → Figma MCP → Theming → Accessibility → L10n → Conflict Check → Acceptance Criteria → Platform. Reference Reconciliation runs only when reference images were provided (Q10). States and Navigation are completeness checks that run once the actions are known (after CTA); Data & Content runs alongside them for functional prototypes only. Breakpoint completeness is checked within the Platform flag for Web/Responsive. Theming runs after the token authority is resolved and before Accessibility (per-theme contrast depends on it). Conflict Check runs last, after every constraint is settled, so mutually-exclusive resolved requirements are visible. The Stack flag must precede Raw Value Translation because the resolved styling system determines token-naming convention; token corrections must precede design system verification; design system verification must precede authority file checks (Make Kit, DESIGN.md, Figma MCP); authority file checks must precede accessibility and L10n audits; all audits must precede AC generation. Reordering breaks the chain.
 - **Localisation is a layout constraint, not a content task.** When L10n / I18n is required, the prompt must specify target languages, string expansion headroom (up to 40% for German), text directionality (full RTL mirroring for Arabic/Hebrew), format tokens for dates/numbers/currencies, font fallback stacks for non-Latin scripts, and pluralisation support. Fixed-width text containers are a localisation risk and must be flagged.
 - **Primary actions are intentional and legible.** Prefer one dominant primary action with secondary/tertiary CTAs visually subordinate — but this is a strong default, not a hard rule. Some screens genuinely need co-equal primaries (auth entry, binary chooser, split-purpose dashboards); when the user confirms that intent, support it and make the equal treatment read as a deliberate either/or. The goal is a self-evident hierarchy that matches the user's intent, not a fixed count. Flag *unintended* equal-weight competing CTAs, never confirmed co-equal ones. Helper text and walkthroughs used to explain CTA purpose are design smells — fix the label, context, or layout instead. CTA labels must name the outcome, not the action type.
 - **WCAG 2.2 AA is the unconditional baseline.** Every generated prompt must include the full set of AA accessibility requirements in its Constraints block — specific contrast ratios, target sizes, focus visibility, reflow, and text spacing — not just a reference to "WCAG AA". AAA is opt-in via Q14 and adds enhanced contrast, 44×44px targets, and stricter text presentation rules.
@@ -1117,7 +1136,7 @@ After delivering the prompt, offer the following concisely — one short paragra
 - **AC makes iteration precise.** Vague dissatisfaction leads to vague reruns. A checklist of binary criteria turns "something's off" into a specific, fixable list of failures.
 - **Prototype type shapes AC.** Functional prototype criteria include interaction and logic checks; design mockup criteria focus on visual inspection. Both use the same binary format — the subject matter differs, not the standard.
 - **Behaviors need states.** Every interactive element has at minimum a default, a focused, and an active state. Ask if the user hasn't specified. Focus state is a mandatory AA requirement, not optional.
-- **Completeness and conflict checks gate generation.** Before generating, the workflow verifies the screen is actually complete and self-consistent, not just styled. Data- and input-bearing surfaces must specify empty, loading, and error states (States flag); every screen and overlay must have an exit/back/dismiss path and a defined primary-CTA destination (Navigation flag); multi-theme designs must carry a full token set and per-theme contrast (Theming flag, single-theme by default — never invent a theme); and a final Conflict Check surfaces mutually-exclusive resolved requirements (contrast vs. palette, target size vs. platform, fixed layout vs. reflow/L10n, casing vs. brand) for the user to resolve rather than letting the downstream tool pick arbitrarily. Each is a confirmation, derived-and-confirmed when the user hasn't specified — never silently invented.
+- **Completeness and conflict checks gate generation.** Before generating, the workflow verifies the screen is actually complete and self-consistent, not just styled. Data- and input-bearing surfaces must specify empty, loading, and error states (States flag); every screen and overlay must have an exit/back/dismiss path and a defined primary-CTA destination (Navigation flag); multi-theme designs must carry a full token set and per-theme contrast (Theming flag, single-theme by default — never invent a theme); functional prototypes must specify data source, volume, pagination, and truncation (Data & Content flag); Web/Responsive layouts must define behaviour across named breakpoints, not just the 320px floor (Platform flag); named content assets (images, icons, custom fonts, final copy) must be confirmed present or flagged as developer to-supply (asset-availability gate); and a final Conflict Check surfaces mutually-exclusive resolved requirements (contrast vs. palette, target size vs. platform, fixed layout vs. reflow/L10n, casing vs. brand) for the user to resolve rather than letting the downstream tool pick arbitrarily. Each is a confirmation, derived-and-confirmed when the user hasn't specified — never silently invented.
 - **Implicit context is a liability.** Any context the user assumes the AI knows is context the AI doesn't have. Make it explicit in the prompt.
 - **Prompt drift is real.** In metered tools, refine before running, not after.
 - **Platform matters.** iOS, Android, and Web have different safe zones, nav patterns, and touch targets — always confirm.
