@@ -297,6 +297,7 @@ All four value categories have translation tables:
 | `Figma Design to Figma Make Best Practices (Mid-2026 Update).md` | Reference doc — source of record for the Make-ready Figma construction rules used by the Claude Code + Figma MCP build-in-Figma branch. Not attached to the Gem |
 | `CHANGELOG.md` | Authoritative version history for both the Skill and the Gem |
 | `CHEATSHEET.md` | User cheat sheet — a ~5-minute reference covering what the Skill/Gem does, what to prepare, the intake at a glance, built-in quality, and tips for a better session |
+| `tc-ebc-requirements-template.md` | Fill-in Markdown template for writing TC-EBC requirements ahead of a session (with each category described in HTML comments). Paste it into the Skill/Gem or attach it as a source file to pre-answer the intake |
 | `SYNC-MANIFEST.md` | Maintenance document — section map, feature touch map, pre-commit checklist, and intentional differences list for keeping the two implementation files in sync |
 | `vibe-prompt-architect-reconstruction-brief.md` | Reconstruction brief — design authority for rebuilding the file set from scratch in a new Claude session, or for onboarding a collaborator. Explains the *why* alongside the content files' *what* |
 | `README.md` | This file |

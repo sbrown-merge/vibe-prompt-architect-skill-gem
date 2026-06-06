@@ -40,6 +40,8 @@ Quick reference for getting the best results from **Vibe Prompt Architect**, ava
 
 ## Before you start — prep checklist
 
+> **Tip:** want to write your requirements up front? Fill in `tc-ebc-requirements-template.md` and paste it in (or attach it) — the workflow reads it, skips what you've answered, and asks only for the rest.
+
 Have these ready for a smooth session:
 
 - [ ] **Target platform/tool** the prompt will run in
