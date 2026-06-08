@@ -11,7 +11,7 @@ HOW TO USE THIS TEMPLATE
 Fill in the sections below, then paste the whole file into the Vibe Prompt Architect Skill or Gem — or attach it as a source file. The workflow reads what you've already written, skips questions you've answered, and asks only for what's missing. Leaving a section blank is fine — the workflow will ask. TC-EBC = Task · Context · Elements · Behavior · Constraints.
 -->
 
-## Setup
+## Setup (Optional)
 
 <!--
 SETUP — quick context the workflow needs before the TC-EBC body. Fill in what you know.
@@ -91,7 +91,9 @@ You don't need to be exhaustive: the workflow adds 8px-grid, token, WCAG AA, CTA
 * Constraint description…
 * Additional constraint…
 
-## Acceptance Criteria
+---
+
+## Acceptance Criteria (Optional)
 
 <!--
 ACCEPTANCE CRITERIA (optional) — how you'll know the output succeeded. Binary, checkable pass/fail items. Leave this blank to have the workflow derive a starter set from your Elements, Behavior, and Constraints.
@@ -100,7 +102,7 @@ ACCEPTANCE CRITERIA (optional) — how you'll know the output succeeded. Binary,
 - [ ] Criteria one…
 - [ ] Criteria two…
 
-## Reference Images
+## Reference Images (Optional)
 
 <!--
 REFERENCE IMAGES (optional) — list any screenshots or inspiration you'll attach, and for each note its role:
