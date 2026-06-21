@@ -294,6 +294,7 @@ All four value categories have translation tables:
 | `vibe-prompt-architect-gem.md` | Gemini Gem **router** — the minimal instruction text pasted into a new Gem's instruction box; points at the knowledge files |
 | `vibe-prompt-architect-knowledge.md` | Gemini Gem **knowledge file** — the full operating procedures, uploaded as a Gem attachment. This is the content sync partner with `SKILL.md` |
 | `vibe-prompt-architect-tc-ebc-primer.md` | Gemini Gem **knowledge file** — the TC-EBC framework origin and rationale, uploaded as a second Gem attachment |
+| `gem-description.md` | The short one-line description text for the Gemini Gem's description field |
 | `Figma Design to Figma Make Best Practices (Mid-2026 Update).md` | Reference doc — source of record for the Make-ready Figma construction rules used by the Claude Code + Figma MCP build-in-Figma branch. Not attached to the Gem |
 | `CHANGELOG.md` | Authoritative version history for both the Skill and the Gem |
 | `CHEATSHEET.md` | User cheat sheet — a ~5-minute reference covering what the Skill/Gem does, what to prepare, the intake at a glance, built-in quality, and tips for a better session |
