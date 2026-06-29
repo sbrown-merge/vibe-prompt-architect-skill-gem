@@ -9,7 +9,7 @@ Quick reference for getting the best results from **Vibe Prompt Architect**, ava
 ## How to start a session
 
 | | Claude Skill | Gemini Gem |
-|---|---|---|
+| --- | --- | --- |
 | **Setup** | Place `SKILL.md` in your Skills directory | Paste `vibe-prompt-architect-gem.md` into a new Gem |
 | **Trigger** | Say "help me write a vibe-coding prompt", "I want to build a UI with AI", or just describe the screen | Start a conversation in the Gem |
 | **Answer style** | One question at a time — reply, wait for the next | Same |
